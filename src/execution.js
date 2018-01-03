@@ -1,9 +1,7 @@
 // execution
 export const rule = (field, name, ...args) => {
   return {
-    r: (state) => {
-      return { field, name, args };
-    },
+    r: { field, name, args },
     v0: (state) => {
       for (let v of args) {
         let value = state[field], x = v(0, value, state), newValue = v(1, x[0][0], state);
@@ -25,7 +23,7 @@ export const rule = (field, name, ...args) => {
     },
     f: (state) => {
       for (let v of args) {
-        let value = state[field], newValue = v(1, value, state);
+        let value = state[field], x = v(0, value, state), newValue = v(1, x[0][0], state);
         if (newValue && value !== newValue) {
           return { [field]: newValue };
         }
@@ -40,7 +38,29 @@ export const ruleIf = (condition, ...rules) => {
     r: rules
   }
 };
-export const flatten = (state, rules) => rules.reduce((y, x) => { y.push.apply(y, x.c ? (x.c(state) && x.r ? flatten(state, x.r) : []) : [x.r(state)]); return y; }, []);
-export const valuedate = (state, rules) => rules.reduce((y, x) => Object.assign(y, x.c ? (x.c(state) && x.r ? valuedate(state, x.r) : y) : x.v0(state)), {});
-export const validate = (state, rules) => rules.reduce((y, x) => Object.assign(y, x.c ? (x.c(state) && x.r ? validate(state, x.r) : y) : x.v1(state)), {});
-export const format = (state, rules) => rules.reduce((y, x) => Object.assign(y, x.c ? (x.c(state) && x.r ? format(state, x.r) : y) : x.f(state)), {});
+
+export const find = (state, rules, field) => rules.reduce((a, x) =>
+  a || (x.c ?
+    (x.c(state) && x.r ? find(state, x.r, field) : null) :
+    x.r.field == field ? x.r : null)
+  , null);
+export const flatten = (state, rules) => rules.reduce((a, x) => {
+  a.push.apply(a, x.c ?
+    (x.c(state) && x.r ? flatten(state, x.r) : []) :
+    [x.r]); return a;
+}, []);
+export const valuedate = (state, rules, field) => rules.reduce((a, x) =>
+  Object.assign(a, x.c ?
+    (x.c(state) && x.r ? valuedate(state, x.r, field) : a) :
+    !field || x.r.field == field ? x.v0(state) : null
+  ), {});
+export const validate = (state, rules, field) => rules.reduce((a, x) =>
+  Object.assign(a, x.c ?
+    (x.c(state) && x.r ? validate(state, x.r, field) : a) :
+    !field || x.r.field == field ? x.v1(state) : null
+  ), {});
+export const format = (state, rules, field) => rules.reduce((a, x) =>
+  Object.assign(a, x.c ?
+    (x.c(state) && x.r ? format(state, x.r, field) : a) :
+    !field || x.r.field == field ? x.f(state) : null
+  ), {});

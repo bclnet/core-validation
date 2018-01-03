@@ -3,13 +3,6 @@ export {
   rule, ruleIf
 } from './execution';
 
-// accessors
-export {
-  reset,
-  rules, runRules, reduceState,
-  hasErrors, errorFor,
-} from './accessors';
-
 // error messages
 const requiredError = fieldName => `${fieldName} is required`;
 const mustMatchError = otherFieldName => (fieldName) => `${fieldName} must match ${otherFieldName}`;
@@ -83,3 +76,9 @@ import {
 export const text = (param) => (f, text) => f ? textFormater(text, param) : [textParser(text, param), v => v ? null : invalidFormatError];
 export const memo = (param) => (f, text) => f ? memoFormater(text, param) : [memoParser(text, param), v => v ? null : invalidFormatError];
 export const regex = (param) => (f, text) => f ? regexFormater(text, param) : [regexParser(text, param), v => v ? null : invalidFormatError];
+
+// bindings
+export { create } from './binding';
+import NullBinding from './bindings/nullBinding';
+import ReactBinding from './bindings/reactBinding';
+export { NullBinding, ReactBinding };

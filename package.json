@@ -1,6 +1,6 @@
 {
   "name": "core-validation",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "core validation",
   "main": "lib/index.js",
   "keywords": [
@@ -27,7 +27,9 @@
   ],
   "author": "Sky Morey <smorey@degdigital.com>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "moment": "^2.20.1"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
