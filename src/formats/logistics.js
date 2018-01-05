@@ -1,3 +1,8 @@
+const _letterPattern = /[a-z]/i;
+const _digitsPattern = /\d/i;
+const _notDigitsPattern = /\D/gi;
+const _notAlphaDigitsPattern = /[^0-9a-z]/gi;
+
 // phone
 export const phoneFormater = (value, param) => {
   if (!value) return '';
@@ -5,14 +10,14 @@ export const phoneFormater = (value, param) => {
 };
 export const phoneParser = (text, param) => {
   if (!text) return [text, false];
-  let countries = param && param.countries ? param.countries() || '' : 'u';
+  let countries = param ? param.countries || 'u' : 'u';
   if (countries.includes('u') || countries.includes('c')) { // canada+usa/generic parsing
-    let text = ''; //U.extractDigits(text);
-    if (text.length > 10) return [text.substring(0, 3) + '-' + text.substring(3, 3) + '-' + text.substring(6, 4) + ' x' + text.substring(10), true];
-    else if (text.length === 10) return [text.substring(0, 3) + '-' + text.substring(3, 3) + '-' + text.substring(6, 4), true];
-    else if (text.length === 7) return [text.substring(0, 3) + '-' + text.substring(3, 4), true];
+    let ntext = text.replace(_notDigitsPattern, '');
+    if (ntext.length > 10) return [ntext.substring(0, 3) + '-' + ntext.substring(3, 6) + '-' + ntext.substring(6, 10) + ' x' + ntext.substring(10), true];
+    else if (ntext.length === 10) return [ntext.substring(0, 3) + '-' + ntext.substring(3, 6) + '-' + ntext.substring(6, 10), true];
+    // else if (ntext.length === 7) return [ntext.substring(0, 3) + '-' + ntext.substring(3, 7), true];
   }
-  else if (countries === '') return [text, true]; // accept all
+  else if (countries === '*') return [text, true]; // accept all
   return [text, false];
 };
 
@@ -22,21 +27,20 @@ export const zipFormater = (value, param) => {
   return value;
 };
 export const zipParser = (text, param) => {
-  let letter = /[a-z]/i, digit = /[0-9]/i;
   if (!text) return [text, false];
-  let countries = param && param.countries ? param.countries() || '' : 'u';
+  let countries = param ? param.countries || 'u' : 'u';
   if (countries.includes('c')) { // canada/generic parsing
-    let text = ''; //U.extractAlphaDigits(text);
-    if (text.length === 6 &&
-      text[0].match(letter) && text[1].match(digit) && text[2].match(letter) &&
-      text[3].match(digit) && text[4].match(letter) && text[5].match(digit)
-    ) return [text.substring(0, 3) + ' ' + text.substring(3), true];
+    let ntext = text.replace(_notAlphaDigitsPattern, '');
+    if (ntext.length === 6 &&
+      _letterPattern.test(ntext[0]) && _digitsPattern.test(ntext[1]) && _letterPattern.test(ntext[2]) &&
+      _digitsPattern.test(ntext[3]) && _letterPattern.test(ntext[4]) && _digitsPattern.test(ntext[5])
+    ) return [ntext.substring(0, 3) + ' ' + ntext.substring(3), true];
   }
   if (countries.includes('u')) { // usa/generic parsing
-    let text = ''; //U.extractDigits(text);
-    if (text.length >= 7 && text.length <= 9) return [text.substring(0, 5) + '-' + text.substring(5).padStart(4, '0'), true];
-    else if (text.length >= 3 && text.length <= 5) return [text.padStart(5, '0'), true];
+    let ntext = text.replace(_notDigitsPattern, '');
+    if (ntext.length >= 7 && ntext.length <= 9) return [ntext.substring(0, 5) + '-' + ntext.substring(5).padStart(4, '0'), true];
+    else if (ntext.length >= 3 && ntext.length <= 5) return [ntext.padStart(5, '0'), true];
   }
-  else if (countries === '') return [text, true]; // accept all
+  else if (countries === '*') return [text, true]; // accept all
   return [text, false];
 };

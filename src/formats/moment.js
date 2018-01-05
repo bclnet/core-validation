@@ -1,5 +1,6 @@
 import moment from 'moment';
 
+moment.suppressDeprecationWarnings = true;
 const _minDateValue = moment([1753, 1, 1]);
 const _maxDateValue = moment([9999, 12, 31]);
 
@@ -29,6 +30,7 @@ export const dateParser = (text, param) => {
   else if (value < _minDateValue || value > _maxDateValue) return [value, false];
   value = moment([value.year(), value.month(), value.date()]);
   if (param) { // check param
+    console.log('here', param.minValue, value, moment(minValue));
     let minValue = param.minValue; if (minValue && value < moment(minValue)) return [value, false];
     let maxValue = param.maxValue; if (maxValue && value > moment(maxValue)) return [value, false];
   }
