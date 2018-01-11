@@ -2,14 +2,14 @@ export default function ReactBinding(defaultStateProp) {
     this.defaultStateProp = defaultStateProp || null;
 }
 
-ReactBinding.prototype.getState = function ($this, opt) {
-    let stateProp = (opt || {}).stateProp || this.defaultStateProp;
+ReactBinding.prototype.getState = function ($this, opts) {
+    let stateProp = (opts || {}).stateProp || this.defaultStateProp;
     let state = stateProp ? $this.state[stateProp] : $this.state;
     return state;
 };
 
-ReactBinding.prototype.setState = function ($this, opt, values) {
-    let stateProp = (opt || {}).stateProp || this.defaultStateProp;
+ReactBinding.prototype.setState = function ($this, opts, values) {
+    let stateProp = (opts || {}).stateProp || this.defaultStateProp;
     if (stateProp) { let state = {}; for (let key in values) state[key] = values[key]; $this.setState({ [stateProp]: state }); }
     else $this.setState(values);
 };

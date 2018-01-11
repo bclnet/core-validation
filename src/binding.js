@@ -7,54 +7,55 @@ import {
 export let create = function (binding, defaultRules) {
   return ($this) => {
     return {
+      defaultRules: null,
       reset: function () {
         binding.setErrors($this, { _flag: 0 });
       },
-      rules: function (opt, field) {
-        let rules = (opt || {}).rules || defaultRules;
-        let state = binding.getState($this, opt);
+      rules: function (opts, field) {
+        let rules = (opts || {}).rules || this.defaultRules || defaultRules;
+        let state = binding.getState($this, opts);
         if (field) return rules ? find(state, rules, field) : null;
         return rules ? flatten(state, rules) : [];
       },
-      runRules: function (opt, field, flag) {
-        let rules = (opt || {}).rules || defaultRules;
-        let state = binding.getState($this, opt);
+      runRules: function (opts, field, flag) {
+        let rules = (opts || {}).rules || this.defaultRules || defaultRules;
+        let state = binding.getState($this, opts);
         let errors = rules ? validate(state, rules, field) : {};
         errors._flag = flag ? flag : binding.getErrors($this)._flag;
         binding.setErrors($this, errors);
         return errors;
       },
-      runValues: function (opt, field) {
-        let rules = (opt || {}).rules || defaultRules;
-        let state = binding.getState($this, opt);
+      runValues: function (opts, field) {
+        let rules = (opts || {}).rules || this.defaultRules || defaultRules;
+        let state = binding.getState($this, opts);
         let values = rules ? valuedate(state, rules, field) : {};
-        binding.setState($this, opt, values);
+        binding.setState($this, opts, values);
         return values;
       },
-      runFormats: function (opt, field) {
-        let rules = (opt || {}).rules || defaultRules;
-        let state = binding.getState($this, opt);
+      runFormats: function (opts, field) {
+        let rules = (opts || {}).rules || this.defaultRules || defaultRules;
+        let state = binding.getState($this, opts);
         let values = rules ? format(state, rules, field) : {};
         if (field && state[field] == values[field]) return;
-        binding.setState($this, opt, values);
+        binding.setState($this, opts, values);
         return values;
       },
-      reduceState: function (opt, clearExceptFields) {
-        let state = binding.getState($this, opt);
-        let fieldMap = this.rules(opt).reduce((y, x) => Object.assign(y, { [x.field]: clearExceptFields ? clearExceptFields.includes(x.field) : true }), {});
+      reduceState: function (opts, clearExceptFields) {
+        let state = binding.getState($this, opts);
+        let fieldMap = this.rules(opts).reduce((y, x) => Object.assign(y, { [x.field]: clearExceptFields ? clearExceptFields.includes(x.field) : true }), {});
         Object.keys(state).forEach(function (key) {
           if (!fieldMap[key]) {
             state[key] = '';
             //delete state[key];
           }
         });
-        binding.setState($this, opt, state);
+        binding.setState($this, opts, state);
         return state;
       },
 
-      hasErrors: function (opt) {
-        let skipRules = (opt || {}).skipRules || false;
-        let errors = !skipRules ? this.runRules(opt, null, 1) : binding.getErrors($this);
+      hasErrors: function (opts) {
+        let skipRules = (opts || {}).skipRules || false;
+        let errors = !skipRules ? this.runRules(opts, null, 1) : binding.getErrors($this);
         let primaryErrorFlag = errors._flag & 1;
         return primaryErrorFlag && Object.keys(errors).length !== 1;
       },
@@ -74,17 +75,17 @@ export let create = function (binding, defaultRules) {
         binding.setErrors($this, errors);
       },
 
-      labelFor: function (field, opt) {
-        let rule = this.rules(opt, field) || {};
+      labelFor: function (field, opts) {
+        let rule = this.rules(opts, field) || {};
         return rule.name || 'Label';
       },
-      errorFor: function (field, opt) {
+      errorFor: function (field, opts) {
         let errors = binding.getErrors($this);
         let primaryErrorFlag = errors._flag & 1;
         return primaryErrorFlag ? errors[field || ''] || '' : undefined;
       },
-      onBlurFor: function (field, opt) {
-        return () => this.runFormats(opt, field);
+      onBlurFor: function (field, opts) {
+        return () => this.runFormats(opts, field);
       },
     };
   };
