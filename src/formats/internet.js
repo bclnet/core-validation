@@ -19,7 +19,7 @@ export const emailListFormater = (value, param) => {
 };
 export const emailListParser = (text, param) => {
     if (!text) return [text, false];
-    let list = text.replace(',', ';').split(';'), newList = [];
+    let list = text.replace(/,/g, ';').split(';'), newList = [];
     for (let vi in list) {
         let v = list[vi];
         v = v.trim(); if (!v) continue;
@@ -51,7 +51,7 @@ export const hostnameListFormater = (value, param) => {
 };
 export const hostnameListParser = (text, param) => {
     if (!text) return [text, false];
-    let list = text.replace('\r', '').replace('\n', ';').replace(',', ';').split(';'), newList = [];
+    let list = text.replace(/[\r\n,]/g, ';').split(';'), newList = [];
     for (let vi in list) {
         let v = list[vi];
         v = v.trim(); if (!v) continue;

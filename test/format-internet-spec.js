@@ -37,6 +37,7 @@ describe('Email List', () => {
         // list
         expect(emailListParser('bad.com, valid@email.com')).toEqual(['bad.com, valid@email.com', false]);
         expect(emailListParser('valid@email.com, valid@email.com')).toEqual(['valid@email.com; valid@email.com', true]);
+        expect(emailListParser('valid@email.com, ,valid@email.com')).toEqual(['valid@email.com; valid@email.com', true]);
     });
     it('should parse: maxCount', () => {
         expect(emailListParser('valid@email.com, valid@email.com', { maxCount: 1 })).toEqual(['valid@email.com, valid@email.com', false]);
@@ -72,6 +73,7 @@ describe('Hostname List', () => {
         // list
         expect(hostnameListParser('bad-com, good.com')).toEqual(['bad-com, good.com', false]);
         expect(hostnameListParser('good.com, good.com')).toEqual(['good.com; good.com', true]);
+        expect(hostnameListParser('good.com, ,good.com')).toEqual(['good.com; good.com', true]);
     });
     it('should parse: maxCount', () => {
         expect(hostnameListParser('good.com, good.com', { maxCount: 1 })).toEqual(['good.com, good.com', false]);
