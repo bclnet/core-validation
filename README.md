@@ -36,7 +36,7 @@ export default class extends React.Component {
         let v = Validator(this);
         return (
             <div>
-                <Input id="message" error={v.errorFor('message')} label={v.labelFor('message')} onBlur={v.onBlurFor('message')} value={this.state.message} onChange={this.inputChangeHandler} />
+                <input id="message" error={v.errorFor('message')} label={v.labelFor('message')} onBlur={v.onBlurFor('message')} value={this.state.message} onChange={this.inputChangeHandler} />
                 <button onClick={this.submitHandler}>Submit</button>
             </div>
         );
