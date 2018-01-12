@@ -9,6 +9,7 @@ let dateFormaterDefault = 'YYYY-MM-DD'; //'M/D/YYYY'
 export const dateFormater = (value, param) => {
   if (!value) return '';
   value = moment(value);
+  
   if (param) {
     switch (param.format) {
       case 'date': return value.format('DD MMMM YYYY');
@@ -42,25 +43,26 @@ export const dateTimeFormater = (value, param) => {
   value = moment(value);
   if (param) {
     switch (param.format) {
-      case 'date': return value.format('DD MMMM YYYY hh:mm tt');
-      case 'longDateTime': return value.format('dddd, MMMM D, YYYY');
+      case 'date': return value.format('DD MMMM YYYY hh:mm a');
+      case 'longDateTime': return value.format('dddd, MMMM D, YYYY hh:mm a');
       case 'longDate': return value.format('dddd, MMMM D, YYYY');
-      case 'longTime': return value.format('hh:mm:ss tt');
+      case 'longTime': return value.format('hh:mm:ss a');
       case 'shortDate': return value.format('D-MMM-YYYY');
-      case 'shortTime': return value.format('hh:mm tt');
+      case 'shorterDate': return value.format('MMM D YYYY');
+      case 'shortTime': return value.format('hh:mm a');
       case 'tinyDate': return value.format('M/D/YY');
-      case 'tinyDateTime': return value.format('M/D/YY hh:mm tt');
+      case 'tinyDateTime': return value.format('M/D/YY hh:mm a');
       case 'pattern': return value.format(param.pattern);
       default: throw new Error('param.format invalid');
     }
   }
-  return value.format('M/D/YYYY');
+  return value.format('MM/DD/YYYY');
 };
 export const dateTimeParser = (text, param) => {
   if (!text) return [text, false];
   let value = moment(text); if (!value.isValid()) return [text, false];
   else if (value < _minDateValue || value > _maxDateValue) return [value, false];
-  value = moment([value.year(), value.month() + 1, value.date()]);
+  value = moment([value.year(), value.month(), value.date()]);
   if (param) { // check param
     let minValue = param.minValue; if (minValue && moment(minValue).isAfter(value)) return [value, false];
     let maxValue = param.maxValue; if (maxValue && value.isAfter(moment(maxValue))) return [value, false];
@@ -78,12 +80,12 @@ export const monthAndDayFormater = (value, param) => {
       default: throw new Error('param.format invalid');
     }
   }
-  return value.format('M/D');
+  return value.format('MM/DD');
 };
 export const monthAndDayParser = (text, param) => {
   if (!text) return [text, false];
-  let match = /^\d{1,2}([/\-])\d{1,2}$/.exec(text); if (!match) return [text, false];
-  let value = moment(match[1] + '2000'); if (!value.isValid()) return [text, false];
+  let match = /^((0[1-9])|(1[0-2]))[\/-](([0-2][0-9])|([3][0-1]))$/.exec(text); if (!match) return [text, false];
+  let value = moment().set({year:'2000', month: match[1]-1, date: match[4], h: 0, m: 0, s: 0 }) ; //if (!value.isValid()) return [text, false];
   return [value, true];
 };
 
@@ -105,10 +107,9 @@ export const timeParser = (text, param) => {
   if (!text) return [text, false];
   let value = moment(text); if (!value.isValid()) return [text, false];
   value = moment({ h: value.hour(), m: value.minute(), s: value.second() });
-  console.log('here', value);
   if (param) { // check param
-    let minValue = param.minValue, minValue2; if (minValue && moment(minValue).isAfter(value)) return [value, false];
-    let maxValue = param.maxValue, maxValue2; if (maxValue && value.isAfter(moment(maxValue))) return [value, false];
+    let minValue = param.minValue; if (minValue && moment(minValue).isAfter(value)) return [value, false];
+    let maxValue = param.maxValue; if (maxValue && value.isAfter(moment(maxValue))) return [value, false];
   }
   return [value, true];
 };
