@@ -30,9 +30,8 @@ export const dateParser = (text, param) => {
   else if (value < _minDateValue || value > _maxDateValue) return [value, false];
   value = moment([value.year(), value.month(), value.date()]);
   if (param) { // check param
-    console.log('here', param.minValue, value, moment(minValue));
-    let minValue = param.minValue; if (minValue && value < moment(minValue)) return [value, false];
-    let maxValue = param.maxValue; if (maxValue && value > moment(maxValue)) return [value, false];
+    let minValue = param.minValue; if (minValue && moment(minValue).isAfter(value)) return [value, false];
+    let maxValue = param.maxValue; if (maxValue && value.isAfter(moment(maxValue))) return [value, false];
   }
   return [value, true];
 };
@@ -63,8 +62,8 @@ export const dateTimeParser = (text, param) => {
   else if (value < _minDateValue || value > _maxDateValue) return [value, false];
   value = moment([value.year(), value.month() + 1, value.date()]);
   if (param) { // check param
-    let minValue = param.minValue; if (minValue && value < moment(minValue)) return [value, false];
-    let maxValue = param.maxValue; if (maxValue && value > moment(maxValue)) return [value, false];
+    let minValue = param.minValue; if (minValue && moment(minValue).isAfter(value)) return [value, false];
+    let maxValue = param.maxValue; if (maxValue && value.isAfter(moment(maxValue))) return [value, false];
   }
   return [value, true];
 };
@@ -94,21 +93,22 @@ export const timeFormater = (value, param) => {
   value = moment(value);
   if (param) {
     switch (param.format) {
-      case 'longTime': return value.format('hh:mm:ss tt');
-      case 'shortTime': return value.format('hh:mm tt');
+      case 'longTime': return value.format('hh:mm:ss a');
+      case 'shortTime': return value.format('hh:mm a');
       case 'pattern': return value.format(param.pattern);
       default: throw new Error('param.format invalid');
     }
   }
-  return value.format('hh:mm tt');
+  return value.format('hh:mm ss');
 };
 export const timeParser = (text, param) => {
   if (!text) return [text, false];
   let value = moment(text); if (!value.isValid()) return [text, false];
-  value = moment([0, 0, 0, value.hour(), value.minute(), value.second()]);
+  value = moment([value.hour(), value.minute(), value.second()]);
+  console.log('here', value);
   if (param) { // check param
-    let minValue = param.minValue, minValue2; if (minValue && value < moment(minValue)) return [value, false];
-    let maxValue = param.maxValue, maxValue2; if (maxValue && value > moment(maxValue)) return [value, false];
+    let minValue = param.minValue, minValue2; if (minValue && moment(minValue).isAfter(value)) return [value, false];
+    let maxValue = param.maxValue, maxValue2; if (maxValue && value.isAfter(moment(maxValue))) return [value, false];
   }
   return [value, true];
 };
