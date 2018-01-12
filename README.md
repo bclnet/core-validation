@@ -23,8 +23,8 @@ export default class extends React.Component {
         super(props);
         this.state = {};
     }
-    inputChangeHandler = (e) => util.inputChange(e, (target, id, value, valueFile) => {
-        this.setState({ [id]: value });
+    inputChangeHandler = (e) => {
+        // set state
         Validator(this).runRules();
     })
     submitHandler = (e) => {
