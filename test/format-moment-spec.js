@@ -65,7 +65,7 @@ describe('Date', () => {
     });
     it('should parse: minValue', () => {
         expect(dateParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,false');
-        //expect(dateParser('2012-01-01', { minValue: '1/1/2011' }).toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true');
+        expect(dateParser('2012-01-01', { minValue: '1/1/2011' }).toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true');
 
         //expect(dateParser('2013-01-01', { minValue: '1/1/2012' }).toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true');
     });

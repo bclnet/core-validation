@@ -104,7 +104,7 @@ export const timeFormater = (value, param) => {
 export const timeParser = (text, param) => {
   if (!text) return [text, false];
   let value = moment(text); if (!value.isValid()) return [text, false];
-  value = moment([value.hour(), value.minute(), value.second()]);
+  value = moment({ h: value.hour(), m: value.minute(), s: value.second() });
   console.log('here', value);
   if (param) { // check param
     let minValue = param.minValue, minValue2; if (minValue && moment(minValue).isAfter(value)) return [value, false];
