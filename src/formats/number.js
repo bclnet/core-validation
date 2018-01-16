@@ -1,6 +1,6 @@
 // bool
 export const boolFormater = (value, param) => {
-  if (!value) return '';
+  //if (!value) return '';
   if (param) {
     switch (param.format) {
       case 'trueFalse': return value ? 'True' : 'False';
@@ -19,6 +19,7 @@ export const boolParser = (text, param) => {
   switch (text.toLowerCase()) {
     case '1': case 'y': case 'true': case 'yes': case 'on': return [true, true];
     case '0': case 'n': case 'false': case 'no': case 'off': return [false, true];
+    default: throw new Error('invalid value');
   }
 };
 
@@ -52,10 +53,10 @@ export const integerFormater = (value, param) => {
   value = parseInt(value);
   if (param) {
     switch (param.format) {
-      case 'comma': return value.toString('#,##0');
+      case 'comma': return format(value);
       case 'byte':
-        let length = Math.floor((double)(value.toString().length - 1) / 3);
-        if (length > 0) return Math.Round(value / (2 << (10 * length)), 2).toString() + ' ' + '  KBMBGB'.substring(length * 2, 2);
+        let length = Math.floor(parseFloat((value.toString().length - 1)) / 3);
+        if (length > 0) return Math.round(value / (2 << (10 * length)), 2).toString() + ' ' + '  KBMBGB'.substring(length * 2, 2);
         if (value == 1) return '1 byte';
         return value.toString() + ' bytes';
       case 'pattern': return value.toString(param.pattern);
@@ -155,3 +156,9 @@ export const percentParser = (text, param) => {
   let value = parseFloat(text); if (isNaN(value)) return [text, false];
   return [value, true];
 };
+
+function format(value) {
+  if(isNaN(value))return "";
+  let n= value.toString().split('.');
+  return n[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+(n.length>1?"."+n[1]:"");
+}
