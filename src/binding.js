@@ -40,11 +40,11 @@ export let create = function (binding, defaultRules) {
         binding.setState($this, opts, values);
         return values;
       },
-      reduceState: function (opts, clearExceptFields) {
+      reduceState: function (opts, exceptFields) {
         let state = binding.getState($this, opts);
-        let fieldMap = this.rules(opts).reduce((y, x) => Object.assign(y, { [x.field]: clearExceptFields ? clearExceptFields.includes(x.field) : true }), {});
+        let fieldMap = this.rules(opts).reduce((y, x) => Object.assign(y, { [x.field]: exceptFields ? exceptFields.includes(x.field) : true }), {});
         Object.keys(state).forEach(function (key) {
-          if (!fieldMap[key]) {
+          if (!fieldMap[key] && (exceptFields ? !exceptFields.includes(key) : true)) {
             state[key] = '';
             //delete state[key];
           }
@@ -52,14 +52,12 @@ export let create = function (binding, defaultRules) {
         binding.setState($this, opts, state);
         return state;
       },
-
       hasErrors: function (opts) {
         let skipRules = (opts || {}).skipRules || false;
         let errors = !skipRules ? this.runRules(opts, null, 1) : binding.getErrors($this);
         let primaryErrorFlag = errors._flag & 1;
         return primaryErrorFlag && Object.keys(errors).length !== 1;
       },
-
       hasErrorFlag: function (bit) {
         let errors = binding.getErrors($this);
         return errors._flag & (1 << bit);

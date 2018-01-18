@@ -158,7 +158,7 @@ export const percentParser = (text, param) => {
 };
 
 function format(value) {
-  if(isNaN(value))return "";
-  let n= value.toString().split('.');
-  return n[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+(n.length>1?"."+n[1]:"");
+  if (isNaN(value)) return '';
+  let n = value.toString().split('.');
+  return n[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (n.length > 1 ? '.' + n[1] : '');
 }
