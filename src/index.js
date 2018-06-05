@@ -5,7 +5,7 @@ export {
 
 // error messages
 const requiredError = fieldName => `${fieldName} is required`;
-const customError = fieldName => `${fieldName} is invalid`;
+const generalError = fieldName => `${fieldName} is invalid`;
 const mustMatchError = otherFieldName => (fieldName) => `${fieldName} must match ${otherFieldName}`;
 const minLengthError = length => (fieldName) => `${fieldName} must be at least ${length} characters`;
 const maxLengthError = length => (fieldName) => `${fieldName} must be at most ${length} characters`;
@@ -13,8 +13,8 @@ const invalidFormatError = fieldName => `${fieldName} has an invalid format`;
 
 // rules
 export const required = (f, text) => f ? null : [[text, text], v => v ? null : requiredError];
-export const custom = (predicate, customError, param) => (f, text, state) => f ? null : [[text, predicate(text, state, param)], v => v ? null : customError || customError];
-export const mustMatch = (field, fieldName) => (f, text, state) => f ? null : [[text, state[field] === text], v => v ? null : mustMatchError(fieldName)];
+export const custom = (predicate, customError, param) => (f, text, state) => f ? null : [[text, predicate(text, state, param)], v => v ? null : customError || generalError];
+export const mustMatch = (field, fieldName, customError) => (f, text, state) => f ? null : [[text, state[field] === text], v => v ? null : customError || mustMatchError(fieldName)];
 export const minLength = (length, customError) => (f, text) => f ? null : [[text, text && text.length >= length], v => v ? null : customError || minLengthError(length)];
 export const maxLength = (length, customError) => (f, text) => f ? null : [[text, (!text || text && text.length <= length)], v => v ? null : customError || maxLengthError(length)];
 
