@@ -15,8 +15,8 @@ const invalidFormatError = fieldName => `${fieldName} has an invalid format`;
 export const required = (f, text) => f ? null : [[text, text], v => v ? null : requiredError];
 export const custom = (predicate, customError, param) => (f, text, state) => f ? null : [[text, predicate(text, state, param)], v => v ? null : customError || customError];
 export const mustMatch = (field, fieldName) => (f, text, state) => f ? null : [[text, state[field] === text], v => v ? null : mustMatchError(fieldName)];
-export const minLength = (length) => (f, text) => f ? null : [[text, text && text.length >= length], v => v ? null : minLengthError(length)];
-export const maxLength = (length) => (f, text) => f ? null : [[text, (!text || text && text.length <= length)], v => v ? null : maxLengthError(length)];
+export const minLength = (length, customError) => (f, text) => f ? null : [[text, text && text.length >= length], v => v ? null : customError || minLengthError(length)];
+export const maxLength = (length, customError) => (f, text) => f ? null : [[text, (!text || text && text.length <= length)], v => v ? null : customError || maxLengthError(length)];
 
 // formats - internet
 import {
