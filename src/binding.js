@@ -7,11 +7,34 @@ import {
 export let create = function (binding, defaultRules) {
   return ($this) => {
     return {
+      // STATE
       defaultRules: null,
       reset: function () {
         binding.setErrors($this, { _flag: 0 });
       },
-      rules: function (opts, field) {
+      hasErrors: function (opts) {
+        let skipRules = (opts || {}).skipRules || false;
+        let errors = !skipRules ? this.runRules(opts, null, 1) : binding.getErrors($this);
+        let primaryErrorFlag = errors._flag & 1;
+        return primaryErrorFlag && Object.keys(errors).length !== 1;
+      },
+      hasErrorFlag: function (bit) {
+        let errors = binding.getErrors($this);
+        return errors._flag & (1 << bit);
+      },
+      setErrorFlag: function (bit) {
+        let errors = binding.getErrors($this);
+        errors._flag |= (1 << bit);
+        binding.setErrors($this, errors);
+      },
+      clearErrorFlag: function (bit) {
+        let errors = binding.getErrors($this);
+        errors._flag &= ~(1 << bit);
+        binding.setErrors($this, errors);
+      },
+
+      // RUN
+      getRules: function (opts, field) {
         let rules = (opts || {}).rules || this.defaultRules || defaultRules;
         let state = binding.getState($this, opts);
         if (field) return rules ? find(state, rules, field) : null;
@@ -42,7 +65,7 @@ export let create = function (binding, defaultRules) {
       },
       reduceState: function (opts, exceptFields) {
         let state = binding.getState($this, opts);
-        let fieldMap = this.rules(opts).reduce((y, x) => Object.assign(y, { [x.field]: exceptFields ? exceptFields.includes(x.field) : true }), {});
+        let fieldMap = this.getRules(opts).reduce((y, x) => Object.assign(y, { [x.field]: exceptFields ? exceptFields.includes(x.field) : true }), {});
         Object.keys(state).forEach(function (key) {
           if (!fieldMap[key] && (exceptFields ? !exceptFields.includes(key) : true)) {
             state[key] = '';
@@ -52,30 +75,21 @@ export let create = function (binding, defaultRules) {
         binding.setState($this, opts, state);
         return state;
       },
-      hasErrors: function (opts) {
-        let skipRules = (opts || {}).skipRules || false;
-        let errors = !skipRules ? this.runRules(opts, null, 1) : binding.getErrors($this);
-        let primaryErrorFlag = errors._flag & 1;
-        return primaryErrorFlag && Object.keys(errors).length !== 1;
-      },
-      hasErrorFlag: function (bit) {
-        let errors = binding.getErrors($this);
-        return errors._flag & (1 << bit);
-      },
-      setErrorFlag: function (bit) {
-        let errors = binding.getErrors($this);
-        errors._flag |= (1 << bit);
-        binding.setErrors($this, errors);
-      },
-      clearErrorFlag: function (bit) {
-        let errors = binding.getErrors($this);
-        errors._flag &= ~(1 << bit);
-        binding.setErrors($this, errors);
-      },
 
+
+      // BINDERS
       labelFor: function (field, opts) {
-        let rule = this.rules(opts, field) || {};
+        let rule = this.getRules(opts, field) || {};
         return rule.name || 'Label';
+      },
+      valueFor: function (field, opts) {
+        let state = binding.getState($this, opts);
+        return state[field] || '';
+      },
+      requiredFor: function (field, opts) {
+        let rule = this.getRules(opts, field) || {};
+        let required = rule.args && rule.args.some(x => x.name === 'required');
+        return required;
       },
       errorFor: function (field, opts) {
         let errors = binding.getErrors($this);

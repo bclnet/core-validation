@@ -1,3 +1,7 @@
+function Math_round(value, decimals) {
+  return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+}
+
 // bool
 export const boolFormater = (value, param) => {
   //if (!value) return '';
@@ -41,8 +45,8 @@ export const decimalParser = (text, param) => {
   if (param) { // check param
     let minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [value, false];
     let maxValue = param.maxValue; if (maxValue && value > parseFloat(maxValue)) return [value, false];
-    let precision = param.precision; if (precision && value !== Math.round(value, precision)) return [value, false];
-    let round = param.round; if (round) value = Math.round(value, round);
+    let precision = param.precision; if (precision && value !== Math_round(value, precision)) return [value, false];
+    let round = param.round; if (round) value = Math_round(value, round);
   }
   return [value, true];
 };
@@ -56,7 +60,7 @@ export const integerFormater = (value, param) => {
       case 'comma': return format(value);
       case 'byte':
         let length = Math.floor(parseFloat((value.toString().length - 1)) / 3);
-        if (length > 0) return Math.round(value / (2 << (10 * length)), 2).toString() + ' ' + '  KBMBGB'.substring(length * 2, 2);
+        if (length > 0) return Math_round(value / (2 << (10 * length)), 2).toString() + ' ' + '  KBMBGB'.substring(length * 2, 2);
         if (value == 1) return '1 byte';
         return value.toString() + ' bytes';
       case 'pattern': return value.toString(param.pattern);
@@ -93,8 +97,8 @@ export const realParser = (text, param) => {
   if (param) { // check param
     let minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [value, false];
     let maxValue = param.maxValue; if (maxValue && value > parseFloat(maxValue)) return [value, false];
-    let precision = param.precision; if (precision && value !== Math.round(value, precision)) return [value, false];
-    let round = param.round; if (round) value = Math.round(value, round);
+    let precision = param.precision; if (precision && value !== Math_round(value, precision)) return [value, false];
+    let round = param.round; if (round) value = Math_round(value, round);
   }
   return [value, true];
 };
@@ -128,12 +132,12 @@ export const moneyParser = (text, param) => {
   //if(!/^\d+$/.test(text)) return [text, false];
   text = text.replace(/[^0-9\.]+/g, ''); if (!text) return [text, false];
   let value = parseFloat(text); if (isNaN(value)) return [text, false];
-  value = Math.round(value, 4);
+  value = Math_round(value, 4);
   if (param) { // check param
     let minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [value, false];
     let maxValue = param.maxValue; if (maxValue && value > parseFloat(maxValue)) return [value, false];
-    let precision = param.precision; if (precision && value !== Math.round(value, precision)) return [value, false];
-    let round = param.round; if (round) value = Math.round(value, round);
+    let precision = param.precision; if (precision && value !== Math_round(value, precision)) return [value, false];
+    let round = param.round; if (round) value = Math_round(value, round);
   }
   return [value, true];
 };
