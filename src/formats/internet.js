@@ -6,10 +6,10 @@ export const emailFormater = (value, param) => {
     if (!value) return '';
     return value;
 };
-export const emailParser = (text, param) => {
-    if (!text) return [text, false];
-    if (!_emailPattern.test(text)) return [text, false];
-    return [text, true];
+export const emailParser = (text, param, message) => {
+    if (!text) return [text, false, message];
+    if (!_emailPattern.test(text)) return [text, false, message];
+    return [text, true, message];
 };
 
 // emailList
@@ -17,20 +17,20 @@ export const emailListFormater = (value, param) => {
     if (!value) return '';
     return value;
 };
-export const emailListParser = (text, param) => {
-    if (!text) return [text, false];
+export const emailListParser = (text, param, message) => {
+    if (!text) return [text, false, message];
     let list = text.replace(/,/g, ';').split(';'), newList = [];
     for (let vi in list) {
         let v = list[vi];
         v = v.trim(); if (!v) continue;
-        if (!_emailPattern.test(v)) return [text, false];
+        if (!_emailPattern.test(v)) return [text, false, message];
         newList.push(v);
     }
     let value = newList.join('; ');
     if (param) { // check param
-        let maxCount = param.maxCount; if (maxCount && newList.length > maxCount) return [text, false];
+        let maxCount = param.maxCount; if (maxCount && newList.length > maxCount) return [text, false, message];
     }
-    return [value, true];
+    return [value, true, message];
 };
 
 // hostname
@@ -38,10 +38,10 @@ export const hostnameFormater = (value, param) => {
     if (!value) return '';
     return value;
 };
-export const hostnameParser = (text, param) => {
-    if (!text) return [text, false];
-    if (!_hostnamePattern.test(text)) return [text, false];
-    return [text, true];
+export const hostnameParser = (text, param, message) => {
+    if (!text) return [text, false, message];
+    if (!_hostnamePattern.test(text)) return [text, false, message];
+    return [text, true, message];
 };
 
 // hostnameList
@@ -49,20 +49,20 @@ export const hostnameListFormater = (value, param) => {
     if (!value) return '';
     return value;
 };
-export const hostnameListParser = (text, param) => {
-    if (!text) return [text, false];
+export const hostnameListParser = (text, param, message) => {
+    if (!text) return [text, false, message];
     let list = text.replace(/[\r\n,]/g, ';').split(';'), newList = [];
     for (let vi in list) {
         let v = list[vi];
         v = v.trim(); if (!v) continue;
-        if (!_hostnamePattern.test(v)) return [text, false];
+        if (!_hostnamePattern.test(v)) return [text, false, message];
         newList.push(v);
     }
     let value = newList.join('; ');
     if (param) { // check param
-        let maxCount = param.maxCount; if (maxCount && newList.length > maxCount) return [text, false];
+        let maxCount = param.maxCount; if (maxCount && newList.length > maxCount) return [text, false, message];
     }
-    return [value, true];
+    return [value, true, message];
 };
 
 // uri
@@ -70,9 +70,9 @@ export const uriFormater = (value, param) => {
     if (!value) return '';
     return value;
 };
-export const uriParser = (text, param) => {
-    if (!text) return [text, false];
-    return [text, true];
+export const uriParser = (text, param, message) => {
+    if (!text) return [text, false, message];
+    return [text, true, message];
 };
 
 // xml
@@ -80,7 +80,7 @@ export const xmlFormater = (value, param) => {
     if (!value) return '';
     return value;
 };
-export const xmlParser = (text, param) => {
-    if (!text) return [text, false];
-    return [text, true];
+export const xmlParser = (text, param, message) => {
+    if (!text) return [text, false, message];
+    return [text, true, message];
 };
