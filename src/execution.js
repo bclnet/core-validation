@@ -7,7 +7,7 @@ export const rule = (field, name, ...args) => {
     r: { field, name, args },
     v0: (state) => {
       for (let v of args) {
-        let value = state[field], x = v(value, state).parse, newValue = v(x[0], state).format;
+        let value = state[field], x = v(value, state).parse(), newValue = v(x[0], state).format();
         if (newValue && value !== newValue) {
           return { [field]: newValue };
         }
@@ -16,7 +16,7 @@ export const rule = (field, name, ...args) => {
     },
     v1: (state) => {
       for (let v of args) {
-        let value = state[field], x = v(value, state).parse;
+        let value = state[field], x = v(value, state).parse();
         let messageFunc = x[2](x[1]);
         if (messageFunc) {
           return { [field]: messageFunc(name) };
@@ -26,7 +26,7 @@ export const rule = (field, name, ...args) => {
     },
     f: (state) => {
       for (let v of args) {
-        let value = state[field], x = v(value, state).parse, newValue = v(x[0], state).format;
+        let value = state[field], x = v(value, state).parse(), newValue = v(x[0], state).format();
         if (newValue && value !== newValue) {
           return { [field]: newValue };
         }
