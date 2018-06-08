@@ -1,5 +1,8 @@
 // execution
 export const rule = (field, name, ...args) => {
+  for (var i in args) {
+    if (args[i].b) args[i] = args[i].b();
+  }
   return {
     r: { field, name, args },
     v0: (state) => {
