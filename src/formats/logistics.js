@@ -9,7 +9,7 @@ export const phoneFormater = (value, param) => {
   return value;
 };
 export const phoneParser = (text, param, message) => {
-  if (!text) return [text, false, message];
+  if (!text) return [text, true, message];
   let countries = param ? param.countries || 'u' : 'u';
   if (countries.includes('u') || countries.includes('c')) { // canada+usa/generic parsing
     let ntext = text.replace(_notDigitsPattern, '');
@@ -27,7 +27,7 @@ export const zipFormater = (value, param) => {
   return value;
 };
 export const zipParser = (text, param, message) => {
-  if (!text) return [text, false, message];
+  if (!text) return [text, true, message];
   let countries = param ? param.countries || 'u' : 'u';
   if (countries.includes('c')) { // canada/generic parsing
     let ntext = text.replace(_notAlphaDigitsPattern, '');

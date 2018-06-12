@@ -15,7 +15,7 @@ export const boolFormater = (value, param) => {
   return value ? 'Yes' : 'No';
 };
 export const boolParser = (text, param, message) => {
-  if (!text) return [text, false, message];
+  if (!text) return [text, true, message];
   switch (text.toLowerCase()) {
     case '1': case 'y': case 'true': case 'yes': case 'on': return [true, true, message];
     case '0': case 'n': case 'false': case 'no': case 'off': return [false, true, message];
@@ -36,7 +36,7 @@ export const decimalFormater = (value, param) => {
   return value.toFixed(4);
 };
 export const decimalParser = (text, param, message) => {
-  if (!text) return [text, false, message];
+  if (!text) return [text, true, message];
   let value = parseFloat(text); if (isNaN(value)) return [text, false, message];
   if (param) { // check param
     let minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [value, false, message];
@@ -66,7 +66,7 @@ export const integerFormater = (value, param) => {
   return value.toString();
 };
 export const integerParser = (text, param, message) => {
-  if (!text) return [text, false, message];
+  if (!text) return [text, true, message];
   let value = parseInt(text); if (isNaN(value)) return [text, false, message];
   if (param) { // check param
     let minValue = param.minValue; if (minValue && value < parseInt(minValue)) return [value, false, message];
@@ -88,7 +88,7 @@ export const realFormater = (value, param) => {
   return value.toFixed(4);
 };
 export const realParser = (text, param, message) => {
-  if (!text) return [text, false, message];
+  if (!text) return [text, true, message];
   let value = parseFloat(text); if (isNaN(value)) return [text, false, message];
   if (param) { // check param
     let minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [value, false, message];
@@ -124,7 +124,7 @@ export const moneyFormater = (value, param) => {
   return '$' + value.formatMoney(2);
 };
 export const moneyParser = (text, param, message) => {
-  if (!text) return [text, false, message];
+  if (!text) return [text, true, message];
   //if(!/^\d+$/.test(text)) return [text, false, message];
   text = text.replace(/[^0-9\.]+/g, ''); if (!text) return [text, false, message];
   let value = parseFloat(text); if (isNaN(value)) return [text, false, message];
@@ -151,7 +151,7 @@ export const percentFormater = (value, param) => {
   return value.toString('0.00') + '%';
 };
 export const percentParser = (text, param, message) => {
-  if (!text) return [text, false, message];
+  if (!text) return [text, true, message];
   if (text && text[text.length - 1] === '%') text = text.substring(0, text.length - 1);
   let value = parseFloat(text); if (isNaN(value)) return [text, false, message];
   return [value, true, message];

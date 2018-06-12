@@ -7,7 +7,7 @@ export const emailFormater = (value, param) => {
     return value;
 };
 export const emailParser = (text, param, message) => {
-    if (!text) return [text, false, message];
+    if (!text) return [text, true, message];
     if (!_emailPattern.test(text)) return [text, false, message];
     return [text, true, message];
 };
@@ -18,7 +18,7 @@ export const emailListFormater = (value, param) => {
     return value;
 };
 export const emailListParser = (text, param, message) => {
-    if (!text) return [text, false, message];
+    if (!text) return [text, true, message];
     let list = text.replace(/,/g, ';').split(';'), newList = [];
     for (let vi in list) {
         let v = list[vi];
@@ -39,7 +39,7 @@ export const hostnameFormater = (value, param) => {
     return value;
 };
 export const hostnameParser = (text, param, message) => {
-    if (!text) return [text, false, message];
+    if (!text) return [text, true, message];
     if (!_hostnamePattern.test(text)) return [text, false, message];
     return [text, true, message];
 };
@@ -50,7 +50,7 @@ export const hostnameListFormater = (value, param) => {
     return value;
 };
 export const hostnameListParser = (text, param, message) => {
-    if (!text) return [text, false, message];
+    if (!text) return [text, true, message];
     let list = text.replace(/[\r\n,]/g, ';').split(';'), newList = [];
     for (let vi in list) {
         let v = list[vi];
@@ -71,7 +71,7 @@ export const uriFormater = (value, param) => {
     return value;
 };
 export const uriParser = (text, param, message) => {
-    if (!text) return [text, false, message];
+    if (!text) return [text, true, message];
     return [text, true, message];
 };
 
@@ -81,6 +81,6 @@ export const xmlFormater = (value, param) => {
     return value;
 };
 export const xmlParser = (text, param, message) => {
-    if (!text) return [text, false, message];
+    if (!text) return [text, true, message];
     return [text, true, message];
 };
