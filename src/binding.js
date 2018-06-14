@@ -88,7 +88,7 @@ export let create = function (binding, defaultRules) {
       },
       requiredFor: function (field, opts) {
         let rule = this.getRules(opts, field) || {};
-        let required = rule.args && rule.args.some(x => x.name === 'required');
+        let required = rule.args && rule.args.some(x => x.n === 'required');
         return required;
       },
       errorFor: function (field, opts) {
