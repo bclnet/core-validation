@@ -40,6 +40,13 @@ export let create = function (binding, defaultRules) {
         if (field) return rules ? find(state, rules, field) : null;
         return rules ? flatten(state, rules) : [];
       },
+      getFormats: function (opts, field) {
+        let rules = (opts || {}).rules || this.defaultRules || defaultRules;
+        let state = binding.getState($this, opts);
+        let values = rules ? format(state, rules, field) : {};
+        if (field && state[field] === values[field]) return;
+        return values;
+      },
       runRules: function (opts, field, flag) {
         let rules = (opts || {}).rules || this.defaultRules || defaultRules;
         let state = binding.getState($this, opts);
@@ -48,18 +55,11 @@ export let create = function (binding, defaultRules) {
         binding.setErrors($this, errors);
         return errors;
       },
-      runValues: function (opts, field) {
-        let rules = (opts || {}).rules || this.defaultRules || defaultRules;
-        let state = binding.getState($this, opts);
-        let values = rules ? valuedate(state, rules, field) : {};
-        binding.setState($this, opts, values);
-        return values;
-      },
       runFormats: function (opts, field) {
         let rules = (opts || {}).rules || this.defaultRules || defaultRules;
         let state = binding.getState($this, opts);
         let values = rules ? format(state, rules, field) : {};
-        if (field && state[field] == values[field]) return;
+        if (field && state[field] === values[field]) return;
         binding.setState($this, opts, values);
         return values;
       },
@@ -75,7 +75,6 @@ export let create = function (binding, defaultRules) {
         binding.setState($this, opts, state);
         return state;
       },
-
 
       // BINDERS
       labelFor: function (field, opts) {
@@ -96,8 +95,19 @@ export let create = function (binding, defaultRules) {
         let primaryErrorFlag = errors._flag & 1;
         return primaryErrorFlag ? errors[field || ''] || '' : undefined;
       },
+      formatFor: function (field, opts) {
+        return this.getFormats(opts, field)[field];
+      },
+      changeFor: function (field, opts) {
+        return {
+          id: field,
+          target: null,
+          type: 'rule',
+          value: this.getFormats(opts, field)[field],
+        }
+      },
       onBlurFor: function (field, opts) {
-        return () => this.runFormats(opts, field);
+        return () => { this.runFormats(opts, field); }
       },
     };
   };

@@ -35,11 +35,11 @@ function makeError(customError, defaultError) {
   if (typeof customError === "function") return customError;
   return () => customError;
 }
-export const required = (customError) => funcSymbol('required', function required(text) { return { format: () => null, parse: () => [text, text && (text.length || Object.keys(text).length), v => v ? null : makeError(customError, requiredError)] } });
-export const custom = (predicate, customError, param) => funcSymbol('custom', function custom(text, state) { return { format: () => null, parse: () => [text, predicate(text, state, param), v => v ? null : makeError(customError, generalError)] } });
-export const mustMatch = (field, fieldName, customError) => funcSymbol('mustMatch', function mustMatch(text, state) { return { format: () => null, parse: () => [text, state[field] === text, v => v ? null : makeError(customError, mustMatchError(fieldName))] } });
-export const minLength = (length, customError) => funcSymbol('minLength', function minLength(text) { return { format: () => null, parse: () => [text, text && text.length >= length, v => v ? null : makeError(customError, minLengthError(length))] } });
-export const maxLength = (length, customError) => funcSymbol('maxLength', function maxLength(text) { return { format: () => null, parse: () => [text, (!text || text && text.length <= length), v => v ? null : makeError(customError, maxLengthError(length))] } });
+export const required = (customError) => funcSymbol('required', function required(text) { return { format: () => undefined, parse: () => [text, text && (text.length || Object.keys(text).length), v => v ? null : makeError(customError, requiredError)] } });
+export const custom = (predicate, customError, param) => funcSymbol('custom', function custom(text, state) { return { format: () => undefined, parse: () => [text, predicate(text, state, param), v => v ? null : makeError(customError, generalError)] } });
+export const mustMatch = (field, fieldName, customError) => funcSymbol('mustMatch', function mustMatch(text, state) { return { format: () => undefined, parse: () => [text, state[field] === text, v => v ? null : makeError(customError, mustMatchError(fieldName))] } });
+export const minLength = (length, customError) => funcSymbol('minLength', function minLength(text) { return { format: () => undefined, parse: () => [text, text && text.length >= length, v => v ? null : makeError(customError, minLengthError(length))] } });
+export const maxLength = (length, customError) => funcSymbol('maxLength', function maxLength(text) { return { format: () => undefined, parse: () => [text, (!text || text && text.length <= length), v => v ? null : makeError(customError, maxLengthError(length))] } });
 makeSymbols(required);
 custom.b = () => { console.log('rule: custom must be a function') };
 mustMatch.b = () => { console.log('rule: mustMatch must be a function') };
