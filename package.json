@@ -1,6 +1,6 @@
 {
   "name": "core-validation",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "core validation",
   "main": "lib/index.js",
   "keywords": [

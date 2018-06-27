@@ -84,7 +84,7 @@ export const monthAndDayFormater = (value, param) => {
 export const monthAndDayParser = (text, param, message) => {
   if (!text) return [text, true, message];
   let match = /^((0[1-9])|(1[0-2]))[\/-](([0-2][0-9])|([3][0-1]))$/.exec(text); if (!match) return [text, false, message];
-  let value = moment().set({ year: '2000', month: match[1] - 1, date: match[4], h: 0, m: 0, s: 0 }); //if (!value.isValid()) return [text, false, message];
+  let value = moment().set({ year: 2000, month: match[1] - 1, date: match[4], h: 0, m: 0, s: 0 }); //if (!value.isValid()) return [text, false, message];
   return [value, true, message];
 };
 
@@ -104,11 +104,13 @@ export const timeFormater = (value, param) => {
 };
 export const timeParser = (text, param, message) => {
   if (!text) return [text, true, message];
+  let base = moment({ year: 2000, month: 0, date: 1, h: 0, m: 0, s: 0 }), theValue;
   let value = moment(text); if (!value.isValid()) return [text, false, message];
-  value = moment({ h: value.hour(), m: value.minute(), s: value.second() });
+  value = moment({ year: 2000, month: 0, date: 1, h: value.hour(), m: value.minute(), s: value.second() });
+  //value = value.subtract(value.diff(base, 'days'), 'days');
   if (param) { // check param
-    let minValue = param.minValue; if (minValue && moment(minValue).isAfter(value)) return [value, false, message];
-    let maxValue = param.maxValue; if (maxValue && value.isAfter(moment(maxValue))) return [value, false, message];
+    let minValue = param.minValue; if (minValue && (!(theValue = moment(`01/01 ${minValue}`)).isValid() || theValue.subtract(theValue.diff(base, 'days'), 'days').isAfter(value))) return [value, false, message];
+    let maxValue = param.maxValue; if (maxValue && (!(theValue = moment(`01/01 ${maxValue}`)).isValid() || value.isAfter(theValue.subtract(theValue.diff(base, 'days'), 'days')))) return [value, false, message];
   }
   return [value, true, message];
 };

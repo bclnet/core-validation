@@ -57,26 +57,25 @@ describe('Date', () => {
         expect(dateFormater('2017-01-01', param)).toBe('2017');
     });
     it('should parse', () => {
-        expect(dateParser(null)).toEqual([null, false]);
-        expect(dateParser('')).toEqual(['', false]);
-        expect(dateParser('1ab')).toEqual(['1ab', false]);
-        expect(dateParser('blah').toString()).toEqual('blah,false');
-        expect(dateParser('3:00 pm').toString()).toEqual('3:00 pm,false');
-        expect(dateParser('2012-01-01 3pm').toString()).toEqual('2012-01-01 3pm,false');
-        expect(dateParser('1/1/2012').toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true');
-        expect(dateParser('2012-01-01').toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true');
-        expect(dateParser('2012-01-01 3:00 pm').toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true');
-        expect(dateParser('1752-01-01 03:00:00 am').toString()).toEqual('Sat Jan 01 1752 03:00:00 GMT-0600,false');
-        
+        expect(dateParser(null)).toEqual([null, true, undefined]);
+        expect(dateParser('')).toEqual(['', true, undefined]);
+        expect(dateParser('1ab')).toEqual(['1ab', false, undefined]);
+        expect(dateParser('blah').toString()).toEqual('blah,false,');
+        expect(dateParser('3:00 pm').toString()).toEqual('3:00 pm,false,');
+        expect(dateParser('2012-01-01 3pm').toString()).toEqual('2012-01-01 3pm,false,');
+        expect(dateParser('1/1/2012').toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
+        expect(dateParser('2012-01-01').toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
+        expect(dateParser('2012-01-01 3:00 pm').toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
+        expect(dateParser('1752-01-01 03:00:00 am').toString()).toEqual('Sat Jan 01 1752 03:00:00 GMT-0600,false,');
+
     });
     it('should parse: minValue', () => {
-        expect(dateParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,false');
-        expect(dateParser('2012-01-01', { minValue: '1/1/2011' }).toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true');
-        //expect(dateParser('2013-01-01', { minValue: '1/1/2012' }).toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true');
+        expect(dateParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,false,');
+        expect(dateParser('2012-01-01', { minValue: '1/1/2011' }).toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
     });
     it('should parse: maxValue', () => {
-        expect(dateParser('2017-01-01', { maxValue: '2012-01-01' }).toString()).toEqual('Sun Jan 01 2017 00:00:00 GMT-0600,false');
-        expect(dateParser('2011-01-01', { maxValue: '1/1/2012' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,true');
+        expect(dateParser('2017-01-01', { maxValue: '2012-01-01' }).toString()).toEqual('Sun Jan 01 2017 00:00:00 GMT-0600,false,');
+        expect(dateParser('2011-01-01', { maxValue: '1/1/2012' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,true,');
     });
 });
 
@@ -133,20 +132,20 @@ describe('DateTime', () => {
         expect(dateTimeFormater('2017-01-01 03:00:00 am', param)).toBe('1/1/17 03:00 am');
     });
     it('should parse', () => {
-        expect(dateTimeParser(null)).toEqual([null, false]);
-        expect(dateTimeParser('')).toEqual(['', false]);
-        expect(dateTimeParser('1ab')).toEqual(['1ab', false]);
-        expect(dateTimeParser('blah').toString()).toEqual('blah,false');
-        expect(dateTimeParser('2017-01-01 03:00:00 am').toString()).toEqual('Sun Jan 01 2017 00:00:00 GMT-0600,true');
-        expect(dateTimeParser('1752-01-01 03:00:00 am').toString()).toEqual('Sat Jan 01 1752 03:00:00 GMT-0600,false');
+        expect(dateTimeParser(null)).toEqual([null, true, undefined]);
+        expect(dateTimeParser('')).toEqual(['', true, undefined]);
+        expect(dateTimeParser('1ab')).toEqual(['1ab', false, undefined]);
+        expect(dateTimeParser('blah').toString()).toEqual('blah,false,');
+        expect(dateTimeParser('2017-01-01 03:00:00 am').toString()).toEqual('Sun Jan 01 2017 00:00:00 GMT-0600,true,');
+        expect(dateTimeParser('1752-01-01 03:00:00 am').toString()).toEqual('Sat Jan 01 1752 03:00:00 GMT-0600,false,');
     });
     it('should parse: minValue', () => {
-        expect(dateTimeParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,false');
-        expect(dateTimeParser('2012-01-01', { minValue: '1/1/2011' }).toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true');
+        expect(dateTimeParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,false,');
+        expect(dateTimeParser('2012-01-01', { minValue: '1/1/2011' }).toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
     });
     it('should parse: maxValue', () => {
-        expect(dateTimeParser('2017-01-01', { maxValue: '2012-01-01' }).toString()).toEqual('Sun Jan 01 2017 00:00:00 GMT-0600,false');
-        expect(dateTimeParser('2011-01-01', { maxValue: '1/1/2012' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,true');
+        expect(dateTimeParser('2017-01-01', { maxValue: '2012-01-01' }).toString()).toEqual('Sun Jan 01 2017 00:00:00 GMT-0600,false,');
+        expect(dateTimeParser('2011-01-01', { maxValue: '1/1/2012' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,true,');
     });
 });
 
@@ -167,15 +166,15 @@ describe('MonthAndDay', () => {
         expect(monthAndDayFormater('2017-01-01', param)).toBe('2017');
     });
     it('should parse', () => {
-        expect(monthAndDayParser(null)).toEqual([null, false]);
-        expect(monthAndDayParser('')).toEqual(['', false]);
-        expect(monthAndDayParser('1ab')).toEqual(['1ab', false]);
-        expect(monthAndDayParser('blah').toString()).toEqual('blah,false');
-        expect(monthAndDayParser('31/12').toString()).toEqual('31/12,false');
-        expect(monthAndDayParser('12/40').toString()).toEqual('12/40,false');
-        expect(monthAndDayParser('12/31').toString()).toEqual('Sun Dec 31 2000 00:00:00 GMT-0600,true');
-        // expect(monthAndDayParser('12/31 3:00 pm').toString()).toEqual('12/31 pm,false');
-        expect(monthAndDayParser('00/00').toString()).toEqual('00/00,false');
+        expect(monthAndDayParser(null)).toEqual([null, true, undefined]);
+        expect(monthAndDayParser('')).toEqual(['', true, undefined]);
+        expect(monthAndDayParser('1ab')).toEqual(['1ab', false, undefined]);
+        expect(monthAndDayParser('blah').toString()).toEqual('blah,false,');
+        expect(monthAndDayParser('31/12').toString()).toEqual('31/12,false,');
+        expect(monthAndDayParser('12/40').toString()).toEqual('12/40,false,');
+        expect(monthAndDayParser('12/31').toString()).toEqual('Sun Dec 31 2000 00:00:00 GMT-0600,true,');
+        expect(monthAndDayParser('12/31 3:00 pm').toString()).toEqual('12/31 3:00 pm,false,');
+        expect(monthAndDayParser('00/00').toString()).toEqual('00/00,false,');
     });
 });
 
@@ -204,19 +203,19 @@ describe('Time', () => {
         expect(timeFormater('2017-01-01 17:00', param)).toEqual('05 pm');
     });
     it('should parse', () => {
-        expect(timeParser(null)).toEqual([null, false]);
-        expect(timeParser('')).toEqual(['', false]);
-        expect(timeParser('1ab')).toEqual(['1ab', false]);
-        expect(timeParser('blah').toString()).toEqual('blah,false');
-        expect(timeParser('3:00 pm').toString()).toEqual('3:00 pm,false');
-        expect(timeParser('2012-01-01 3:11:01 pm').toString()).toEqual('Fri Jan 12 2018 15:11:01 GMT-0600,true');
+        expect(timeParser(null)).toEqual([null, true, undefined]);
+        expect(timeParser('')).toEqual(['', true, undefined]);
+        expect(timeParser('1ab')).toEqual(['1ab', false, undefined]);
+        expect(timeParser('blah').toString()).toEqual('blah,false,');
+        expect(timeParser('3:00 pm').toString()).toEqual('3:00 pm,false,');
+        expect(timeParser('2012-01-01 3:11:01 pm').toString()).toEqual('Sat Jan 01 2000 15:11:01 GMT-0600,true,');
     });
     it('should parse: minValue', () => {
-        expect(timeParser('2012-01-01 3:11:01 pm', { minValue: '2018-02-01' }).toString()).toEqual('Fri Jan 12 2018 15:11:01 GMT-0600,false');
-        expect(timeParser('2012-01-01 3:11:01 pm', { minValue: '1/1/2011' }).toString()).toEqual('Fri Jan 12 2018 15:11:01 GMT-0600,true');
+        expect(timeParser('2012-01-01 3:11:01 pm', { minValue: '5:00:00 pm' }).toString()).toEqual('Sat Jan 01 2000 15:11:01 GMT-0600,false,');
+        expect(timeParser('2012-01-01 3:11:01 pm', { minValue: '1:00:00 am' }).toString()).toEqual('Sat Jan 01 2000 15:11:01 GMT-0600,true,');
     });
     it('should parse: maxValue', () => {
-        expect(timeParser('2012-01-01 3:11:01 pm', { maxValue: '2012-01-01' }).toString()).toEqual('Fri Jan 12 2018 15:11:01 GMT-0600,false');
-        expect(timeParser('2012-01-01 3:11:01 pm', { maxValue: '2018-02-01' }).toString()).toEqual('Fri Jan 12 2018 15:11:01 GMT-0600,true');
+        expect(timeParser('2012-01-01 3:11:01 pm', { maxValue: '1:00:00 am' }).toString()).toEqual('Sat Jan 01 2000 15:11:01 GMT-0600,false,');
+        expect(timeParser('2012-01-01 3:11:01 pm', { maxValue: '5:00:00 pm' }).toString()).toEqual('Sat Jan 01 2000 15:11:01 GMT-0600,true,');
     });
 });

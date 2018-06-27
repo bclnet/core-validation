@@ -2,7 +2,7 @@ import assert from 'power-assert';
 
 import { NullBinding, ReactBinding } from '../src/index';
 
-describe('Runner', () => {
+describe('Binding', () => {
     it('should', () => {
         assert(true);
     });

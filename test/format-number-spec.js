@@ -36,7 +36,7 @@ describe('Bool', () => {
     });
     it('should format: values with values empty', () => {
         let param = { format: 'values', values: '' };
-        expect(() => boolFormater('12', param)).toThrow();
+        expect(() => boolFormater('12', { format: 'values', values: '' })).toThrow();
     });
     it('should format: values with values null', () => {
         let param = { format: 'values', values: null };
@@ -67,19 +67,19 @@ describe('Bool', () => {
         expect(boolFormater('', param)).toBe(0);
     });
     it('should parse', () => {
-        expect(boolParser(null)).toEqual([null, false]);
-        expect(boolParser('')).toEqual(['', false]);
+        expect(boolParser(null)).toEqual([null, true, undefined]);
+        expect(boolParser('')).toEqual(['', true, undefined]);
         expect(() => boolParser('A')).toThrow();
-        expect(boolParser('Yes')).toEqual([true, true]);
-        expect(boolParser('On')).toEqual([true, true]);
-        expect(boolParser('true')).toEqual([true, true]);
-        expect(boolParser('y')).toEqual([true, true]);
-        expect(boolParser('1')).toEqual([true, true]);
-        expect(boolParser('No')).toEqual([false, true]);
-        expect(boolParser('Off')).toEqual([false, true]);
-        expect(boolParser('false')).toEqual([false, true]);
-        expect(boolParser('n')).toEqual([false, true]);
-        expect(boolParser('0')).toEqual([false, true]);
+        expect(boolParser('Yes')).toEqual([true, true, undefined]);
+        expect(boolParser('On')).toEqual([true, true, undefined]);
+        expect(boolParser('true')).toEqual([true, true, undefined]);
+        expect(boolParser('y')).toEqual([true, true, undefined]);
+        expect(boolParser('1')).toEqual([true, true, undefined]);
+        expect(boolParser('No')).toEqual([false, true, undefined]);
+        expect(boolParser('Off')).toEqual([false, true, undefined]);
+        expect(boolParser('false')).toEqual([false, true, undefined]);
+        expect(boolParser('n')).toEqual([false, true, undefined]);
+        expect(boolParser('0')).toEqual([false, true, undefined]);
     });
 });
 
@@ -91,49 +91,47 @@ describe('Decimal', () => {
         expect(decimalFormater('ABC')).toBe('NaN');
     });
     it('should format: *', () => {
-        let param = { format: '*' };
-        expect(() => decimalFormater('12', param)).toThrow();
+        expect(() => decimalFormater('12', { format: '*' })).toThrow();
+    });
+    it('should format: comma', () => {
+        expect(decimalFormater(NaN, { format: 'comma' })).toBe('');
+        expect(decimalFormater('1232323', { format: 'comma' })).toBe('1,232,323');
+        expect(decimalFormater('1232323.234', { format: 'comma' })).toBe('1,232,323.234');
+        expect(decimalFormater('12', { format: 'comma' })).toBe('12');
+        expect(decimalFormater('12.234', { format: 'comma' })).toBe('12.234');
+    });
+    it('should format: nx', () => {
+        expect(decimalFormater('12', { format: 'n2' })).toBe('12.00');
+        expect(decimalFormater('12', { format: 'n3' })).toBe('12.000');
     });
     it('should format: pattern', () => {
-        let param = { format: 'pattern', pattern: '2' };
-        expect(decimalFormater('12', param)).toBe('12.00');
-    });
-    it('should format: pattern', () => {
-        let param = { format: 'pattern', pattern: 'A' };
-        expect(decimalFormater('12', param)).toBe('12');
+        expect(decimalFormater('12', { format: 'pattern', pattern: '2' })).toBe('12.00');
+        expect(decimalFormater('12', { format: 'pattern', pattern: 'A' })).toBe('12');
     });
     it('should parse', () => {
-        expect(decimalParser(null)).toEqual([null, false]);
-        expect(decimalParser('')).toEqual(['', false]);
-        expect(decimalParser('NaN')).toEqual(['NaN', false]);
-        expect(decimalParser('12')).toEqual([12, true]);
+        expect(decimalParser(null)).toEqual([null, true, undefined]);
+        expect(decimalParser('')).toEqual(['', true, undefined]);
+        expect(decimalParser('NaN')).toEqual(['NaN', false, undefined]);
+        expect(decimalParser(NaN)).toEqual([NaN, true, undefined]);
+        expect(decimalParser('12')).toEqual([12, true, undefined]);
     });
-    it('should parse: minValue less than', () => {
-        let param = { minValue: '12' };
-        expect(decimalParser('13.0', param)).toEqual([13, true]);
+    it('should parse: minValue', () => {
+        expect(decimalParser('13.0', { minValue: 12 })).toEqual([13, true, undefined]);
+        expect(decimalParser('12.0', { minValue: 13 })).toEqual([12, false, undefined]);
     });
-    it('should parse: minValue greater than', () => {
-        let param = { minValue: '13' };
-        expect(decimalParser('12.0', param)).toEqual([12, false]);
+    it('should parse: maxValue', () => {
+        expect(decimalParser('12.0', { maxValue: 23 })).toEqual([12, true, undefined]);
+        expect(decimalParser('22.0', { maxValue: 13 })).toEqual([22, false, undefined]);
     });
-    it('should parse: maxValue greater than', () => {
-        let param = { maxValue: '23' };
-        expect(decimalParser('12.0', param)).toEqual([12, true]);
+    it('should parse: precision', () => {
+        expect(decimalParser('22.123', { precision: 2 })).toEqual([22.123, false, undefined]);
+        expect(decimalParser('22.12', { precision: 2 })).toEqual([22.12, true, undefined]);
     });
-    it('should parse: maxValue less than', () => {
-        let param = { maxValue: '13' };
-        expect(decimalParser('22.0', param)).toEqual([22, false]);
+    it('should parse: round', () => {
+        expect(decimalParser('22.123', { round: 1 })).toEqual([22.1, true, undefined]);
+        expect(decimalParser('22.123', { round: 2 })).toEqual([22.12, true, undefined]);
     });
-    // it('should parse: precision', () => {
-    //     let param = { precision: '2' };
-    //     expect(decimalParser('22.123', param)).toEqual([22, true]);
-    // });
-    // it('should parse: round', () => {
-    //     let param = { round: '13' };
-    //     expect(decimalParser('22.0', param)).toEqual([22, false]);
-    // });
 });
-
 
 describe('Integer', () => {
     it('should format', () => {
@@ -143,60 +141,157 @@ describe('Integer', () => {
         expect(integerFormater('12')).toBe('12');
     });
     it('should format: *', () => {
-        let param = { format: '*' };
-        expect(() => integerFormater('12', param)).toThrow();
+        expect(() => integerFormater('12', { format: '*' })).toThrow();
     });
     it('should format: comma', () => {
-        let param = { format: 'comma' };
-        expect(integerFormater('1232323', param)).toBe('1,232,323');
+        expect(integerFormater(NaN, { format: 'comma' })).toBe('');
+        expect(integerFormater('1232323', { format: 'comma' })).toBe('1,232,323');
+        expect(integerFormater('12', { format: 'comma' })).toBe('12');
     });
     it('should format: byte', () => {
         let param = { format: 'byte' };
-        expect(integerFormater('1232323', param)).toBe('1 KB');
+        expect(integerFormater('1232323', param)).toBe('1.18 MB');
+        expect(integerFormater('2048', param)).toBe('2 KB');
         expect(integerFormater('2', param)).toBe('2 bytes');
     });
-    // it('should format: pattern', () => {
-    //     let param = { format: 'pattern' };
-    //     expect(integerFormater('1232323', param)).toBe('1,232,323');
-    // });
+    it('should format: pattern', () => {
+        expect(integerFormater('1232323', { format: 'pattern', pattern: 10 })).toBe('1232323');
+    });
     it('should parse', () => {
-        expect(integerParser(null)).toEqual([null, false]);
-        expect(integerParser('')).toEqual(['', false]);
-        expect(integerParser('NaN')).toEqual(['NaN', false]);
-        expect(integerParser('12')).toEqual([12, true]);
+        expect(integerParser(null)).toEqual([null, true, undefined]);
+        expect(integerParser('')).toEqual(['', true, undefined]);
+        expect(integerParser('NaN')).toEqual(['NaN', false, undefined]);
+        expect(integerParser(NaN)).toEqual([NaN, true, undefined]);
+        expect(integerParser('12')).toEqual([12, true, undefined]);
     });
-    it('should parse: minValue less than', () => {
-        let param = { minValue: '12' };
-        expect(integerParser('13.0', param)).toEqual([13, true]);
+    it('should parse: minValue', () => {
+        expect(integerParser('13.0', { minValue: 12 })).toEqual([13, true, undefined]);
+        expect(integerParser('12.0', { minValue: 13 })).toEqual([12, false, undefined]);
     });
-    it('should parse: minValue greater than', () => {
-        let param = { minValue: '13' };
-        expect(integerParser('12.0', param)).toEqual([12, false]);
-    });
-    it('should parse: maxValue greater than', () => {
-        let param = { maxValue: '23' };
-        expect(integerParser('12.0', param)).toEqual([12, true]);
-    });
-    it('should parse: maxValue less than', () => {
-        let param = { maxValue: '13' };
-        expect(integerParser('22.0', param)).toEqual([22, false]);
+    it('should parse: maxValue', () => {
+        expect(integerParser('12.0', { maxValue: 23 })).toEqual([12, true, undefined]);
+        expect(integerParser('22.0', { maxValue: 13 })).toEqual([22, false, undefined]);
     });
 });
 
 describe('Real', () => {
-    it('should', () => {
-        assert(true);
+    it('should format', () => {
+        expect(realFormater(null)).toBe('');
+        expect(realFormater('')).toBe('');
+        expect(realFormater('A')).toBe('NaN');
+        expect(realFormater('12')).toBe('12.0000');
+    });
+    it('should format: *', () => {
+        expect(() => realFormater('12', { format: '*' })).toThrow();
+    });
+    it('should format: comma', () => {
+        expect(realFormater(NaN, { format: 'comma' })).toBe('');
+        expect(realFormater('1232323', { format: 'comma' })).toBe('1,232,323');
+        expect(realFormater('1232323.234', { format: 'comma' })).toBe('1,232,323.234');
+        expect(realFormater('12', { format: 'comma' })).toBe('12');
+        expect(realFormater('12.234', { format: 'comma' })).toBe('12.234');
+    });
+    it('should format: nx', () => {
+        expect(realFormater('12', { format: 'n2' })).toBe('12.00');
+        expect(realFormater('12', { format: 'n3' })).toBe('12.000');
+    });
+    it('should format: pattern', () => {
+        expect(realFormater('12', { format: 'pattern', pattern: '2' })).toBe('12.00');
+        expect(realFormater('12', { format: 'pattern', pattern: 'A' })).toBe('12');
+    });
+    it('should parse', () => {
+        expect(realParser(null)).toEqual([null, true, undefined]);
+        expect(realParser('')).toEqual(['', true, undefined]);
+        expect(realParser('NaN')).toEqual(['NaN', false, undefined]);
+        expect(realParser(NaN)).toEqual([NaN, true, undefined]);
+        expect(realParser('12')).toEqual([12, true, undefined]);
+    });
+    it('should parse: minValue', () => {
+        expect(realParser('13.0', { minValue: 12 })).toEqual([13, true, undefined]);
+        expect(realParser('12.0', { minValue: 13 })).toEqual([12, false, undefined]);
+    });
+    it('should parse: maxValue', () => {
+        expect(realParser('12.0', { maxValue: 23 })).toEqual([12, true, undefined]);
+        expect(realParser('22.0', { maxValue: 13 })).toEqual([22, false, undefined]);
+    });
+    it('should parse: precision', () => {
+        expect(realParser('22.123', { precision: 2 })).toEqual([22.123, false, undefined]);
+        expect(realParser('22.12', { precision: 2 })).toEqual([22.12, true, undefined]);
+    });
+    it('should parse: round', () => {
+        expect(realParser('22.123', { round: 1 })).toEqual([22.1, true, undefined]);
+        expect(realParser('22.123', { round: 2 })).toEqual([22.12, true, undefined]);
     });
 });
 
 describe('Money', () => {
-    it('should', () => {
-        assert(true);
+    it('should format', () => {
+        expect(moneyFormater(null)).toBe('');
+        expect(moneyFormater('')).toBe('');
+        expect(moneyFormater('A')).toBe('$0.00');
+        expect(moneyFormater('12')).toBe('$12.00');
+    });
+    it('should format: *', () => {
+        expect(() => moneyFormater('12', { format: '*' })).toThrow();
+    });
+    it('should format: nx', () => {
+        expect(moneyFormater('12', { format: 'c2' })).toBe('$12.00');
+        expect(moneyFormater('12', { format: 'c3' })).toBe('$12.000');
+    });
+    it('should format: pattern', () => {
+        expect(moneyFormater('12', { format: 'pattern', pattern: '2' })).toBe('$12.00');
+        expect(moneyFormater('12', { format: 'pattern', pattern: 'A' })).toBe('$12.00');
+    });
+    it('should parse', () => {
+        expect(moneyParser(null)).toEqual([null, true, undefined]);
+        expect(moneyParser('')).toEqual(['', true, undefined]);
+        expect(moneyParser('NaN')).toEqual(['', false, undefined]);
+        expect(moneyParser(NaN)).toEqual([NaN, true, undefined]);
+        expect(moneyParser('12')).toEqual([12, true, undefined]);
+    });
+    it('should parse: minValue', () => {
+        expect(moneyParser('13.0', { minValue: 12 })).toEqual([13, true, undefined]);
+        expect(moneyParser('12.0', { minValue: 13 })).toEqual([12, false, undefined]);
+    });
+    it('should parse: maxValue', () => {
+        expect(moneyParser('12.0', { maxValue: 23 })).toEqual([12, true, undefined]);
+        expect(moneyParser('22.0', { maxValue: 13 })).toEqual([22, false, undefined]);
+    });
+    it('should parse: precision', () => {
+        expect(moneyParser('22.123', { precision: 2 })).toEqual([22.123, false, undefined]);
+        expect(moneyParser('22.12', { precision: 2 })).toEqual([22.12, true, undefined]);
+    });
+    it('should parse: round', () => {
+        expect(moneyParser('22.123', { round: 1 })).toEqual([22.1, true, undefined]);
+        expect(moneyParser('22.123', { round: 2 })).toEqual([22.12, true, undefined]);
     });
 });
 
 describe('Percent', () => {
-    it('should', () => {
-        assert(true);
+    it('should format', () => {
+        expect(percentFormater(null)).toBe('');
+        expect(percentFormater('')).toBe('');
+        expect(percentFormater('A')).toBe('NaN%');
+        expect(percentFormater('.12')).toBe('12.00%');
+    });
+    it('should format: *', () => {
+        expect(() => percentFormater('12', { format: '*' })).toThrow();
+    });
+    it('should format: nx', () => {
+        expect(percentFormater('.12', { format: 'p2' })).toBe('12.00%');
+        expect(percentFormater('.12', { format: 'p3' })).toBe('12.000%');
+        expect(percentFormater('.12', { format: 'p4' })).toBe('12.0000%');
+    });
+    it('should format: pattern', () => {
+        expect(percentFormater('.12', { format: 'pattern', pattern: '2' })).toBe('12.00%');
+        expect(percentFormater('.12', { format: 'pattern', pattern: 'A' })).toBe('12%');
+    });
+    it('should parse', () => {
+        expect(percentParser(null)).toEqual([null, true, undefined]);
+        expect(percentParser('')).toEqual(['', true, undefined]);
+        expect(percentParser('NaN')).toEqual(['NaN', false, undefined]);
+        expect(percentParser(NaN)).toEqual([NaN, true, undefined]);
+        expect(percentParser('12')).toEqual([.12, true, undefined]);
+        expect(percentParser('12%')).toEqual([.12, true, undefined]);
     });
 });

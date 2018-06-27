@@ -29,6 +29,9 @@ export const decimalFormater = (value, param) => {
   value = parseFloat(value);
   if (param) {
     switch (param.format) {
+      case 'comma': return Format_comma(value);
+      case 'n2': return value.toFixed(2);
+      case 'n3': return value.toFixed(3);
       case 'pattern': return value.toFixed(param.pattern);
       default: throw new Error('param.format invalid');
     }
@@ -53,10 +56,10 @@ export const integerFormater = (value, param) => {
   value = parseInt(value);
   if (param) {
     switch (param.format) {
-      case 'comma': return format(value);
+      case 'comma': return Format_comma(value);
       case 'byte':
-        let length = Math.floor(parseFloat((value.toString().length - 1)) / 3);
-        if (length > 0) return Math_round(value / (2 << (10 * length)), 2).toString() + ' ' + '  KBMBGB'.substring(length * 2, 2);
+        let radix = Math.floor(parseFloat(value.toString().length - 1) / 3);
+        if (radix > 0) return Math_round(value / (1 << (10 * radix)), 2).toString() + ' ' + '  KBMBGB'.substring(radix << 1, (radix << 1) + 2);
         if (value == 1) return '1 byte';
         return value.toString() + ' bytes';
       case 'pattern': return value.toString(param.pattern);
@@ -81,6 +84,9 @@ export const realFormater = (value, param) => {
   value = parseFloat(value);
   if (param) {
     switch (param.format) {
+      case 'comma': return Format_comma(value);
+      case 'n2': return value.toFixed(2);
+      case 'n3': return value.toFixed(3);
       case 'pattern': return value.toFixed(param.pattern);
       default: throw new Error('param.format invalid');
     }
@@ -103,20 +109,20 @@ export const realParser = (text, param, message) => {
 Number.prototype.formatMoney = function (c, d, t) {
   var n = this,
     c = isNaN(c = Math.abs(c)) ? 2 : c,
-    d = d == undefined ? "." : d,
-    t = t == undefined ? "," : t,
-    s = n < 0 ? "-" : "",
+    d = d == undefined ? '.' : d,
+    t = t == undefined ? ',' : t,
+    s = n < 0 ? '-' : '',
     i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))),
     j = (j = i.length) > 3 ? j % 3 : 0;
-  return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+  return s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : '');
 };
 export const moneyFormater = (value, param) => {
   if (!value) return '';
   value = parseFloat(value);
   if (param) {
     switch (param.format) {
-      case 'c3': return '$' + value.formatMoney(3);
       case 'c2': return '$' + value.formatMoney(2);
+      case 'c3': return '$' + value.formatMoney(3);
       case 'pattern': return '$' + value.formatMoney(param.pattern);
       default: throw new Error('param.format invalid');
     }
@@ -144,20 +150,23 @@ export const percentFormater = (value, param) => {
   value = parseFloat(value);
   if (param) {
     switch (param.format) {
-      case 'pattern': return value.toString(param.pattern);
+      case 'p2': return (value * 100).toFixed(2) + '%';
+      case 'p3': return (value * 100).toFixed(3) + '%';
+      case 'p4': return (value * 100).toFixed(4) + '%';
+      case 'pattern': return (value * 100).toFixed(param.pattern) + '%';
       default: throw new Error('param.format invalid');
     }
   }
-  return value.toString('0.00') + '%';
+  return (value * 100).toFixed(2).toString() + '%';
 };
 export const percentParser = (text, param, message) => {
   if (!text) return [text, true, message];
   if (text && text[text.length - 1] === '%') text = text.substring(0, text.length - 1);
   let value = parseFloat(text); if (isNaN(value)) return [text, false, message];
-  return [value, true, message];
+  return [value / 100, true, message];
 };
 
-function format(value) {
+function Format_comma(value) {
   if (isNaN(value)) return '';
   let n = value.toString().split('.');
   return n[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (n.length > 1 ? '.' + n[1] : '');
