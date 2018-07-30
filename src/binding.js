@@ -44,7 +44,7 @@ export let create = function (binding, defaultRules) {
         let rules = (opts || {}).rules || this.defaultRules || defaultRules;
         let state = binding.getState($this, opts);
         let values = rules ? format(state, rules, field) : {};
-        if (field && state[field] === values[field]) return;
+        if (field && state[field] === values[field]) return {};
         return values;
       },
       runRules: function (opts, field, flag) {
@@ -59,7 +59,7 @@ export let create = function (binding, defaultRules) {
         let rules = (opts || {}).rules || this.defaultRules || defaultRules;
         let state = binding.getState($this, opts);
         let values = rules ? format(state, rules, field) : {};
-        if (field && state[field] === values[field]) return;
+        if (field && state[field] === values[field]) return {};
         binding.setState($this, opts, values);
         return values;
       },
@@ -99,12 +99,13 @@ export let create = function (binding, defaultRules) {
         return this.getFormats(opts, field)[field];
       },
       changeFor: function (field, opts) {
-        return {
+        let value = this.getFormats(opts, field)[field];
+        return value ? {
           id: field,
           target: null,
           type: 'rule',
-          value: this.getFormats(opts, field)[field],
-        }
+          value: value,
+        } : undefined
       },
       onBlurFor: function (field, opts) {
         return () => { this.runFormats(opts, field); }
