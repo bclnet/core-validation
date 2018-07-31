@@ -29,6 +29,15 @@ function funcSymbol(name, symbol) {
   return symbol;
 }
 
+// options
+var globals = {};
+export function setGlobals(name, param) {
+  globals[name] = param;
+}
+function funcParm(name, param) {
+  return Object.assign(globals[name] || {}, param);
+}
+
 // rules
 function makeError(customError, defaultError) {
   if (!customError) return defaultError;
@@ -55,12 +64,12 @@ import {
   uriFormater, uriParser,
   xmlFormater, xmlParser,
 } from './formats/internet';
-export const email = (param, customError) => funcSymbol('email', function email(text) { return { format: () => emailFormater(text, param), parse: () => emailParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const emailList = (param, customError) => funcSymbol('emailList', function emailList(text) { return { format: () => emailListFormater(text, param), parse: () => emailListParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const hostname = (param, customError) => funcSymbol('hostname', function hostname(text) { return { format: () => hostnameFormater(text, param), parse: () => hostnameParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const hostnameList = (param, customError) => funcSymbol('hostnameList', function hostnameList(text) { return { format: () => hostnameListFormater(text, param), parse: () => hostnameListParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const uri = (param, customError) => funcSymbol('uri', function uri(text) { return { format: () => uriFormater(text, param), parse: () => uriParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const xml = (param, customError) => funcSymbol('xml', function xml(text) { return { format: () => xmlFormater(text, param), parse: () => xmlParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
+export const email = (param, customError) => funcSymbol('email', function email(text) { return { format: () => emailFormater(text, funcParm('email', param)), parse: () => emailParser(text, funcParm('email', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const emailList = (param, customError) => funcSymbol('emailList', function emailList(text) { return { format: () => emailListFormater(text, funcParm('emailList', param)), parse: () => emailListParser(text, funcParm('emailList', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const hostname = (param, customError) => funcSymbol('hostname', function hostname(text) { return { format: () => hostnameFormater(text, funcParm('hostname', param)), parse: () => hostnameParser(text, funcParm('hostname', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const hostnameList = (param, customError) => funcSymbol('hostnameList', function hostnameList(text) { return { format: () => hostnameListFormater(text, funcParm('hostnameList', param)), parse: () => hostnameListParser(text, funcParm('hostnameList', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const uri = (param, customError) => funcSymbol('uri', function uri(text) { return { format: () => uriFormater(text, funcParm('uri', param)), parse: () => uriParser(text, funcParm('uri', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const xml = (param, customError) => funcSymbol('xml', function xml(text) { return { format: () => xmlFormater(text, funcParm('xml', param)), parse: () => xmlParser(text, funcParm('xml', param), v => v ? null : makeError(customError, invalidFormatError)) } });
 makeSymbols(email, emailList, hostname, hostnameList, uri, xml);
 
 // formats - logistics
@@ -68,8 +77,8 @@ import {
   phoneFormater, phoneParser,
   zipFormater, zipParser,
 } from './formats/logistics';
-export const phone = (param, customError) => funcSymbol('phone', function phone(text) { return { format: () => phoneFormater(text, param), parse: () => phoneParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const zip = (param, customError) => funcSymbol('zip', function zip(text) { return { format: () => zipFormater(text, param), parse: () => zipParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
+export const phone = (param, customError) => funcSymbol('phone', function phone(text) { return { format: () => phoneFormater(text, funcParm('phone', param)), parse: () => phoneParser(text, funcParm('phone', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const zip = (param, customError) => funcSymbol('zip', function zip(text) { return { format: () => zipFormater(text, funcParm('zip', param)), parse: () => zipParser(text, funcParm('zip', param), v => v ? null : makeError(customError, invalidFormatError)) } });
 makeSymbols(phone, zip);
 
 import {
@@ -78,10 +87,10 @@ import {
   monthAndDayFormater, monthAndDayParser,
   timeFormater, timeParser,
 } from './formats/moment';
-export const date = (param, customError) => funcSymbol('date', function date(text) { return { format: () => dateFormater(text, param), parse: () => dateParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const dateTime = (param, customError) => funcSymbol('dateTime', function dateTime(text) { return { format: () => dateTimeFormater(text, param), parse: () => dateTimeParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const monthAndDay = (param, customError) => funcSymbol('monthAndDay', function monthAndDay(text) { return { format: () => monthAndDayFormater(text, param), parse: () => monthAndDayParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const time = (param, customError) => funcSymbol('time', function time(text) { return { format: () => timeFormater(text, param), parse: () => timeParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
+export const date = (param, customError) => funcSymbol('date', function date(text) { return { format: () => dateFormater(text, funcParm('date', param)), parse: () => dateParser(text, funcParm('date', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const dateTime = (param, customError) => funcSymbol('dateTime', function dateTime(text) { return { format: () => dateTimeFormater(text, funcParm('dateTime', param)), parse: () => dateTimeParser(text, funcParm('dateTime', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const monthAndDay = (param, customError) => funcSymbol('monthAndDay', function monthAndDay(text) { return { format: () => monthAndDayFormater(text, funcParm('monthAndDay', param)), parse: () => monthAndDayParser(text, funcParm('monthAndDay', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const time = (param, customError) => funcSymbol('time', function time(text) { return { format: () => timeFormater(text, funcParm('time', param)), parse: () => timeParser(text, funcParm('time', param), v => v ? null : makeError(customError, invalidFormatError)) } });
 makeSymbols(date, dateTime, monthAndDay, time);
 
 // formats - number
@@ -93,12 +102,12 @@ import {
   moneyFormater, moneyParser,
   percentFormater, percentParser,
 } from './formats/number';
-export const bool = (param, customError) => funcSymbol('bool', function bool(text) { return { format: () => boolFormater(text, param), parse: () => boolParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const decimal = (param, customError) => funcSymbol('decimal', function decimal(text) { return { format: () => decimalFormater(text, param), parse: () => decimalParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const integer = (param, customError) => funcSymbol('integer', function integer(text) { return { format: () => integerFormater(text, param), parse: () => integerParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const real = (param, customError) => funcSymbol('real', function real(text) { return { format: () => realFormater(text, param), parse: () => realParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const money = (param, customError) => funcSymbol('money', function money(text) { return { format: () => moneyFormater(text, param), parse: () => moneyParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const percent = (param, customError) => funcSymbol('percent', function percent(text) { return { format: () => percentFormater(text, param), parse: () => percentParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
+export const bool = (param, customError) => funcSymbol('bool', function bool(text) { return { format: () => boolFormater(text, funcParm('bool', param)), parse: () => boolParser(text, funcParm('bool', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const decimal = (param, customError) => funcSymbol('decimal', function decimal(text) { return { format: () => decimalFormater(text, funcParm('decimal', param)), parse: () => decimalParser(text, funcParm('decimal', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const integer = (param, customError) => funcSymbol('integer', function integer(text) { return { format: () => integerFormater(text, funcParm('integer', param)), parse: () => integerParser(text, funcParm('integer', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const real = (param, customError) => funcSymbol('real', function real(text) { return { format: () => realFormater(text, funcParm('real', param)), parse: () => realParser(text, funcParm('real', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const money = (param, customError) => funcSymbol('money', function money(text) { return { format: () => moneyFormater(text, funcParm('money', param)), parse: () => moneyParser(text, funcParm('money', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const percent = (param, customError) => funcSymbol('percent', function percent(text) { return { format: () => percentFormater(text, funcParm('percent', param)), parse: () => percentParser(text, funcParm('percent', param), v => v ? null : makeError(customError, invalidFormatError)) } });
 makeSymbols(bool, decimal, integer, real, money, percent);
 
 // formats - strings
@@ -107,9 +116,9 @@ import {
   memoFormater, memoParser,
   regexFormater, regexParser,
 } from './formats/string';
-export const text = (param, customError) => funcSymbol('text', function text(text) { return { format: () => textFormater(text, param), parse: () => textParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const memo = (param, customError) => funcSymbol('memo', function memo(text) { return { format: () => memoFormater(text, param), parse: () => memoParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
-export const regex = (param, customError) => funcSymbol('regex', function regex(text) { return { format: () => regexFormater(text, param), parse: () => regexParser(text, param, v => v ? null : makeError(customError, invalidFormatError)) } });
+export const text = (param, customError) => funcSymbol('text', function text(text) { return { format: () => textFormater(text, funcParm('text', param)), parse: () => textParser(text, funcParm('text', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const memo = (param, customError) => funcSymbol('memo', function memo(text) { return { format: () => memoFormater(text, funcParm('memo', param)), parse: () => memoParser(text, funcParm('memo', param), v => v ? null : makeError(customError, invalidFormatError)) } });
+export const regex = (param, customError) => funcSymbol('regex', function regex(text) { return { format: () => regexFormater(text, funcParm('regex', param)), parse: () => regexParser(text, funcParm('regex', param), v => v ? null : makeError(customError, invalidFormatError)) } });
 makeSymbols(text, memo, regex);
 
 // bindings

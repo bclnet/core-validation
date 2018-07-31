@@ -10,12 +10,19 @@ export const phoneFormater = (value, param) => {
 };
 export const phoneParser = (text, param, message) => {
   if (!text) return [text, true, message];
-  let countries = param ? param.countries || 'u' : 'u';
+  let countries = (param ? param.countries : null) || 'u';
   if (countries.includes('u') || countries.includes('c')) { // canada+usa/generic parsing
+    let layout = (param ? param.layout : null) || 'a-b-c';
     let ntext = text.replace(_notDigitsPattern, '');
-    if (ntext.length > 10) return [ntext.substring(0, 3) + '.' + ntext.substring(3, 6) + '.' + ntext.substring(6, 10) + ' .' + ntext.substring(10), true, message];
-    else if (ntext.length === 10) return [ntext.substring(0, 3) + '.' + ntext.substring(3, 6) + '.' + ntext.substring(6, 10), true, message];
-    // else if (ntext.length === 7) return [ntext.substring(0, 3) + '-' + ntext.substring(3, 7), true, message];
+    if (ntext.length >= 10) { // 7
+      let v = [ntext.substring(0, 3), ntext.substring(3, 6), ntext.substring(6, 10), ntext.length > 10 ? ' x' + ntext.substring(10) : ''];
+      switch (layout) {
+        case '.': return [`${v[0]}.${v[1]}.${v[2]}${v[3]}`, true, message];
+        case '-': return [`${v[0]}-${v[1]}-${v[2]}${v[3]}`, true, message];
+        default:
+        case '()': return [`(${v[0]}) ${v[1]}-${v[2]}${v[3]}`, true, message];
+      }
+    }
   }
   else if (countries === '*') return [text, true, message]; // accept all
   return [text, false, message];
