@@ -13,8 +13,8 @@ export const phoneParser = (text, param, message) => {
   let countries = param ? param.countries || 'u' : 'u';
   if (countries.includes('u') || countries.includes('c')) { // canada+usa/generic parsing
     let ntext = text.replace(_notDigitsPattern, '');
-    if (ntext.length > 10) return [ntext.substring(0, 3) + '-' + ntext.substring(3, 6) + '-' + ntext.substring(6, 10) + ' x' + ntext.substring(10), true, message];
-    else if (ntext.length === 10) return [ntext.substring(0, 3) + '-' + ntext.substring(3, 6) + '-' + ntext.substring(6, 10), true, message];
+    if (ntext.length > 10) return [ntext.substring(0, 3) + '.' + ntext.substring(3, 6) + '.' + ntext.substring(6, 10) + ' .' + ntext.substring(10), true, message];
+    else if (ntext.length === 10) return [ntext.substring(0, 3) + '.' + ntext.substring(3, 6) + '.' + ntext.substring(6, 10), true, message];
     // else if (ntext.length === 7) return [ntext.substring(0, 3) + '-' + ntext.substring(3, 7), true, message];
   }
   else if (countries === '*') return [text, true, message]; // accept all
