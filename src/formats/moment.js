@@ -9,7 +9,7 @@ let dateFormaterDefault = 'YYYY-MM-DD'; //'M/D/YYYY'
 export const dateFormater = (value, param) => {
   if (!value) return '';
   value = moment(value);
-  if (param) {
+  if (param && param.format) {
     switch (param.format) {
       case 'date': return value.format('DD MMMM YYYY');
       case 'longDate': return value.format('dddd, MMMM D, YYYY');
@@ -40,7 +40,7 @@ export const dateParser = (text, param, message) => {
 export const dateTimeFormater = (value, param) => {
   if (!value) return '';
   value = moment(value);
-  if (param) {
+  if (param && param.format) {
     switch (param.format) {
       case 'date': return value.format('DD MMMM YYYY hh:mm a');
       case 'longDateTime': return value.format('dddd, MMMM D, YYYY hh:mm a');
@@ -92,7 +92,7 @@ export const monthAndDayParser = (text, param, message) => {
 export const timeFormater = (value, param) => {
   if (!value) return '';
   value = moment(value);
-  if (param) {
+  if (param && param.format) {
     switch (param.format) {
       case 'longTime': return value.format('hh:mm:ss a');
       case 'shortTime': return value.format('hh:mm a');

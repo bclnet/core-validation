@@ -12,15 +12,15 @@ export const phoneParser = (text, param, message) => {
   if (!text) return [text, true, message];
   let countries = (param ? param.countries : null) || 'u';
   if (countries.includes('u') || countries.includes('c')) { // canada+usa/generic parsing
-    let layout = (param ? param.layout : null) || 'a-b-c';
+    let layout = (param ? param.layout : null) || '()';
     let ntext = text.replace(_notDigitsPattern, '');
     if (ntext.length >= 10) { // 7
       let v = [ntext.substring(0, 3), ntext.substring(3, 6), ntext.substring(6, 10), ntext.length > 10 ? ' x' + ntext.substring(10) : ''];
       switch (layout) {
         case '.': return [`${v[0]}.${v[1]}.${v[2]}${v[3]}`, true, message];
         case '-': return [`${v[0]}-${v[1]}-${v[2]}${v[3]}`, true, message];
-        default:
         case '()': return [`(${v[0]}) ${v[1]}-${v[2]}${v[3]}`, true, message];
+        default: throw new Error('param.layout invalid');
       }
     }
   }

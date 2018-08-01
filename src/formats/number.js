@@ -1,7 +1,7 @@
 // bool
 export const boolFormater = (value, param) => {
   //if (!value) return '';
-  if (param) {
+  if (param && param.format) {
     switch (param.format) {
       case 'trueFalse': return value ? 'True' : 'False';
       case 'yesNo': return value ? 'Yes' : 'No';
@@ -27,7 +27,7 @@ export const boolParser = (text, param, message) => {
 export const decimalFormater = (value, param) => {
   if (!value) return '';
   value = parseFloat(value);
-  if (param) {
+  if (param && param.format) {
     switch (param.format) {
       case 'comma': return Format_comma(value);
       case 'n2': return value.toFixed(2);
@@ -54,7 +54,7 @@ export const decimalParser = (text, param, message) => {
 export const integerFormater = (value, param) => {
   if (!value) return '';
   value = parseInt(value);
-  if (param) {
+  if (param && param.format) {
     switch (param.format) {
       case 'comma': return Format_comma(value);
       case 'byte':
@@ -82,7 +82,7 @@ export const integerParser = (text, param, message) => {
 export const realFormater = (value, param) => {
   if (!value) return '';
   value = parseFloat(value);
-  if (param) {
+  if (param && param.format) {
     switch (param.format) {
       case 'comma': return Format_comma(value);
       case 'n2': return value.toFixed(2);
@@ -119,7 +119,7 @@ Number.prototype.formatMoney = function (c, d, t) {
 export const moneyFormater = (value, param) => {
   if (!value) return '';
   value = parseFloat(value);
-  if (param) {
+  if (param && param.format) {
     switch (param.format) {
       case 'c2': return '$' + value.formatMoney(2);
       case 'c3': return '$' + value.formatMoney(3);
@@ -148,7 +148,7 @@ export const moneyParser = (text, param, message) => {
 export const percentFormater = (value, param) => {
   if (!value) return '';
   value = parseFloat(value);
-  if (param) {
+  if (param && param.format) {
     switch (param.format) {
       case 'p2': return (value * 100).toFixed(2) + '%';
       case 'p3': return (value * 100).toFixed(3) + '%';
