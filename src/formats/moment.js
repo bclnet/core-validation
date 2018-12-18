@@ -4,6 +4,22 @@ moment.suppressDeprecationWarnings = true;
 const _minDateValue = moment([1753, 1, 1]);
 const _maxDateValue = moment([9999, 12, 31]);
 
+const getDateAndTime = (text) => {
+  var value;
+  if ((value = moment(text)).isValid()) return value;
+  if ((value = moment(text, 'YYYY-MM-DDTHH:mm')).isValid()) return value;
+  return value;
+}
+
+const getTime = (text) => {
+  var value;
+  if (!text.includes(':')) return moment('bad');
+  if ((value = moment(text)).isValid()) return value;
+  if ((value = moment(text, 'YYYY-MM-DDTHH:mm')).isValid()) return value;
+  if ((value = moment(text, 'hh:mm:ss a')).isValid()) return value;
+  return value;
+}
+
 // date
 let dateFormaterDefault = 'YYYY-MM-DD'; //'M/D/YYYY'
 export const dateFormater = (value, param) => {
@@ -59,8 +75,8 @@ export const dateTimeFormater = (value, param) => {
 };
 export const dateTimeParser = (text, param, message) => {
   if (!text) return [text, true, message];
-  let value = moment(text); if (!value.isValid()) return [text, false, message];
-  else if (value < _minDateValue || value > _maxDateValue) return [value, false, message];
+  let value = getDateAndTime(text); if (!value.isValid()) return [text, false, message];
+  else if (value < _minDateValue || value > _maxDateValue) return [text, false, message];
   value = moment([value.year(), value.month(), value.date()]);
   if (param) { // check param
     let minValue = param.minValue; if (minValue && moment(minValue).isAfter(value)) return [value, false, message];
@@ -104,13 +120,19 @@ export const timeFormater = (value, param) => {
 };
 export const timeParser = (text, param, message) => {
   if (!text) return [text, true, message];
-  let base = moment({ year: 2000, month: 0, date: 1, h: 0, m: 0, s: 0 }), theValue;
-  let value = moment(text); if (!value.isValid()) return [text, false, message];
+  let value = getTime(text); if (!value.isValid()) return [text, false, message];
   value = moment({ year: 2000, month: 0, date: 1, h: value.hour(), m: value.minute(), s: value.second() });
-  //value = value.subtract(value.diff(base, 'days'), 'days');
   if (param) { // check param
-    let minValue = param.minValue; if (minValue && (!(theValue = moment(`01/01 ${minValue}`)).isValid() || theValue.subtract(theValue.diff(base, 'days'), 'days').isAfter(value))) return [value, false, message];
-    let maxValue = param.maxValue; if (maxValue && (!(theValue = moment(`01/01 ${maxValue}`)).isValid() || value.isAfter(theValue.subtract(theValue.diff(base, 'days'), 'days')))) return [value, false, message];
+    let minValue = param.minValue; if (minValue) {
+      var theValue = moment(minValue, 'hh:mm:ss a');
+      theValue = moment({ year: 2000, month: 0, date: 1, h: theValue.hour(), m: theValue.minute(), s: theValue.second() });
+      if (theValue.isAfter(value)) return [value, false, message];
+    }
+    let maxValue = param.maxValue; if (maxValue) {
+      var theValue = moment(maxValue, 'hh:mm:ss a');
+      theValue = moment({ year: 2000, month: 0, date: 1, h: theValue.hour(), m: theValue.minute(), s: theValue.second() });
+      if (value.isAfter(theValue)) return [value, false, message];
+    }
   }
   return [value, true, message];
 };

@@ -66,7 +66,7 @@ describe('Date', () => {
         expect(dateParser('1/1/2012').toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
         expect(dateParser('2012-01-01').toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
         expect(dateParser('2012-01-01 3:00 pm').toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
-        expect(dateParser('1752-01-01 03:00:00 am').toString()).toEqual('Sat Jan 01 1752 03:00:00 GMT-0600,false,');
+        expect(dateParser('1901-01-01 03:00:00 am').toString()).toEqual('Tue Jan 01 1901 00:00:00 GMT-0600,true,');
 
     });
     it('should parse: minValue', () => {
@@ -137,7 +137,7 @@ describe('DateTime', () => {
         expect(dateTimeParser('1ab')).toEqual(['1ab', false, undefined]);
         expect(dateTimeParser('blah').toString()).toEqual('blah,false,');
         expect(dateTimeParser('2017-01-01 03:00:00 am').toString()).toEqual('Sun Jan 01 2017 00:00:00 GMT-0600,true,');
-        expect(dateTimeParser('1752-01-01 03:00:00 am').toString()).toEqual('Sat Jan 01 1752 03:00:00 GMT-0600,false,');
+        expect(dateTimeParser('1901-01-01 03:00:00 am').toString()).toEqual('Tue Jan 01 1901 00:00:00 GMT-0600,true,');
     });
     it('should parse: minValue', () => {
         expect(dateTimeParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,false,');
@@ -205,9 +205,9 @@ describe('Time', () => {
     it('should parse', () => {
         expect(timeParser(null)).toEqual([null, true, undefined]);
         expect(timeParser('')).toEqual(['', true, undefined]);
-        expect(timeParser('1ab')).toEqual(['1ab', false, undefined]);
+        expect(timeParser('1ab').toString()).toEqual('1ab,false,');
         expect(timeParser('blah').toString()).toEqual('blah,false,');
-        expect(timeParser('3:00 pm').toString()).toEqual('3:00 pm,false,');
+        expect(timeParser('3:00 pm').toString()).toEqual('Sat Jan 01 2000 15:00:00 GMT-0600,true,');
         expect(timeParser('2012-01-01 3:11:01 pm').toString()).toEqual('Sat Jan 01 2000 15:11:01 GMT-0600,true,');
     });
     it('should parse: minValue', () => {
