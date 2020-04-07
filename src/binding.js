@@ -9,6 +9,7 @@ export const create = function (binding, defaultRules) {
   return ($this) => {
     return {
       // STATE
+      $this,
       binding,
       defaultRules: null,
       reset: function () {

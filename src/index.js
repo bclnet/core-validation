@@ -127,3 +127,13 @@ export { create } from './binding';
 import NullBinding from './bindings/nullBinding';
 import ReactBinding from './bindings/reactBinding';
 export { NullBinding, ReactBinding };
+
+// default
+import { Binder } from './React/Binder';
+const Validator = exports.create(new exports.ReactBinding());
+for (let key in exports) {
+  if (!exports.hasOwnProperty(key)) continue;
+  Validator[key] = exports[key];
+}
+Validator.Binder = Binder
+export default Validator;

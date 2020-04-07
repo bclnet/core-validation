@@ -1,18 +1,18 @@
 /* istanbul ignore file */
-export default function NullBinding(defaultStateProp) {
+export default function NullBinding(stateProp) {
     window.state = window.state || {};
     window.setState = function (state) { };
-    this.defaultStateProp = defaultStateProp || null;
+    this.stateProp = stateProp || null;
 }
 
 NullBinding.prototype.getState = function ($this, opts) {
-    const stateProp = (opts || {}).stateProp || this.defaultStateProp;
+    const stateProp = (opts || {}).stateProp || this.stateProp;
     const state = window.stateProp ? window.state[stateProp] : window.state;
     return state;
 };
 
 NullBinding.prototype.setState = function ($this, opts, values) {
-    const stateProp = (opts || {}).stateProp || this.defaultStateProp;
+    const stateProp = (opts || {}).stateProp || this.stateProp;
     if (stateProp) { for (let key in values) state[key] = values[key]; $this.setState({ [stateProp]: state }); }
     else window.setState(values);
 };

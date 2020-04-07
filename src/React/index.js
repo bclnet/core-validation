@@ -1,8 +1,8 @@
-import * as V from 'core-validation';
+import * as V from '..';
 import Binder from './Binder';
 
-const Validator = V.create(new V.ReactBinding());
-for (var key in V) {
+let Validator = V.create(new V.ReactBinding());
+for (let key in V) {
   if (!V.hasOwnProperty(key)) continue;
   Validator[key] = V[key];
 }

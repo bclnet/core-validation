@@ -1,10 +1,10 @@
 /* istanbul ignore file */
-export default function ReactBinding(defaultStateProp) {
-    this.defaultStateProp = defaultStateProp || null;
+export default function ReactBinding(stateProp) {
+    this.stateProp = stateProp || null;
 }
 
 ReactBinding.prototype.getState = function ($this, opts) {
-    const stateProp = (opts || {}).stateProp || this.defaultStateProp;
+    const stateProp = (opts || {}).stateProp || this.stateProp;
     const state = stateProp ? $this.state[stateProp] : $this.state;
     return state;
 };
