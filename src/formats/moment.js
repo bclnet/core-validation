@@ -5,23 +5,26 @@ const _minDateValue = moment([1753, 1, 1]);
 const _maxDateValue = moment([9999, 12, 31]);
 
 const getDateAndTime = (text) => {
-  var value;
+  let value;
   if ((value = moment(text)).isValid()) return value;
   if ((value = moment(text, 'YYYY-MM-DDTHH:mm')).isValid()) return value;
   return value;
 }
 
 const getTime = (text) => {
-  var value;
+  let value;
   if (!text.includes(':')) return moment('bad');
   if ((value = moment(text)).isValid()) return value;
+  /* istanbul ignore next */
   if ((value = moment(text, 'YYYY-MM-DDTHH:mm')).isValid()) return value;
+  /* istanbul ignore next */
   if ((value = moment(text, 'hh:mm:ss a')).isValid()) return value;
+  /* istanbul ignore next */
   return value;
 }
 
 // date
-let dateFormaterDefault = 'YYYY-MM-DD'; //'M/D/YYYY'
+const dateFormaterDefault = 'YYYY-MM-DD'; //'M/D/YYYY'
 export const dateFormater = (value, param) => {
   if (!value) return '';
   value = moment(value);
@@ -46,8 +49,8 @@ export const dateParser = (text, param, message) => {
   else if (value < _minDateValue || value > _maxDateValue) return [value, false, message];
   value = moment([value.year(), value.month(), value.date()]);
   if (param) { // check param
-    let minValue = param.minValue; if (minValue && moment(minValue).isAfter(value)) return [value, false, message];
-    let maxValue = param.maxValue; if (maxValue && value.isAfter(moment(maxValue))) return [value, false, message];
+    const minValue = param.minValue; if (minValue && moment(minValue).isAfter(value)) return [value, false, message];
+    const maxValue = param.maxValue; if (maxValue && value.isAfter(moment(maxValue))) return [value, false, message];
   }
   return [value, true, message];
 };
@@ -79,8 +82,8 @@ export const dateTimeParser = (text, param, message) => {
   else if (value < _minDateValue || value > _maxDateValue) return [text, false, message];
   value = moment([value.year(), value.month(), value.date()]);
   if (param) { // check param
-    let minValue = param.minValue; if (minValue && moment(minValue).isAfter(value)) return [value, false, message];
-    let maxValue = param.maxValue; if (maxValue && value.isAfter(moment(maxValue))) return [value, false, message];
+    const minValue = param.minValue; if (minValue && moment(minValue).isAfter(value)) return [value, false, message];
+    const maxValue = param.maxValue; if (maxValue && value.isAfter(moment(maxValue))) return [value, false, message];
   }
   return [value, true, message];
 };
@@ -99,7 +102,7 @@ export const monthAndDayFormater = (value, param) => {
 };
 export const monthAndDayParser = (text, param, message) => {
   if (!text) return [text, true, message];
-  let match = /^((0[1-9])|(1[0-2]))[\/-](([0-2][0-9])|([3][0-1]))$/.exec(text); if (!match) return [text, false, message];
+  const match = /^((0[1-9])|(1[0-2]))[\/-](([0-2][0-9])|([3][0-1]))$/.exec(text); if (!match) return [text, false, message];
   let value = moment().set({ year: 2000, month: match[1] - 1, date: match[4], h: 0, m: 0, s: 0 }); //if (!value.isValid()) return [text, false, message];
   return [value, true, message];
 };
@@ -123,13 +126,13 @@ export const timeParser = (text, param, message) => {
   let value = getTime(text); if (!value.isValid()) return [text, false, message];
   value = moment({ year: 2000, month: 0, date: 1, h: value.hour(), m: value.minute(), s: value.second() });
   if (param) { // check param
-    let minValue = param.minValue; if (minValue) {
-      var theValue = moment(minValue, 'hh:mm:ss a');
+    const minValue = param.minValue; if (minValue) {
+      let theValue = moment(minValue, 'hh:mm:ss a');
       theValue = moment({ year: 2000, month: 0, date: 1, h: theValue.hour(), m: theValue.minute(), s: theValue.second() });
       if (theValue.isAfter(value)) return [value, false, message];
     }
-    let maxValue = param.maxValue; if (maxValue) {
-      var theValue = moment(maxValue, 'hh:mm:ss a');
+    const maxValue = param.maxValue; if (maxValue) {
+      let theValue = moment(maxValue, 'hh:mm:ss a');
       theValue = moment({ year: 2000, month: 0, date: 1, h: theValue.hour(), m: theValue.minute(), s: theValue.second() });
       if (value.isAfter(theValue)) return [value, false, message];
     }

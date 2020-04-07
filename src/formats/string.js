@@ -16,8 +16,8 @@ export const memoFormater = (value, param) => {
 export const memoParser = (text, param, message) => {
   if (!text) return [text, true, message];
   if (param) { // check param
-    let maxNonWhiteSpaceLength = param.maxNonWhiteSpaceLength; if (maxNonWhiteSpaceLength && text.replace(/\s/g, '').length > maxNonWhiteSpaceLength) return [text, false, message];
-    let maxLines = param.maxLines; if (maxLines && text.split('\n').length > maxLines) return [text, false, message];
+    const maxNonWhiteSpaceLength = param.maxNonWhiteSpaceLength; if (maxNonWhiteSpaceLength && text.replace(/\s/g, '').length > maxNonWhiteSpaceLength) return [text, false, message];
+    const maxLines = param.maxLines; if (maxLines && text.split('\n').length > maxLines) return [text, false, message];
   }
   return [text, true, message];
 };
@@ -30,7 +30,7 @@ export const regexFormater = (value, param) => {
 export const regexParser = (text, param, message) => {
   if (!text) return [text, true, message];
   if (param) { // check param
-    let pattern = param.pattern; if (pattern && !(new RegExp(pattern)).test(text)) return [text, false, message];
+    const pattern = param.pattern; if (pattern && !(new RegExp(pattern)).test(text)) return [text, false, message];
   }
   return [text, true, message];
 };

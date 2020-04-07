@@ -1,8 +1,6 @@
 import assert from 'power-assert';
 
-// import { rule } from '../src/index';
-
-describe('Runner', () => {
+describe('Binder', () => {
     it('should', () => {
         assert(true);
     });

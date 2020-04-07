@@ -53,7 +53,7 @@ describe('Regex', () => {
         expect(regexParser('123-456')).toEqual(['123-456', true, undefined]);
     });
     it('should parse: pattern', () => {
-        let param = { pattern: /^((0[1-9])|(1[0-2]))[\/-](([0-2][0-9])|([3][0-1]))$/ };
+        const param = { pattern: /^((0[1-9])|(1[0-2]))[\/-](([0-2][0-9])|([3][0-1]))$/ };
         expect(regexParser('2017-01-01', param)).toEqual(['2017-01-01', false, undefined]);
         expect(regexParser('09-12', param)).toEqual(['09-12', true, undefined]);
     });

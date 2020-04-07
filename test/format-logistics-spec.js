@@ -19,32 +19,38 @@ describe('Phone', () => {
         expect(phoneParser('123-456-7890')).toEqual(['(123) 456-7890', true, undefined]);
     });
     it('should parse: _', () => {
-        let params = { countries: '' };
+        const params = { countries: '' };
         expect(phoneParser('123.456.7890.1234', params)).toEqual(['(123) 456-7890 x1234', true, undefined]);
         expect(phoneParser('123.456.7890.1234', Object.assign(params, { layout: '-' }))).toEqual(['123-456-7890 x1234', true, undefined]);
         expect(phoneParser('123.456.7890.1234', Object.assign(params, { layout: '.' }))).toEqual(['123.456.7890 x1234', true, undefined]);
         expect(phoneParser('123.456.7890.1234', Object.assign(params, { layout: '()' }))).toEqual(['(123) 456-7890 x1234', true, undefined]);
     });
     it('should parse: *', () => {
-        let params = { countries: '*' };
+        const params = { countries: '*' };
         expect(phoneParser('123-456-7890.1234', params)).toEqual(['123-456-7890.1234', true, undefined]);
         expect(phoneParser('123-456-7890', params)).toEqual(['123-456-7890', true, undefined]);
     });
     it('should parse: usa', () => {
-        let params = { countries: 'u' };
+        const params = { countries: 'u' };
         expect(phoneParser('123.456.7890.1234', params)).toEqual(['(123) 456-7890 x1234', true, undefined]);
         expect(phoneParser('123-456-7890', params)).toEqual(['(123) 456-7890', true, undefined]);
         expect(phoneParser('456-7890', params)).toEqual(['456-7890', false, undefined]);
     });
     it('should parse: canada', () => {
-        let params = { countries: 'c' };
+        const params = { countries: 'c' };
         expect(phoneParser('123.456.7890.1234', params)).toEqual(['(123) 456-7890 x1234', true, undefined]);
         expect(phoneParser('123-456-7890', params)).toEqual(['(123) 456-7890', true, undefined]);
         expect(phoneParser('456-7890', params)).toEqual(['456-7890', false, undefined]);
     });
     it('should parse: unknown', () => {
-        let params = { countries: 'z' };
+        const params = { countries: 'z' };
         expect(phoneParser('123.456.7890.1234', params)).toEqual(['123.456.7890.1234', false, undefined]);
+    });
+    it('should parse: layout', () => {
+        expect(phoneParser('123.456.7890.1234', { countries: 'u', layout: '.' })).toEqual(['123.456.7890 x1234', true, undefined]);
+        expect(phoneParser('123.456.7890.1234', { countries: 'u', layout: '-' })).toEqual(['123-456-7890 x1234', true, undefined]);
+        expect(phoneParser('123.456.7890.1234', { countries: 'u', layout: '()' })).toEqual(['(123) 456-7890 x1234', true, undefined]);
+        expect(() => phoneParser('123.456.7890.1234', { countries: 'u', layout: '*' })).toThrow(Error);
     });
 });
 
@@ -60,17 +66,17 @@ describe('Zip', () => {
         expect(zipParser('66211')).toEqual(['66211', true, undefined]);
     });
     it('should parse: _', () => {
-        let params = { countries: '' };
+        const params = { countries: '' };
         expect(zipParser('12345-0123', params)).toEqual(['12345-0123', true, undefined]);
     });
     it('should parse: *', () => {
-        let params = { countries: '*' };
+        const params = { countries: '*' };
         expect(zipParser('123', params)).toEqual(['123', true, undefined]);
         expect(zipParser('12345', params)).toEqual(['12345', true, undefined]);
         expect(zipParser('12345-123', params)).toEqual(['12345-123', true, undefined]);
     });
     it('should parse: usa', () => {
-        let params = { countries: 'u' };
+        const params = { countries: 'u' };
         expect(zipParser('123', params)).toEqual(['00123', true, undefined]);
         expect(zipParser('12345', params)).toEqual(['12345', true, undefined]);
         expect(zipParser('123456', params)).toEqual(['123456', false, undefined]);
@@ -78,13 +84,13 @@ describe('Zip', () => {
         expect(zipParser('12345-1234', params)).toEqual(['12345-1234', true, undefined]);
     });
     it('should parse: canada', () => {
-        let params = { countries: 'c' };
+        const params = { countries: 'c' };
         expect(zipParser('12345', params)).toEqual(['12345', false, undefined]);
         expect(zipParser('123 456', params)).toEqual(['123 456', false, undefined]);
         expect(zipParser('K8N 5W6', params)).toEqual(['K8N 5W6', true, undefined]);
     });
     it('should parse: unknown', () => {
-        let params = { countries: 'z' };
+        const params = { countries: 'z' };
         expect(zipParser('12345', params)).toEqual(['12345', false, undefined]);
     });
 });

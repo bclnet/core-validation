@@ -1,8 +1,8 @@
 import assert from 'power-assert';
 
-// import { NullBinding, ReactBinding } from '../src/index';
+// import { rule } from '../src/index';
 
-describe('Binding', () => {
+describe('Execution', () => {
     it('should', () => {
         assert(true);
     });

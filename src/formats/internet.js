@@ -19,16 +19,16 @@ export const emailListFormater = (value, param) => {
 };
 export const emailListParser = (text, param, message) => {
     if (!text) return [text, true, message];
-    let list = text.replace(/,/g, ';').split(';'), newList = [];
+    const list = text.replace(/,/g, ';').split(';'), newList = [];
     for (let vi in list) {
-        let v = list[vi];
+        const v = list[vi];
         v = v.trim(); if (!v) continue;
         if (!_emailPattern.test(v)) return [text, false, message];
         newList.push(v);
     }
-    let value = newList.join('; ');
+    const value = newList.join('; ');
     if (param) { // check param
-        let maxCount = param.maxCount; if (maxCount && newList.length > maxCount) return [text, false, message];
+        const maxCount = param.maxCount; if (maxCount && newList.length > maxCount) return [text, false, message];
     }
     return [value, true, message];
 };
@@ -51,16 +51,16 @@ export const hostnameListFormater = (value, param) => {
 };
 export const hostnameListParser = (text, param, message) => {
     if (!text) return [text, true, message];
-    let list = text.replace(/[\r\n,]/g, ';').split(';'), newList = [];
+    const list = text.replace(/[\r\n,]/g, ';').split(';'), newList = [];
     for (let vi in list) {
-        let v = list[vi];
+        const v = list[vi];
         v = v.trim(); if (!v) continue;
         if (!_hostnamePattern.test(v)) return [text, false, message];
         newList.push(v);
     }
     let value = newList.join('; ');
     if (param) { // check param
-        let maxCount = param.maxCount; if (maxCount && newList.length > maxCount) return [text, false, message];
+        const maxCount = param.maxCount; if (maxCount && newList.length > maxCount) return [text, false, message];
     }
     return [value, true, message];
 };

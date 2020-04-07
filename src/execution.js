@@ -1,14 +1,15 @@
+/* istanbul ignore file */
 // execution
 export const rule = (field, name, ...args) => {
-  for (var i in args) {
+  for (let i in args) {
     if (args[i].b) args[i] = args[i].b();
   }
   return {
     r: { field, name, args },
     validate: (state) => {
       for (let v of args) {
-        let value = state[field], x = v(value, state).parse();
-        let messageFunc = x[2](x[1]);
+        const value = state[field], x = v(value, state).parse();
+        const messageFunc = x[2](x[1]);
         if (messageFunc) {
           return { [field]: messageFunc(name) };
         }
@@ -17,7 +18,7 @@ export const rule = (field, name, ...args) => {
     },
     format: (state) => {
       for (let v of args) {
-        let value = state[field], x = v(value, state).parse(), newValue = v(x[0], state).format();
+        const value = state[field], x = v(value, state).parse(), newValue = v(x[0], state).format();
         if (newValue && value !== newValue) {
           return { [field]: newValue };
         }

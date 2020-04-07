@@ -16,54 +16,54 @@ describe('Bool', () => {
         expect(boolFormater('12')).toBe('Yes');
     });
     it('should format: *', () => {
-        let param = { format: '*' };
+        const param = { format: '*' };
         expect(() => boolFormater('12', param)).toThrow();
     });
     it('should format: trueFalse', () => {
-        let param = { format: 'trueFalse' };
+        const param = { format: 'trueFalse' };
         expect(boolFormater('12', param)).toBe('True');
         expect(boolFormater('', param)).toBe('False');
     });
     it('should format: yesNo', () => {
-        let param = { format: 'yesNo' };
+        const param = { format: 'yesNo' };
         expect(boolFormater('12', param)).toBe('Yes');
         expect(boolFormater('', param)).toBe('No');
     });
     it('should format: values no values', () => {
-        let param = { format: 'values' };
+        const param = { format: 'values' };
         expect(() => boolFormater('12', param)).toThrow();
         expect(() => boolFormater('', param)).toThrow();
     });
     it('should format: values with values empty', () => {
-        let param = { format: 'values', values: '' };
+        const param = { format: 'values', values: '' };
         expect(() => boolFormater('12', { format: 'values', values: '' })).toThrow();
     });
     it('should format: values with values null', () => {
-        let param = { format: 'values', values: null };
+        const param = { format: 'values', values: null };
         expect(() => boolFormater('1', param)).toThrow();
     });
     it('should format: values with values type string', () => {
-        let param = { format: 'values', values: '1' };
+        const param = { format: 'values', values: '1' };
         expect(() => boolFormater('s', param)).toThrow();
     });
     it('should format: values with values type empty array', () => {
-        let param = { format: 'values', values: [] };
+        const param = { format: 'values', values: [] };
         expect(() => boolFormater('af', param)).toThrow();
     });
     it('should format: values with values array of length 1', () => {
-        let param = { format: 'values', values: [1] };
+        const param = { format: 'values', values: [1] };
         expect(() => boolFormater('af', param)).toThrow();
     });
     it('should format: values with values array of length 3', () => {
-        let param = { format: 'values', values: [1, 2, 3] };
+        const param = { format: 'values', values: [1, 2, 3] };
         expect(() => boolFormater('af', param)).toThrow();
     });
     it('should format: values with values array of length 2', () => {
-        let param = { format: 'values', values: [1, 0] };
+        const param = { format: 'values', values: [1, 0] };
         expect(boolFormater('af', param)).toBe(1);
     });
     it('should format: values with no values array of length 2', () => {
-        let param = { format: 'values', values: [1, 0] };
+        const param = { format: 'values', values: [1, 0] };
         expect(boolFormater('', param)).toBe(0);
     });
     it('should parse', () => {
@@ -149,10 +149,12 @@ describe('Integer', () => {
         expect(integerFormater('12', { format: 'comma' })).toBe('12');
     });
     it('should format: byte', () => {
-        let param = { format: 'byte' };
+        const param = { format: 'byte' };
         expect(integerFormater('1232323', param)).toBe('1.18 MB');
         expect(integerFormater('2048', param)).toBe('2 KB');
         expect(integerFormater('2', param)).toBe('2 bytes');
+        expect(integerFormater('1', param)).toBe('1 byte');
+        expect(integerFormater('0', param)).toBe('0 bytes');
     });
     it('should format: pattern', () => {
         expect(integerFormater('1232323', { format: 'pattern', pattern: 10 })).toBe('1232323');

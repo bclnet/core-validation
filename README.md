@@ -23,21 +23,21 @@ export default class extends React.Component {
         super(props);
         this.state = {};
     }
-    inputChangeHandler = (e) => {
+    handleInputChange = (e) => {
         // set state
         Validator(this).runRules();
     })
-    submitHandler = (e) => {
+    handleSubmit = (e) => {
         e.preventDefault();
         if (Validator(this).hasErrors()) return;
         // do submit
     }
     render() {
-        let v = Validator(this);
+        const v = Validator(this);
         return (
             <div>
-                <input id="message" error={v.errorFor('message')} label={v.labelFor('message')} onBlur={v.onBlurFor('message')} value={this.state.message} onChange={this.inputChangeHandler} />
-                <button onClick={this.submitHandler}>Submit</button>
+                <input id="message" error={v.errorFor('message')} label={v.labelFor('message')} onBlur={v.onBlurFor('message')} value={this.state.message} onChange={this.handleInputChange} />
+                <button onClick={this.handleSubmit}>Submit</button>
             </div>
         );
     }

@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 // execution
 export {
   rule, ruleIf
@@ -12,8 +13,8 @@ const maxLengthError = length => (fieldName) => `${fieldName} must be at most ${
 const invalidFormatError = fieldName => `${fieldName} has an invalid format`;
 
 function makeSymbols(...symbols) {
-  for (var i in symbols) {
-    let symbol = symbols[i];
+  for (let i in symbols) {
+    const symbol = symbols[i];
     symbol.b = () => symbol();
     symbol.parse = (text, defaultValue) => { let v = symbol()(text).parse(); return v[1] ? v[0] : defaultValue; }
     symbol.parseInfo = (text) => symbol()(text).parse();
@@ -30,7 +31,7 @@ function funcSymbol(name, symbol) {
 }
 
 // options
-var globals = {};
+const globals = {};
 export function setGlobals(name, param) {
   globals[name] = param;
 }
