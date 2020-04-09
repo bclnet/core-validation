@@ -1,13 +1,19 @@
 /* istanbul ignore file */
 // execution
 export const rule = (field, name, ...args) => {
+  let state = {};
   for (let i in args) {
     if (args[i].b) args[i] = args[i].b();
+    else if (typeof args[i] !== 'function') {
+      Object.assign(state, args[i]);
+      delete args[i];
+    }
   }
   return {
-    r: { field, name, args },
+    r: { field, name, args, state },
     validate: (state) => {
       for (let v of args) {
+        if (!v) continue;
         const value = state[field], x = v(value, state).parse();
         const messageFunc = x[2](x[1]);
         if (messageFunc) {
@@ -18,6 +24,7 @@ export const rule = (field, name, ...args) => {
     },
     format: (state) => {
       for (let v of args) {
+        if (!v) continue;
         const value = state[field], x = v(value, state).parse(), newValue = v(x[0], state).format();
         if (newValue && value !== newValue) {
           return { [field]: newValue };

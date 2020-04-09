@@ -12,6 +12,8 @@ export const create = function (binding, defaultRules) {
       $this,
       binding,
       defaultRules: null,
+      inputParser: null,
+      inputHandler: null,
       reset: function () {
         binding.setErrors($this, { _flag: 0 });
       },
@@ -85,8 +87,11 @@ export const create = function (binding, defaultRules) {
         return rule.name || 'Label';
       },
       valueFor: function (field, opts) {
+        const rule = this.getRules(opts, field) || {};
         const state = binding.getState($this, opts);
-        return state[field] || '';
+        let { defaultValue } = rule.state;
+        if (defaultValue === undefined) defaultValue = '';
+        return state[field] || defaultValue;
       },
       requiredFor: function (field, opts) {
         const rule = this.getRules(opts, field) || {};
@@ -100,6 +105,18 @@ export const create = function (binding, defaultRules) {
       },
       formatFor: function (field, opts) {
         return this.getFormats(opts, field)[field];
+      },
+      inputFor: function (field, opts) {
+        const inputParser = (opts || {}).inputParser || this.inputParser;
+        const inputHandler = (opts || {}).inputHandler || this.inputHandler;
+        if (!inputParser || !inputHandler) throw new Error('inputParser & inputHandler are required');
+        return (...args) => {
+          const value = inputParser(args);
+          inputHandler(this, {
+            id: field,
+            value: value,
+          });
+        };
       },
       changeFor: function (field, opts) {
         const value = this.getFormats(opts, field)[field];
