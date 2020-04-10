@@ -4,6 +4,27 @@ import {
   find, flatten, valuedate, validate, format
 } from './execution';
 
+export const eventTargetInputParser = ($) => {
+  if ($.length > 0 && $[0].target) {
+    const { target } = $[0];
+    return target.type === 'checkbox' ? target.checked : target.value;
+  }
+  return undefined;
+};
+
+export const objectInputParser = ($) => {
+  if ($.length > 1 && $[1]) {
+    const x = $[1];
+    if (x.value !== undefined) return X.value;
+    else if (x.checked !== undefined) return x.checked;
+    else if (x.selection !== undefined) return x.selection;
+    else if (x.formattedDate !== undefined) return x.formattedDate;
+    else if (x.date !== undefined) return x.date;
+    else { console.log('$', $); throw new Error(x); }
+  }
+  return inputParserEventTarget($);
+};
+
 // accessors
 export const create = function (binding, defaultRules) {
   return ($this) => {
@@ -12,7 +33,7 @@ export const create = function (binding, defaultRules) {
       $this,
       binding,
       defaultRules: null,
-      inputParser: null,
+      inputParser: eventTargetInputParser,
       inputHandler: null,
       reset: function () {
         binding.setErrors($this, { _flag: 0 });
