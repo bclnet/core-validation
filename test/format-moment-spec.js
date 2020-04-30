@@ -99,8 +99,8 @@ describe('DateTime', () => {
         const param = { format: 'pattern', pattern: 'YYYY' };
         expect(dateTimeFormater('2017-01-01', param)).toBe('2017');
     });
-    it('should format: date', () => {
-        const param = { format: 'date' };
+    it('should format: dateTime', () => {
+        const param = { format: 'dateTime' };
         expect(dateTimeFormater('2017-01-01 03:00 am', param)).toBe('01 January 2017 03:00 am');
     });
     it('should format: longDateTime', () => {
