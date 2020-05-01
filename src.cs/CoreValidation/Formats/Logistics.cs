@@ -19,14 +19,14 @@ namespace CoreValidation.Formats
     public static (string, bool, Func<object>) PhoneParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
-      var countries = (param != null && param.TryGetValue("countries", out var z) && z is string v1 ? v1 : null) ?? "u";
+      var countries = (param != null && param.TryGetValue("countries", out var z) && z is string v1 && v1.Length > 0 ? v1 : null) ?? "u";
       if (countries.Contains("u") || countries.Contains("c"))
       { // canada+usa/generic parsing
         var layout = (param != null && param.TryGetValue("layout", out z) && z is string v2 ? v2 : null) ?? "()";
         var ntext = _notDigitsPattern.Replace(text, string.Empty);
         if (ntext.Length >= 10) // 7
         {
-          var v = new[] { ntext.Substring(0, 3), ntext.Substring(3, 6), ntext.Substring(6, 10), ntext.Length > 10 ? $" x{ntext.Substring(10)}" : string.Empty };
+          var v = new[] { ntext.Substring(0, 3), ntext.Substring(3, 3), ntext.Substring(6, 4), ntext.Length > 10 ? $" x{ntext.Substring(10)}" : string.Empty };
           switch (layout)
           {
             case ".": return ($"{v[0]}.{v[1]}.{v[2]}{v[3]}", true, error);
@@ -36,6 +36,7 @@ namespace CoreValidation.Formats
           }
         }
       }
+      else if (countries == "*") return (text, true, error); // accept all
       return (text, false, error);
     }
 
@@ -48,16 +49,16 @@ namespace CoreValidation.Formats
     public static (string, bool, Func<object>) ZipParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
-      var countries = (param != null && param.TryGetValue("countries", out var z) && z is string v1 ? v1 : "u") ?? "u";
+      var countries = (param != null && param.TryGetValue("countries", out var z) && z is string v1 && v1.Length > 0 ? v1 : null) ?? "u";
       if (countries.Contains("c"))
       { // canada/generic parsing
         var ntext = _notAlphaDigitsPattern.Replace(text, string.Empty);
         if (ntext.Length == 6 &&
           char.IsLetter(ntext[0]) && char.IsDigit(ntext[1]) && char.IsLetter(ntext[2]) &&
-          char.IsDigit(ntext[3]) && char.IsLetter(ntext[4]) && char.IsDigit(ntext[5])
-        ) return ($"{ntext.Substring(0, 3)} {ntext.Substring(3)}", true, error);
+          char.IsDigit(ntext[3]) && char.IsLetter(ntext[4]) && char.IsDigit(ntext[5]))
+          return ($"{ntext.Substring(0, 3)} {ntext.Substring(3)}", true, error);
       }
-      if (countries.Contains("u"))
+      else if (countries.Contains("u"))
       { // usa/generic parsing
         var ntext = _notDigitsPattern.Replace(text, string.Empty);
         if (ntext.Length >= 7 && ntext.Length <= 9) return ($"{ntext.Substring(0, 5)}-{ntext.Substring(5).PadLeft(4, '0')}", true, error);

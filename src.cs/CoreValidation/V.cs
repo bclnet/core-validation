@@ -21,7 +21,7 @@ namespace CoreValidation
     public static IDictionary<string, object> ToParam(this object source, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance) =>
       source?.GetType().GetProperties(bindingAttr).ToDictionary(x => x.Name, x => x.GetValue(source, null));
     public static IDictionary<string, object> Assign(this IDictionary<string, object> source, object param, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance) =>
-      param?.GetType().GetProperties(bindingAttr).ToDictionary(x => x.Name, x => x.GetValue(source, null));
+      param?.ToParam(bindingAttr).Aggregate(source, (a, b) => { a[b.Key] = b.Value; return a; });
 
     static object MakeSymbol(string name, Func<string, Symbol> symbol)
     {
@@ -45,7 +45,7 @@ namespace CoreValidation
     {
       var global = Globals.Params.TryGetValue(name, out var z) ? z : null;
       var local = param != null ? ToParam(param) : null;
-      return global == null ? local : null; // global.Union(local);
+      return global == null ? local : local == null ? global : global.Aggregate(local, (a, b) => { a[b.Key] = b.Value; return a; });
     }
 
     static Func<string, string> MakeError(object customError, Func<string, string> defaultError) => defaultError;

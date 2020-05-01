@@ -82,7 +82,7 @@ namespace CoreValidation.Formats
           case "comma": return value_.ToString("#,##0", CultureInfo.InvariantCulture);
           case "byte":
             var radix = (int)Math.Floor((float)(value_.ToString().Length - 1) / 3);
-            if (radix > 0) return $"{Math.Round((double)(value_ / (1 << 10 * radix)), 2)} {"  KBMBGB".Substring(radix << 1, (radix << 1) + 2)}";
+            if (radix > 0) return $"{Math.Round((double)(value_ / (1 << 10 * radix)), 2)} {"  KBMBGB".Substring(radix << 1, 2)}";
             if (value_ == 1) return "1 byte";
             return $"{value_} bytes";
           case "pattern": return param.TryGetValue("pattern", out z) && z is string pattern ? value_.ToString(pattern, CultureInfo.InvariantCulture) : string.Empty;

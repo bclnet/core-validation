@@ -62,7 +62,7 @@ namespace CoreValidation.Tests
         Assert2.Equal(PhoneParser("123.456.7890.1234", new { countries = "u", layout = "." }.ToParam()), ("123.456.7890 x1234", true, null));
         Assert2.Equal(PhoneParser("123.456.7890.1234", new { countries = "u", layout = "-" }.ToParam()), ("123-456-7890 x1234", true, null));
         Assert2.Equal(PhoneParser("123.456.7890.1234", new { countries = "u", layout = "()" }.ToParam()), ("(123) 456-7890 x1234", true, null));
-        Assert.Throws<Exception>(() => PhoneParser("123.456.7890.1234", new { countries = "u", layout = "*" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PhoneParser("123.456.7890.1234", new { countries = "u", layout = "*" }.ToParam()));
       }
     }
 

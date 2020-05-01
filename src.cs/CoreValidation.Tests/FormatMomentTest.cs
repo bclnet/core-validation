@@ -21,7 +21,7 @@ namespace CoreValidation.Tests
       // should format: *
       {
         var param = new { format = "*" }.ToParam();
-        Assert.Throws<Exception>(() => DateFormater("2017-01-01", param));
+        Assert.Throws<ArgumentOutOfRangeException>(() => DateFormater("2017-01-01", param));
       }
       // should format: date
       {
@@ -112,7 +112,7 @@ namespace CoreValidation.Tests
       // should format: *
       {
         var param = new { format = "*" }.ToParam();
-        Assert.Throws<Exception>(() => DateTimeFormater("2017-01-01 03:00 am", param));
+        Assert.Throws<ArgumentOutOfRangeException>(() => DateTimeFormater("2017-01-01 03:00 am", param));
       }
       // should format: pattern
       {
@@ -199,7 +199,7 @@ namespace CoreValidation.Tests
       // should format: *
       {
         var param = new { format = "*" }.ToParam();
-        Assert.Throws<Exception>(() => MonthAndDayFormater("2017-01-01", param));
+        Assert.Throws<ArgumentOutOfRangeException>(() => MonthAndDayFormater("2017-01-01", param));
       }
       // should format: pattern
       {
@@ -234,7 +234,7 @@ namespace CoreValidation.Tests
       // should format: *
       {
         var param = new { format = "*" }.ToParam();
-        Assert.Throws<Exception>(() => TimeFormater("2017-01-01", param));
+        Assert.Throws<ArgumentOutOfRangeException>(() => TimeFormater("2017-01-01", param));
       }
       // should format: longTime
       {

@@ -19,7 +19,7 @@ namespace CoreValidation.Tests
       // should format: *
       {
         var param = new { format = "*" }.ToParam();
-        Assert.Throws<Exception>(() => BoolFormater("12", param));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("12", param));
       }
       // should format: trueFalse
       {
@@ -35,14 +35,14 @@ namespace CoreValidation.Tests
       }
       // should format: values no values
       {
-        Assert.Throws<Exception>(() => BoolFormater("12", new { format = "values" }.ToParam()));
-        Assert.Throws<Exception>(() => BoolFormater("", new { format = "values" }.ToParam()));
-        Assert.Throws<Exception>(() => BoolFormater("12", new { format = "values", values = "" }.ToParam()));
-        Assert.Throws<Exception>(() => BoolFormater("1", new { format = "values", values = (string)null }.ToParam()));
-        Assert.Throws<Exception>(() => BoolFormater("s", new { format = "values", values = "1" }.ToParam()));
-        Assert.Throws<Exception>(() => BoolFormater("af", new { format = "values", values = new string[0] }.ToParam()));
-        Assert.Throws<Exception>(() => BoolFormater("af", new { format = "values", values = new[] { 1 } }.ToParam()));
-        Assert.Throws<Exception>(() => BoolFormater("af", new { format = "values", values = (1, 2, 3) }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("12", new { format = "values" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("", new { format = "values" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("12", new { format = "values", values = "" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("1", new { format = "values", values = (string)null }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("s", new { format = "values", values = "1" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("af", new { format = "values", values = new string[0] }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("af", new { format = "values", values = new[] { 1 } }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("af", new { format = "values", values = (1, 2, 3) }.ToParam()));
         Assert2.Equal(BoolFormater("af", new { format = "values", values = new[] { 1, 0 } }.ToParam()), "1");
         Assert2.Equal(BoolFormater("", new { format = "values", values = new[] { 1, 0 } }.ToParam()), "0");
       }
@@ -76,7 +76,7 @@ namespace CoreValidation.Tests
       }
       // should format: *
       {
-        Assert.Throws<Exception>(() => DecimalFormater("12", new { format = "*" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => DecimalFormater("12", new { format = "*" }.ToParam()));
       }
       // should format: comma
       {
@@ -138,7 +138,7 @@ namespace CoreValidation.Tests
       }
       // should format: *
       {
-        Assert.Throws<Exception>(() => IntegerFormater("12", new { format = "*" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IntegerFormater("12", new { format = "*" }.ToParam()));
       }
       // should format: comma
       {
@@ -191,7 +191,7 @@ namespace CoreValidation.Tests
       }
       // should format: *
       {
-        Assert.Throws<Exception>(() => RealFormater("12", new { format = "*" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => RealFormater("12", new { format = "*" }.ToParam()));
       }
       // should format: comma
       {
@@ -253,7 +253,7 @@ namespace CoreValidation.Tests
       }
       // should format: *
       {
-        Assert.Throws<Exception>(() => MoneyFormater("12", new { format = "*" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => MoneyFormater("12", new { format = "*" }.ToParam()));
       }
       // should format: nx
       {
@@ -307,7 +307,7 @@ namespace CoreValidation.Tests
       }
       // should format: *
       {
-        Assert.Throws<Exception>(() => PercentFormater("12", new { format = "*" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PercentFormater("12", new { format = "*" }.ToParam()));
       }
       //should format: nx
       {

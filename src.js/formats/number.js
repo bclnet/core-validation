@@ -64,7 +64,7 @@ export const integerFormater = (value, param) => {
       case 'comma': return Format_comma(value);
       case 'byte':
         const radix = Math.floor((value.toString().length - 1) / 3);
-        if (radix > 0) return `${Math_round(value / (1 << (10 * radix)), 2)} ${'  KBMBGB'.substring(radix << 1, (radix << 1) + 2)}`;
+        if (radix > 0) return `${Math_round(value / (1 << (10 * radix)), 2)} ${'  KBMBGB'.substr(radix << 1, 2)}`;
         if (value == 1) return '1 byte';
         return `${value} bytes`;
       case 'pattern': return value.toString(param.pattern);
@@ -167,7 +167,7 @@ export const percentFormater = (value, param) => {
 };
 export const percentParser = (text, param, error) => {
   if (!text) return [text, true, error];
-  if (text[text.length - 1] === '%') text = text.substring(0, text.length - 1);
+  if (text[text.length - 1] === '%') text = text.substr(0, text.length - 1);
   let value = parseFloat(text); if (isNaN(value)) return [text, false, error];
   return [value / 100, true, error];
 };
