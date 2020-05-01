@@ -1,3 +1,4 @@
+import { nulFormat } from '../globals';
 const _letterPattern = /[a-z]/i;
 const _digitsPattern = /\d/i;
 const _notDigitsPattern = /\D/gi;
@@ -5,7 +6,7 @@ const _notAlphaDigitsPattern = /[^0-9a-z]/gi;
 
 // phone
 export const phoneFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   return value;
 };
 export const phoneParser = (text, param, error) => {
@@ -30,7 +31,7 @@ export const phoneParser = (text, param, error) => {
 
 // zip
 export const zipFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   return value;
 };
 export const zipParser = (text, param, error) => {

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using static CoreValidation.Formats.Internet;
 using static CoreValidation.Formats.Logistics;
 using static CoreValidation.Formats.Moment;
@@ -16,6 +18,11 @@ namespace CoreValidation
       public Func<object> parse = () => null;
     }
 
+    public static IDictionary<string, object> ToParam(this object source, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance) =>
+      source?.GetType().GetProperties(bindingAttr).ToDictionary(x => x.Name, x => x.GetValue(source, null));
+    public static IDictionary<string, object> Assign(this IDictionary<string, object> source, object param, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance) =>
+      param?.GetType().GetProperties(bindingAttr).ToDictionary(x => x.Name, x => x.GetValue(source, null));
+
     static object MakeSymbol(string name, Func<string, Symbol> symbol)
     {
       //symbol.N = name;
@@ -24,7 +31,8 @@ namespace CoreValidation
       //symbol.Format = (text) => symbol(text).format();
       return symbol;
     }
-    static object MakeSymbol(string name, Func<string, Dictionary<string, object>, Symbol> symbol)
+
+    static object MakeSymbol(string name, Func<string, IDictionary<string, object>, Symbol> symbol)
     {
       //symbol.N = name;
       //symbol.Parse = (text, defaultValue) => { let v = symbol(text).parse(); return v[1] ? v[0] : defaultValue; }
@@ -33,13 +41,18 @@ namespace CoreValidation
       return symbol;
     }
 
-    static readonly Dictionary<string, Dictionary<string, object>> Globals = new Dictionary<string, Dictionary<string, object>>();
-    static Dictionary<string, object> MakeParm(string name, object param)
+    static IDictionary<string, object> MakeParm(string name, object param)
     {
-      return null;
+      var global = Globals.Params.TryGetValue(name, out var z) ? z : null;
+      var local = param != null ? ToParam(param) : null;
+      return global == null ? local : null; // global.Union(local);
     }
 
     static Func<string, string> MakeError(object customError, Func<string, string> defaultError) => defaultError;
+
+    // options
+    public static void SetParam(string name, object param) { if (param != null) Globals.Params[name] = param?.ToParam(); else Globals.Params.Remove(name); }
+    static (object, bool, Func<object>) NulParser(string text, bool parsed, Func<object> error) => (text, true, error);
 
     // error messages
     public static readonly Func<string, string> RequiredError = (fieldName) => $"{fieldName} is required";
@@ -50,7 +63,6 @@ namespace CoreValidation
     public static readonly Func<int, Func<string, string>> MaxLengthError = (length) => (fieldName) => $"{fieldName} must be at most {length} characters";
 
     // rules
-    static (object, bool, Func<object>) NulParser(string text, bool parsed, Func<object> error) => (text, true, error);
     public static readonly Func<object, object> Required = (customError) => MakeSymbol("required", (text) => new Symbol { format = () => null, parse = () => NulParser(text, text != null && text.Length != 0, () => MakeError(customError, RequiredError)) });
     public static readonly Func<object, object, Func<string, object, object, bool>, object> Custom = (param, customError, predicate) => MakeSymbol("custom", (text, state) => new Symbol { format = () => null, parse = () => NulParser(text, predicate(text, state, param), () => MakeError(customError, GeneralError)) });
     public static readonly Func<string, string, object, object> MustMatch = (field, fieldName, customError) => MakeSymbol("mustMatch", (text, state) => new Symbol { format = () => null, parse = () => NulParser(text, state[field].ToString() == text, () => MakeError(customError, MustMatchError(fieldName))) });
@@ -92,7 +104,5 @@ namespace CoreValidation
     public static readonly Func<object, object, object> Memo = (param, customError) => MakeSymbol("memo", (text) => new Symbol { format = () => MemoFormater(text, MakeParm("memo", param)), parse = () => MemoParser(text, MakeParm("memo", param), () => MakeError(customError, InvalidFormatError)) });
     public static readonly Func<object, object, object> Regex = (param, customError) => MakeSymbol("regex", (text) => new Symbol { format = () => RegexFormater(text, MakeParm("regex", param)), parse = () => RegexParser(text, MakeParm("regex", param), () => MakeError(customError, InvalidFormatError)) });
     //makeSymbols(text, memo, regex);
-
-
   }
 }

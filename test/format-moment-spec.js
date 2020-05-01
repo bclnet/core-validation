@@ -1,17 +1,18 @@
 import assert from 'power-assert';
 import moment from 'moment';
 
+import { nulFormat } from '../src.js/globals';
 import {
     dateFormater, dateParser,
     dateTimeFormater, dateTimeParser,
     monthAndDayFormater, monthAndDayParser,
     timeFormater, timeParser,
-} from '../src/formats/moment';
+} from '../src.js/formats/moment';
 
 describe('Date', () => {
     it('should format', () => {
-        expect(dateFormater(null)).toBe('');
-        expect(dateFormater('')).toBe('');
+        expect(dateFormater(null)).toBe(nulFormat);
+        expect(dateFormater('')).toBe(nulFormat);
         expect(dateFormater('1/1/2017')).toBe('2017-01-01');
         expect(dateFormater('2017-01-01')).toBe('2017-01-01');
         expect(dateFormater('2017-01-01 03:00')).toBe('2017-01-01');
@@ -85,8 +86,8 @@ describe('Date', () => {
 
 describe('DateTime', () => {
     it('should format', () => {
-        expect(dateTimeFormater(null)).toBe('');
-        expect(dateTimeFormater('')).toBe('');
+        expect(dateTimeFormater(null)).toBe(nulFormat);
+        expect(dateTimeFormater('')).toBe(nulFormat);
         expect(dateTimeFormater('1/1/2017')).toBe('01/01/2017');
         expect(dateTimeFormater('2017-03-02')).toBe('03/02/2017');
         expect(dateTimeFormater('2017-01-01 03:00')).toBe('01/01/2017');
@@ -140,8 +141,8 @@ describe('DateTime', () => {
         expect(dateTimeParser('')).toEqual(['', true, undefined]);
         expect(dateTimeParser('1ab')).toEqual(['1ab', false, undefined]);
         expect(dateTimeParser('blah').toString()).toEqual('blah,false,');
-        expect(dateTimeParser('2017-01-01 03:00:00 am').toString()).toEqual('Sun Jan 01 2017 00:00:00 GMT-0600,true,');
-        expect(dateTimeParser('1901-01-01 03:00:00 am').toString()).toEqual('Tue Jan 01 1901 00:00:00 GMT-0600,true,');
+        expect(dateTimeParser('2017-01-01 03:00:00 am').toString()).toEqual('Sun Jan 01 2017 03:00:00 GMT-0600,true,');
+        expect(dateTimeParser('1901-01-01 03:00:00 am').toString()).toEqual('Tue Jan 01 1901 03:00:00 GMT-0600,true,');
     });
     it('should parse: minValue', () => {
         expect(dateTimeParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,false,');
@@ -155,8 +156,8 @@ describe('DateTime', () => {
 
 describe('MonthAndDay', () => {
     it('should format', () => {
-        expect(monthAndDayFormater(null)).toBe('');
-        expect(monthAndDayFormater('')).toBe('');
+        expect(monthAndDayFormater(null)).toBe(nulFormat);
+        expect(monthAndDayFormater('')).toBe(nulFormat);
         expect(monthAndDayFormater('1/1/2017')).toBe('01/01');
         expect(monthAndDayFormater('2017-03-02')).toBe('03/02');
         expect(monthAndDayFormater('2017-01-01 03:00')).toBe('01/01');
@@ -184,8 +185,8 @@ describe('MonthAndDay', () => {
 
 describe('Time', () => {
     it('should format', () => {
-        expect(timeFormater(null)).toBe('');
-        expect(timeFormater('')).toBe('');
+        expect(timeFormater(null)).toBe(nulFormat);
+        expect(timeFormater('')).toBe(nulFormat);
         expect(timeFormater('1/1/2017')).toEqual('12:00 00');
         expect(timeFormater('2017-01-01')).toEqual('12:00 00');
         expect(timeFormater('2017-01-01 03:00')).toEqual('03:00 00');

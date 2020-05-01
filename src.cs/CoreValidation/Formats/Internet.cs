@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using static CoreValidation.Globals;
 
 namespace CoreValidation.Formats
 {
@@ -13,12 +14,12 @@ namespace CoreValidation.Formats
     static readonly Regex _hostnamePattern = new Regex(@"^(?:([a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+([a-zA-Z]{2,6})(:\d{1,5})?)|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,5})?)$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
     // email
-    public static string EmailFormater(object value, Dictionary<string, object> param)
+    public static string EmailFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       return value.ToString();
     }
-    public static (object, bool, Func<object>) EmailParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) EmailParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       if (!_emailPattern.IsMatch(text)) return (text, false, error);
@@ -26,20 +27,20 @@ namespace CoreValidation.Formats
     }
 
     // emailList
-    public static string EmailListFormater(object value, Dictionary<string, object> param)
+    public static string EmailListFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       return value.ToString();
     }
-    public static (object, bool, Func<object>) EmailListParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) EmailListParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       var list = text.Split(',', ';'); var newList = new List<string>();
       foreach (var v in list)
       {
         var v2 = v.Trim(); if (v2.Length == 0) continue;
-        if (!_emailPattern.IsMatch(text)) return (text, false, error);
-        newList.Add(v);
+        if (!_emailPattern.IsMatch(v2)) return (text, false, error);
+        newList.Add(v2);
       }
       var value = string.Join("; ", newList);
       if (param != null)
@@ -50,12 +51,12 @@ namespace CoreValidation.Formats
     }
 
     // hostname
-    public static string HostnameFormater(object value, Dictionary<string, object> param)
+    public static string HostnameFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       return value.ToString();
     }
-    public static (object, bool, Func<object>) HostnameParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) HostnameParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       if (!_hostnamePattern.IsMatch(text)) return (text, false, error);
@@ -63,20 +64,20 @@ namespace CoreValidation.Formats
     }
 
     // hostnameList
-    public static string HostnameListFormater(object value, Dictionary<string, object> param)
+    public static string HostnameListFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       return value.ToString();
     }
-    public static (object, bool, Func<object>) HostnameListParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) HostnameListParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       var list = text.Split(',', ';'); var newList = new List<string>();
       foreach (var v in list)
       {
         var v2 = v.Trim(); if (v2.Length == 0) continue;
-        if (!_hostnamePattern.IsMatch(text)) return (text, false, error);
-        newList.Add(v);
+        if (!_hostnamePattern.IsMatch(v2)) return (text, false, error);
+        newList.Add(v2);
       }
       var value = string.Join("; ", newList);
       if (param != null)
@@ -87,24 +88,24 @@ namespace CoreValidation.Formats
     }
 
     // uri
-    public static string UriFormater(object value, Dictionary<string, object> param)
+    public static string UriFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       return value.ToString();
     }
-    public static (object, bool, Func<object>) UriParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) UriParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       return (text, true, error);
     }
 
     // xml
-    public static string XmlFormater(object value, Dictionary<string, object> param)
+    public static string XmlFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       return value.ToString();
     }
-    public static (object, bool, Func<object>) XmlParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) XmlParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       return (text, true, error);

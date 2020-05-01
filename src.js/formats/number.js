@@ -1,6 +1,8 @@
+import { nulFormat } from '../globals';
+
 // bool
 export const boolFormater = (value, param) => {
-  //if (!value) return '';
+  if (value == undefined) return nulFormat;
   if (param && param.format) {
     switch (param.format) {
       case 'trueFalse': return value ? 'True' : 'False';
@@ -28,7 +30,7 @@ export const boolParser = (text, param, error) => {
 
 // decimal
 export const decimalFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   value = parseFloat(value);
   if (param && param.format) {
     switch (param.format) {
@@ -55,13 +57,13 @@ export const decimalParser = (text, param, error) => {
 
 // integer
 export const integerFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   value = parseInt(value);
   if (param && param.format) {
     switch (param.format) {
       case 'comma': return Format_comma(value);
       case 'byte':
-        const radix = Math.floor((float)(value.toString().length - 1) / 3);
+        const radix = Math.floor((value.toString().length - 1) / 3);
         if (radix > 0) return `${Math_round(value / (1 << (10 * radix)), 2)} ${'  KBMBGB'.substring(radix << 1, (radix << 1) + 2)}`;
         if (value == 1) return '1 byte';
         return `${value} bytes`;
@@ -83,7 +85,7 @@ export const integerParser = (text, param, error) => {
 
 // real
 export const realFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   value = parseFloat(value);
   if (param && param.format) {
     switch (param.format) {
@@ -121,7 +123,7 @@ Number.prototype.formatMoney = function (c, d, t) {
   return s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : '');
 };
 export const moneyFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   value = parseFloat(value);
   if (param && param.format) {
     switch (param.format) {
@@ -137,7 +139,7 @@ export const moneyParser = (text, param, error) => {
   if (!text) return [text, true, error];
   //if(!/^\d+$/.test(text)) return [text, false, error];
   text = text.replace(/[^0-9\.]+/g, ''); if (!text) return [text, false, error];
-  let value = parseFloat(text); if (isNaN(value)) return [text, false, error];
+  let value = parseFloat(text); //if (isNaN(value)) return [text, false, error];
   value = Math_round(value, 4);
   if (param) { // check param
     const minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [value, false, error];
@@ -150,7 +152,7 @@ export const moneyParser = (text, param, error) => {
 
 // percent
 export const percentFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   value = parseFloat(value);
   if (param && param.format) {
     switch (param.format) {

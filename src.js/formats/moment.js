@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { nulFormat } from '../globals';
 
 moment.suppressDeprecationWarnings = true;
 const _minDateValue = moment([1753, 1, 1]);
@@ -26,7 +27,7 @@ const getTime = (text) => {
 // date
 const DateFormaterDefault = 'YYYY-MM-DD'; //'M/D/YYYY'
 export const dateFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   value = moment(value);
   if (param && param.format) {
     switch (param.format) {
@@ -57,7 +58,7 @@ export const dateParser = (text, param, error) => {
 
 // dateTime
 export const dateTimeFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   value = moment(value);
   if (param && param.format) {
     switch (param.format) {
@@ -89,7 +90,7 @@ export const dateTimeParser = (text, param, error) => {
 
 // monthAndDay
 export const monthAndDayFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   value = moment(value);
   if (param) {
     switch (param.format) {
@@ -108,7 +109,7 @@ export const monthAndDayParser = (text, param, error) => {
 
 // time
 export const timeFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   value = moment(value);
   if (param && param.format) {
     switch (param.format) {

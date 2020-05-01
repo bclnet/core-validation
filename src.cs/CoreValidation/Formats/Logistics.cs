@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using static CoreValidation.Globals;
 
 namespace CoreValidation.Formats
 {
@@ -10,12 +11,12 @@ namespace CoreValidation.Formats
     static readonly Regex _notAlphaDigitsPattern = new Regex(@"[^0-9a-z]", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
     // phone
-    public static string PhoneFormater(string value, Dictionary<string, object> param)
+    public static string PhoneFormater(string value, IDictionary<string, object> param = null)
     {
-      if (string.IsNullOrEmpty(value)) return null;
+      if (string.IsNullOrEmpty(value)) return NulFormat;
       return value;
     }
-    public static (string, bool, Func<object>) PhoneParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (string, bool, Func<object>) PhoneParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       var countries = (param != null && param.TryGetValue("countries", out var z) && z is string v1 ? v1 : null) ?? "u";
@@ -39,12 +40,12 @@ namespace CoreValidation.Formats
     }
 
     // zip
-    public static string ZipFormater(string value, Dictionary<string, object> param)
+    public static string ZipFormater(string value, IDictionary<string, object> param = null)
     {
-      if (string.IsNullOrEmpty(value)) return null;
+      if (string.IsNullOrEmpty(value)) return NulFormat;
       return value;
     }
-    public static (string, bool, Func<object>) ZipParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (string, bool, Func<object>) ZipParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       var countries = (param != null && param.TryGetValue("countries", out var z) && z is string v1 ? v1 : "u") ?? "u";

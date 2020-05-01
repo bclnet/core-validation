@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using static CoreValidation.Globals;
 
 namespace CoreValidation.Formats
 {
@@ -13,9 +14,9 @@ namespace CoreValidation.Formats
 
     // date
     const string DateFormaterDefault = "yyyy-MM-dd"; //"M/d/yyyy"
-    public static string DateFormater(object value, Dictionary<string, object> param)
+    public static string DateFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       var value_ = Convert.ToDateTime(value);
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
@@ -32,7 +33,7 @@ namespace CoreValidation.Formats
         }
       return value_.ToString(DateFormaterDefault, CultureInfo.InvariantCulture);
     }
-    public static (object, bool, Func<object>) DateParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) DateParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       if (!DateTime.TryParse(text, out var value)) return (text, false, error);
@@ -47,9 +48,9 @@ namespace CoreValidation.Formats
     }
 
     // dateTime
-    public static string DateTimeFormater(object value, Dictionary<string, object> param)
+    public static string DateTimeFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       var value_ = Convert.ToDateTime(value);
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
@@ -68,7 +69,7 @@ namespace CoreValidation.Formats
         }
       return value_.ToString(DateFormaterDefault, CultureInfo.InvariantCulture);
     }
-    public static (object, bool, Func<object>) DateTimeParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) DateTimeParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       if (!DateTime.TryParse(text, out var value)) return (text, false, error);
@@ -82,9 +83,9 @@ namespace CoreValidation.Formats
     }
 
     // monthAndDay
-    public static string MonthAndDayFormater(object value, Dictionary<string, object> param)
+    public static string MonthAndDayFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       var value_ = Convert.ToDateTime(value);
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
@@ -94,7 +95,7 @@ namespace CoreValidation.Formats
         }
       return value_.ToString(DateFormaterDefault, CultureInfo.InvariantCulture);
     }
-    public static (object, bool, Func<object>) MonthAndDayParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) MonthAndDayParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       var match = _monthAndDayPattern.Match(text).Groups; if (match.Count == 0) return (text, false, error);
@@ -103,9 +104,9 @@ namespace CoreValidation.Formats
     }
 
     // time
-    public static string TimeFormater(object value, Dictionary<string, object> param)
+    public static string TimeFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       var value_ = Convert.ToDateTime(value);
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
@@ -117,7 +118,7 @@ namespace CoreValidation.Formats
         }
       return value_.ToString("hh:mm tt", CultureInfo.InvariantCulture);
     }
-    public static (object, bool, Func<object>) TimeParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) TimeParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       if (!DateTime.TryParse(text, out var value)) return (text, false, error);

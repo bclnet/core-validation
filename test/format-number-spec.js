@@ -1,5 +1,6 @@
 import assert from 'power-assert';
 
+import { nulFormat } from '../src.js/globals';
 import {
     boolFormater, boolParser,
     decimalFormater, decimalParser,
@@ -7,11 +8,11 @@ import {
     realFormater, realParser,
     moneyFormater, moneyParser,
     percentFormater, percentParser,
-} from '../src/formats/number';
+} from '../src.js/formats/number';
 
 describe('Bool', () => {
     it('should format', () => {
-        expect(boolFormater(null)).toBe('No');
+        expect(boolFormater(null)).toBe(nulFormat);
         expect(boolFormater('')).toBe('No');
         expect(boolFormater('12')).toBe('Yes');
     });
@@ -29,47 +30,22 @@ describe('Bool', () => {
         expect(boolFormater('12', param)).toBe('Yes');
         expect(boolFormater('', param)).toBe('No');
     });
-    it('should format: values no values', () => {
+    it('should format: values', () => {
         const param = { format: 'values' };
-        expect(() => boolFormater('12', param)).toThrow();
-        expect(() => boolFormater('', param)).toThrow();
-    });
-    it('should format: values with values empty', () => {
-        const param = { format: 'values', values: '' };
+        expect(() => boolFormater('12', { format: 'values' })).toThrow();
         expect(() => boolFormater('12', { format: 'values', values: '' })).toThrow();
-    });
-    it('should format: values with values null', () => {
-        const param = { format: 'values', values: null };
-        expect(() => boolFormater('1', param)).toThrow();
-    });
-    it('should format: values with values type string', () => {
-        const param = { format: 'values', values: '1' };
-        expect(() => boolFormater('s', param)).toThrow();
-    });
-    it('should format: values with values type empty array', () => {
-        const param = { format: 'values', values: [] };
-        expect(() => boolFormater('af', param)).toThrow();
-    });
-    it('should format: values with values array of length 1', () => {
-        const param = { format: 'values', values: [1] };
-        expect(() => boolFormater('af', param)).toThrow();
-    });
-    it('should format: values with values array of length 3', () => {
-        const param = { format: 'values', values: [1, 2, 3] };
-        expect(() => boolFormater('af', param)).toThrow();
-    });
-    it('should format: values with values array of length 2', () => {
-        const param = { format: 'values', values: [1, 0] };
-        expect(boolFormater('af', param)).toBe(1);
-    });
-    it('should format: values with no values array of length 2', () => {
-        const param = { format: 'values', values: [1, 0] };
-        expect(boolFormater('', param)).toBe(0);
+        expect(() => boolFormater('1', { format: 'values', values: null })).toThrow();
+        expect(() => boolFormater('s', { format: 'values', values: '1' })).toThrow();
+        expect(() => boolFormater('af', { format: 'values', values: [] })).toThrow();
+        expect(() => boolFormater('af', { format: 'values', values: [1] })).toThrow();
+        expect(() => boolFormater('af', { format: 'values', values: [1, 2, 3] })).toThrow();
+        expect(boolFormater('af', { format: 'values', values: [1, 0] })).toBe(1);
+        expect(boolFormater('', { format: 'values', values: [1, 0] })).toBe(0);
     });
     it('should parse', () => {
         expect(boolParser(null)).toEqual([null, true, undefined]);
         expect(boolParser('')).toEqual(['', true, undefined]);
-        expect(() => boolParser('A')).toThrow();
+        expect(boolParser('A')).toEqual(['A', false, undefined]);
         expect(boolParser('Yes')).toEqual([true, true, undefined]);
         expect(boolParser('On')).toEqual([true, true, undefined]);
         expect(boolParser('true')).toEqual([true, true, undefined]);
@@ -85,8 +61,8 @@ describe('Bool', () => {
 
 describe('Decimal', () => {
     it('should format', () => {
-        expect(decimalFormater(null)).toBe('');
-        expect(decimalFormater('')).toBe('');
+        expect(decimalFormater(null)).toBe(nulFormat);
+        expect(decimalFormater('')).toBe(nulFormat);
         expect(decimalFormater('12')).toBe('12.0000');
         expect(decimalFormater('ABC')).toBe('NaN');
     });
@@ -94,7 +70,7 @@ describe('Decimal', () => {
         expect(() => decimalFormater('12', { format: '*' })).toThrow();
     });
     it('should format: comma', () => {
-        expect(decimalFormater(NaN, { format: 'comma' })).toBe('');
+        expect(decimalFormater(NaN, { format: 'comma' })).toBe(nulFormat);
         expect(decimalFormater('1232323', { format: 'comma' })).toBe('1,232,323');
         expect(decimalFormater('1232323.234', { format: 'comma' })).toBe('1,232,323.234');
         expect(decimalFormater('12', { format: 'comma' })).toBe('12');
@@ -135,8 +111,8 @@ describe('Decimal', () => {
 
 describe('Integer', () => {
     it('should format', () => {
-        expect(integerFormater(null)).toBe('');
-        expect(integerFormater('')).toBe('');
+        expect(integerFormater(null)).toBe(nulFormat);
+        expect(integerFormater('')).toBe(nulFormat);
         expect(integerFormater('A')).toBe('NaN');
         expect(integerFormater('12')).toBe('12');
     });
@@ -144,7 +120,7 @@ describe('Integer', () => {
         expect(() => integerFormater('12', { format: '*' })).toThrow();
     });
     it('should format: comma', () => {
-        expect(integerFormater(NaN, { format: 'comma' })).toBe('');
+        expect(integerFormater(NaN, { format: 'comma' })).toBe(nulFormat);
         expect(integerFormater('1232323', { format: 'comma' })).toBe('1,232,323');
         expect(integerFormater('12', { format: 'comma' })).toBe('12');
     });
@@ -178,8 +154,8 @@ describe('Integer', () => {
 
 describe('Real', () => {
     it('should format', () => {
-        expect(realFormater(null)).toBe('');
-        expect(realFormater('')).toBe('');
+        expect(realFormater(null)).toBe(nulFormat);
+        expect(realFormater('')).toBe(nulFormat);
         expect(realFormater('A')).toBe('NaN');
         expect(realFormater('12')).toBe('12.0000');
     });
@@ -187,7 +163,7 @@ describe('Real', () => {
         expect(() => realFormater('12', { format: '*' })).toThrow();
     });
     it('should format: comma', () => {
-        expect(realFormater(NaN, { format: 'comma' })).toBe('');
+        expect(realFormater(NaN, { format: 'comma' })).toBe(nulFormat);
         expect(realFormater('1232323', { format: 'comma' })).toBe('1,232,323');
         expect(realFormater('1232323.234', { format: 'comma' })).toBe('1,232,323.234');
         expect(realFormater('12', { format: 'comma' })).toBe('12');
@@ -228,8 +204,8 @@ describe('Real', () => {
 
 describe('Money', () => {
     it('should format', () => {
-        expect(moneyFormater(null)).toBe('');
-        expect(moneyFormater('')).toBe('');
+        expect(moneyFormater(null)).toBe(nulFormat);
+        expect(moneyFormater('')).toBe(nulFormat);
         expect(moneyFormater('A')).toBe('$0.00');
         expect(moneyFormater('12')).toBe('$12.00');
     });
@@ -271,8 +247,8 @@ describe('Money', () => {
 
 describe('Percent', () => {
     it('should format', () => {
-        expect(percentFormater(null)).toBe('');
-        expect(percentFormater('')).toBe('');
+        expect(percentFormater(null)).toBe(nulFormat);
+        expect(percentFormater('')).toBe(nulFormat);
         expect(percentFormater('A')).toBe('NaN%');
         expect(percentFormater('.12')).toBe('12.00%');
     });

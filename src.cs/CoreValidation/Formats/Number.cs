@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using static CoreValidation.Globals;
 
 namespace CoreValidation.Formats
 {
@@ -10,9 +11,9 @@ namespace CoreValidation.Formats
     static readonly Regex _digitPatern = new Regex(@"[^0-9\.]+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
     // bool
-    public static string BoolFormater(object value, Dictionary<string, object> param)
+    public static string BoolFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null || !(value is bool value_)) return null;
+      if (value == null || !(value is bool value_)) return NulFormat;
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
         {
@@ -29,7 +30,7 @@ namespace CoreValidation.Formats
         }
       return value_ ? "Yes" : "No";
     }
-    public static (object, bool, Func<object>) BoolParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) BoolParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       switch (text.ToLowerInvariant())
@@ -41,9 +42,9 @@ namespace CoreValidation.Formats
     }
 
     // decimal
-    public static string DecimalFormater(object value, Dictionary<string, object> param)
+    public static string DecimalFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       var value_ = Convert.ToDecimal(value);
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
@@ -56,7 +57,7 @@ namespace CoreValidation.Formats
         }
       return value_.ToString("n4", CultureInfo.InvariantCulture);
     }
-    public static (object, bool, Func<object>) DecimalParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) DecimalParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       if (!decimal.TryParse(text, out var value)) return (text, false, error);
@@ -71,9 +72,9 @@ namespace CoreValidation.Formats
     }
 
     // integer
-    public static string IntegerFormater(object value, Dictionary<string, object> param)
+    public static string IntegerFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       var value_ = Convert.ToInt32(value);
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
@@ -89,7 +90,7 @@ namespace CoreValidation.Formats
         }
       return value_.ToString(CultureInfo.InvariantCulture);
     }
-    public static (object, bool, Func<object>) IntegerParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) IntegerParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       if (!int.TryParse(text, out var value)) return (text, false, error);
@@ -102,9 +103,9 @@ namespace CoreValidation.Formats
     }
 
     // real
-    public static string RealFormater(object value, Dictionary<string, object> param)
+    public static string RealFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       var value_ = Convert.ToSingle(value);
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
@@ -117,7 +118,7 @@ namespace CoreValidation.Formats
         }
       return value_.ToString("n4", CultureInfo.InvariantCulture);
     }
-    public static (object, bool, Func<object>) RealParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) RealParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       if (!float.TryParse(text, out var value)) return (text, false, error);
@@ -132,9 +133,9 @@ namespace CoreValidation.Formats
     }
 
     // money
-    public static string MoneyFormater(object value, Dictionary<string, object> param)
+    public static string MoneyFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       var value_ = Convert.ToDecimal(value);
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
@@ -146,7 +147,7 @@ namespace CoreValidation.Formats
         }
       return value_.ToString("c2", CultureInfo.InvariantCulture);
     }
-    public static (object, bool, Func<object>) MoneyParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) MoneyParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       text = _digitPatern.Replace(text, string.Empty); if (string.IsNullOrEmpty(text)) return (text, true, error);
@@ -163,9 +164,9 @@ namespace CoreValidation.Formats
     }
 
     // percent
-    public static string PercentFormater(object value, Dictionary<string, object> param)
+    public static string PercentFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       var value_ = Convert.ToSingle(value);
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
@@ -177,7 +178,7 @@ namespace CoreValidation.Formats
         }
       return value_.ToString("p2", CultureInfo.InvariantCulture);
     }
-    public static (object, bool, Func<object>) PercentParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) PercentParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       if (text[text.Length - 1] == '%') text = text.Substring(0, text.Length - 1);

@@ -1,5 +1,6 @@
 import assert from 'power-assert';
 
+import { nulFormat } from '../src.js/globals';
 import {
     emailFormater, emailParser,
     emailListFormater, emailListParser,
@@ -7,12 +8,12 @@ import {
     hostnameListFormater, hostnameListParser,
     uriFormater, uriParser,
     xmlFormater, xmlParser,
-} from '../src/formats/internet';
+} from '../src.js/formats/internet';
 
 describe('Email', () => {
     it('should format', () => {
-        expect(emailFormater(null)).toBe('');
-        expect(emailFormater('')).toBe('');
+        expect(emailFormater(null)).toBe(nulFormat);
+        expect(emailFormater('')).toBe(nulFormat);
         expect(emailFormater('anything')).toBe('anything');
     });
     it('should parse', () => {
@@ -25,8 +26,8 @@ describe('Email', () => {
 
 describe('Email List', () => {
     it('should format', () => {
-        expect(emailListFormater(null)).toBe('');
-        expect(emailListFormater('')).toBe('');
+        expect(emailListFormater(null)).toBe(nulFormat);
+        expect(emailListFormater('')).toBe(nulFormat);
         expect(emailListFormater('anything')).toBe('anything');
     });
     it('should parse', () => {
@@ -47,8 +48,8 @@ describe('Email List', () => {
 
 describe('Hostname', () => {
     it('should format', () => {
-        expect(hostnameFormater(null)).toBe('');
-        expect(hostnameFormater('')).toBe('');
+        expect(hostnameFormater(null)).toBe(nulFormat);
+        expect(hostnameFormater('')).toBe(nulFormat);
         expect(hostnameFormater('anything')).toBe('anything');
     });
     it('should parse', () => {
@@ -61,8 +62,8 @@ describe('Hostname', () => {
 
 describe('Hostname List', () => {
     it('should format', () => {
-        expect(hostnameListFormater(null)).toBe('');
-        expect(hostnameListFormater('')).toBe('');
+        expect(hostnameListFormater(null)).toBe(nulFormat);
+        expect(hostnameListFormater('')).toBe(nulFormat);
         expect(hostnameListFormater('anything')).toBe('anything');
     });
     it('should parse', () => {
@@ -83,8 +84,8 @@ describe('Hostname List', () => {
 
 describe('Uri', () => {
     it('should format', () => {
-        expect(uriFormater(null)).toBe('');
-        expect(uriFormater('')).toBe('');
+        expect(uriFormater(null)).toBe(nulFormat);
+        expect(uriFormater('')).toBe(nulFormat);
         expect(uriFormater('anything')).toBe('anything');
     });
     it('should parse', () => {
@@ -96,8 +97,8 @@ describe('Uri', () => {
 
 describe('Xml', () => {
     it('should format', () => {
-        expect(xmlFormater(null)).toBe('');
-        expect(xmlFormater('')).toBe('');
+        expect(xmlFormater(null)).toBe(nulFormat);
+        expect(xmlFormater('')).toBe(nulFormat);
         expect(xmlFormater('anything')).toBe('anything');
     });
     it('should parse', () => {

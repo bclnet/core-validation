@@ -1,6 +1,8 @@
+import { nulFormat } from '../globals';
+
 // text
 export const textFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   return value;
 };
 export const textParser = (text, param, error) => {
@@ -10,7 +12,7 @@ export const textParser = (text, param, error) => {
 
 // memo
 export const memoFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   return value;
 };
 export const memoParser = (text, param, error) => {
@@ -24,7 +26,7 @@ export const memoParser = (text, param, error) => {
 
 // regex
 export const regexFormater = (value, param) => {
-  if (!value) return '';
+  if (!value) return nulFormat;
   return value;
 };
 export const regexParser = (text, param, error) => {

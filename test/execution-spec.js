@@ -1,6 +1,6 @@
 import assert from 'power-assert';
 
-// import { rule } from '../src/index';
+// import { rule } from '../src.js/index';
 
 describe('Execution', () => {
     it('should', () => {

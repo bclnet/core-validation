@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 // execution
+export { params } from './globals';
 export {
   rule, ruleIf
 } from './execution';
@@ -22,9 +23,8 @@ function makeSymbol(name, symbol) {
   return symbol;
 }
 
-const globals = {};
 function makeParm(name, param) {
-  return Object.assign(globals[name] || {}, param);
+  return Object.assign(params[name] || {}, param);
 }
 
 function makeError(customError, defaultError) {
@@ -32,6 +32,10 @@ function makeError(customError, defaultError) {
   if (typeof customError === "function") return customError;
   return () => customError;
 }
+
+// options
+export const setParam = (name, param) => params[name] = param;
+const nulParser = (text, parsed, error) => [value, parsed, error];
 
 // error messages
 const requiredError = (fieldName) => `${fieldName} is required`;
@@ -41,13 +45,7 @@ const mustMatchError = (otherFieldName) => (fieldName) => `${fieldName} must mat
 const minLengthError = (length) => (fieldName) => `${fieldName} must be at least ${length} characters`;
 const maxLengthError = (length) => (fieldName) => `${fieldName} must be at most ${length} characters`;
 
-// options
-export function setGlobal(name, param) {
-  globals[name] = param;
-}
-
 // rules
-const nulParser = (text, parsed, error) => [value, parsed, error];
 export const required = (customError) => makeSymbol('required', function required(text) { return { format: () => undefined, parse: () => nulParser(text, text && (text.length || Object.keys(text).length), () => makeError(customError, requiredError)) } });
 export const custom = (param, customError, predicate) => makeSymbol('custom', function custom(text, state) { return { format: () => undefined, parse: () => nulParser(text, predicate(text, state, param), () => makeError(customError, generalError)) } });
 export const mustMatch = (field, fieldName, customError) => makeSymbol('mustMatch', function mustMatch(text, state) { return { format: () => undefined, parse: () => nulParser(text, state[field] === text, () => makeError(customError, mustMatchError(fieldName))) } });

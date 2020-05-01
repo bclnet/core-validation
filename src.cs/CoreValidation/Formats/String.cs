@@ -1,30 +1,31 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using static CoreValidation.Globals;
 
 namespace CoreValidation.Formats
 {
   public static class String
   {
     // text
-    public static string TextFormater(object value, Dictionary<string, object> param)
+    public static string TextFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       return value.ToString();
     }
-    public static (object, bool, Func<object>) TextParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) TextParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       return (text, true, error);
     }
 
     // memo
-    public static string MemoFormater(object value, Dictionary<string, object> param)
+    public static string MemoFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       return value.ToString();
     }
-    public static (object, bool, Func<object>) MemoParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) MemoParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       if (param != null)
@@ -36,12 +37,12 @@ namespace CoreValidation.Formats
     }
 
     // regex
-    public static string RegexFormater(object value, Dictionary<string, object> param)
+    public static string RegexFormater(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return null;
+      if (value == null) return NulFormat;
       return value.ToString();
     }
-    public static (object, bool, Func<object>) RegexParser(string text, Dictionary<string, object> param, Func<object> error)
+    public static (object, bool, Func<object>) RegexParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       { // check param
