@@ -1,8 +1,8 @@
 import { nulFormat } from '../globals';
 
 // bool
-export const boolFormater = (value, param) => {
-  if (value == undefined) return nulFormat;
+export const boolFormatter = (value, param) => {
+  if (!value || isNaN(value = parseInt(value))) return nulFormat;
   if (param && param.format) {
     switch (param.format) {
       case 'trueFalse': return value ? 'True' : 'False';
@@ -29,9 +29,8 @@ export const boolParser = (text, param, error) => {
 };
 
 // decimal
-export const decimalFormater = (value, param) => {
-  if (!value) return nulFormat;
-  value = parseFloat(value);
+export const decimalFormatter = (value, param) => {
+  if (!value || isNaN(value = parseFloat(value))) return nulFormat;
   if (param && param.format) {
     switch (param.format) {
       case 'comma': return Format_comma(value);
@@ -47,18 +46,17 @@ export const decimalParser = (text, param, error) => {
   if (!text) return [text, true, error];
   let value = parseFloat(text); if (isNaN(value)) return [text, false, error];
   if (param) { // check param
-    const minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [value, false, error];
-    const maxValue = param.maxValue; if (maxValue && value > parseFloat(maxValue)) return [value, false, error];
-    const precision = param.precision; if (precision && value !== Math_round(value, precision)) return [value, false, error];
+    const minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [text, false, error];
+    const maxValue = param.maxValue; if (maxValue && value > parseFloat(maxValue)) return [text, false, error];
+    const precision = param.precision; if (precision && value !== Math_round(value, precision)) return [text, false, error];
     const round = param.round; if (round) value = Math_round(value, round);
   }
   return [value, true, error];
 };
 
 // integer
-export const integerFormater = (value, param) => {
-  if (!value) return nulFormat;
-  value = parseInt(value);
+export const integerFormatter = (value, param) => {
+  if (!value || isNaN(value = parseInt(value))) return nulFormat;
   if (param && param.format) {
     switch (param.format) {
       case 'comma': return Format_comma(value);
@@ -77,35 +75,8 @@ export const integerParser = (text, param, error) => {
   if (!text) return [text, true, error];
   let value = parseInt(text); if (isNaN(value)) return [text, false, error];
   if (param) { // check param
-    const minValue = param.minValue; if (minValue && value < parseInt(minValue)) return [value, false, error];
-    const maxValue = param.maxValue; if (maxValue && value > parseInt(maxValue)) return [value, false, error];
-  }
-  return [value, true, error];
-};
-
-// real
-export const realFormater = (value, param) => {
-  if (!value) return nulFormat;
-  value = parseFloat(value);
-  if (param && param.format) {
-    switch (param.format) {
-      case 'comma': return Format_comma(value);
-      case 'n2': return value.toFixed(2);
-      case 'n3': return value.toFixed(3);
-      case 'pattern': return value.toFixed(param.pattern);
-      default: throw new Error('param.format invalid');
-    }
-  }
-  return value.toFixed(4);
-};
-export const realParser = (text, param, error) => {
-  if (!text) return [text, true, error];
-  let value = parseFloat(text); if (isNaN(value)) return [text, false, error];
-  if (param) { // check param
-    const minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [value, false, error];
-    const maxValue = param.maxValue; if (maxValue && value > parseFloat(maxValue)) return [value, false, error];
-    const precision = param.precision; if (precision && value !== Math_round(value, precision)) return [value, false, error];
-    const round = param.round; if (round) value = Math_round(value, round);
+    const minValue = param.minValue; if (minValue && value < parseInt(minValue)) return [text, false, error];
+    const maxValue = param.maxValue; if (maxValue && value > parseInt(maxValue)) return [text, false, error];
   }
   return [value, true, error];
 };
@@ -122,9 +93,8 @@ Number.prototype.formatMoney = function (c, d, t) {
     j = (j = i.length) > 3 ? j % 3 : 0;
   return s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : '');
 };
-export const moneyFormater = (value, param) => {
-  if (!value) return nulFormat;
-  value = parseFloat(value);
+export const moneyFormatter = (value, param) => {
+  if (!value || isNaN(value = parseFloat(value))) return nulFormat;
   if (param && param.format) {
     switch (param.format) {
       case 'c2': return `$${value.formatMoney(2)}`;
@@ -142,18 +112,17 @@ export const moneyParser = (text, param, error) => {
   let value = parseFloat(text); //if (isNaN(value)) return [text, false, error];
   value = Math_round(value, 4);
   if (param) { // check param
-    const minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [value, false, error];
-    const maxValue = param.maxValue; if (maxValue && value > parseFloat(maxValue)) return [value, false, error];
-    const precision = param.precision; if (precision && value !== Math_round(value, precision)) return [value, false, error];
+    const minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [text, false, error];
+    const maxValue = param.maxValue; if (maxValue && value > parseFloat(maxValue)) return [text, false, error];
+    const precision = param.precision; if (precision && value !== Math_round(value, precision)) return [text, false, error];
     const round = param.round; if (round) value = Math_round(value, round);
   }
   return [value, true, error];
 };
 
 // percent
-export const percentFormater = (value, param) => {
-  if (!value) return nulFormat;
-  value = parseFloat(value);
+export const percentFormatter = (value, param) => {
+  if (!value || isNaN(value = parseFloat(value))) return nulFormat;
   if (param && param.format) {
     switch (param.format) {
       case 'p2': return `${(value * 100).toFixed(2)}%`;
@@ -170,6 +139,32 @@ export const percentParser = (text, param, error) => {
   if (text[text.length - 1] === '%') text = text.substr(0, text.length - 1);
   let value = parseFloat(text); if (isNaN(value)) return [text, false, error];
   return [value / 100, true, error];
+};
+
+// real
+export const realFormatter = (value, param) => {
+  if (!value || isNaN(value = parseFloat(value))) return nulFormat;
+  if (param && param.format) {
+    switch (param.format) {
+      case 'comma': return Format_comma(value);
+      case 'n2': return value.toFixed(2);
+      case 'n3': return value.toFixed(3);
+      case 'pattern': return value.toFixed(param.pattern);
+      default: throw new Error('param.format invalid');
+    }
+  }
+  return value.toFixed(4);
+};
+export const realParser = (text, param, error) => {
+  if (!text) return [text, true, error];
+  let value = parseFloat(text); if (isNaN(value)) return [text, false, error];
+  if (param) { // check param
+    const minValue = param.minValue; if (minValue && value < parseFloat(minValue)) return [text, false, error];
+    const maxValue = param.maxValue; if (maxValue && value > parseFloat(maxValue)) return [text, false, error];
+    const precision = param.precision; if (precision && value !== Math_round(value, precision)) return [text, false, error];
+    const round = param.round; if (round) value = Math_round(value, round);
+  }
+  return [value, true, error];
 };
 
 /* istanbul ignore next */

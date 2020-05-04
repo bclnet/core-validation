@@ -11,12 +11,12 @@ namespace CoreValidation.Formats
     static readonly Regex _notAlphaDigitsPattern = new Regex(@"[^0-9a-z]", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
     // phone
-    public static string PhoneFormater(string value, IDictionary<string, object> param = null)
+    public static string PhoneFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (string.IsNullOrEmpty(value)) return NulFormat;
-      return value;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
+      return value.ToString();
     }
-    public static (string, bool, Func<object>) PhoneParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
+    public static (object, bool, Func<object>) PhoneParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       var countries = (param != null && param.TryGetValue("countries", out var z) && z is string v1 && v1.Length > 0 ? v1 : null) ?? "u";
@@ -41,12 +41,12 @@ namespace CoreValidation.Formats
     }
 
     // zip
-    public static string ZipFormater(string value, IDictionary<string, object> param = null)
+    public static string ZipFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (string.IsNullOrEmpty(value)) return NulFormat;
-      return value;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
+      return value.ToString();
     }
-    public static (string, bool, Func<object>) ZipParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
+    public static (object, bool, Func<object>) ZipParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
       var countries = (param != null && param.TryGetValue("countries", out var z) && z is string v1 && v1.Length > 0 ? v1 : null) ?? "u";

@@ -8,9 +8,9 @@ namespace CoreValidation.Formats
   public static class String
   {
     // text
-    public static string TextFormater(object value, IDictionary<string, object> param = null)
+    public static string TextFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
       return value.ToString();
     }
     public static (object, bool, Func<object>) TextParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
@@ -20,9 +20,9 @@ namespace CoreValidation.Formats
     }
 
     // memo
-    public static string MemoFormater(object value, IDictionary<string, object> param = null)
+    public static string MemoFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
       return value.ToString();
     }
     public static (object, bool, Func<object>) MemoParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
@@ -37,14 +37,15 @@ namespace CoreValidation.Formats
     }
 
     // regex
-    public static string RegexFormater(object value, IDictionary<string, object> param = null)
+    public static string RegexFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
       return value.ToString();
     }
     public static (object, bool, Func<object>) RegexParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
+      if (param != null)
       { // check param
         if (param.TryGetValue("pattern", out var z) && z is string pattern) { if (pattern != null && !new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline).IsMatch(text)) return (text, false, error); }
       }

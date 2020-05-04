@@ -1,17 +1,17 @@
 import assert from 'power-assert';
 
-import { nulFormat } from '../src.js/globals';
+import { nulFormat } from '../src/globals';
 import {
-    textFormater, textParser,
-    memoFormater, memoParser,
-    regexFormater, regexParser,
-} from '../src.js/formats/string';
+    textFormatter, textParser,
+    memoFormatter, memoParser,
+    regexFormatter, regexParser,
+} from '../src/formats/string';
 
 describe('Text', () => {
     it('should format', () => {
-        expect(textFormater(null)).toBe(nulFormat);
-        expect(textFormater('')).toBe(nulFormat);
-        expect(textFormater('12')).toBe('12');
+        expect(textFormatter(null)).toBe(nulFormat);
+        expect(textFormatter('')).toBe(nulFormat);
+        expect(textFormatter('12')).toBe('12');
     });
     it('should parse', () => {
         expect(textParser(null)).toEqual([null, true, undefined]);
@@ -22,9 +22,9 @@ describe('Text', () => {
 
 describe('Memo', () => {
     it('should format', () => {
-        expect(memoFormater(null)).toBe(nulFormat);
-        expect(memoFormater('')).toBe(nulFormat);
-        expect(memoFormater('12')).toBe('12');
+        expect(memoFormatter(null)).toBe(nulFormat);
+        expect(memoFormatter('')).toBe(nulFormat);
+        expect(memoFormatter('12')).toBe('12');
     });
     it('should parse', () => {
         expect(memoParser(null)).toEqual([null, true, undefined]);
@@ -46,9 +46,9 @@ describe('Memo', () => {
 
 describe('Regex', () => {
     it('should format', () => {
-        expect(regexFormater(null)).toBe(nulFormat);
-        expect(regexFormater('')).toBe(nulFormat);
-        expect(regexFormater('12')).toBe('12');
+        expect(regexFormatter(null)).toBe(nulFormat);
+        expect(regexFormatter('')).toBe(nulFormat);
+        expect(regexFormatter('12')).toBe('12');
     });
     it('should parse', () => {
         expect(regexParser(null)).toEqual([null, true, undefined]);

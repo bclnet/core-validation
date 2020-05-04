@@ -4,7 +4,7 @@ const _emailPattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".
 const _hostnamePattern = /^(?:([a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+([a-zA-Z]{2,6})(:\d{1,5})?)|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,5})?)$/;
 
 // email
-export const emailFormater = (value, param) => {
+export const emailFormatter = (value, param) => {
     if (!value) return nulFormat;
     return value;
 };
@@ -15,7 +15,7 @@ export const emailParser = (text, param, error) => {
 };
 
 // emailList
-export const emailListFormater = (value, param) => {
+export const emailListFormatter = (value, param) => {
     if (!value) return nulFormat;
     return value;
 };
@@ -36,7 +36,7 @@ export const emailListParser = (text, param, error) => {
 };
 
 // hostname
-export const hostnameFormater = (value, param) => {
+export const hostnameFormatter = (value, param) => {
     if (!value) return nulFormat;
     return value;
 };
@@ -47,7 +47,7 @@ export const hostnameParser = (text, param, error) => {
 };
 
 // hostnameList
-export const hostnameListFormater = (value, param) => {
+export const hostnameListFormatter = (value, param) => {
     if (!value) return nulFormat;
     return value;
 };
@@ -68,7 +68,7 @@ export const hostnameListParser = (text, param, error) => {
 };
 
 // uri
-export const uriFormater = (value, param) => {
+export const uriFormatter = (value, param) => {
     if (!value) return nulFormat;
     return value;
 };
@@ -78,7 +78,7 @@ export const uriParser = (text, param, error) => {
 };
 
 // xml
-export const xmlFormater = (value, param) => {
+export const xmlFormatter = (value, param) => {
     if (!value) return nulFormat;
     return value;
 };

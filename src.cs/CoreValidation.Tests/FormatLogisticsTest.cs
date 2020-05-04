@@ -12,9 +12,9 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(PhoneFormater(null), NulFormat);
-        Assert2.Equal(PhoneFormater(""), NulFormat);
-        Assert2.Equal(PhoneFormater("816-304-4341"), "816-304-4341");
+        Assert2.Equal(PhoneFormatter(null), NulFormat);
+        Assert2.Equal(PhoneFormatter(""), NulFormat);
+        Assert2.Equal(PhoneFormatter("816-304-4341"), "816-304-4341");
       }
       //should parse
       {
@@ -71,9 +71,9 @@ namespace CoreValidation.Tests
     {
       // should format", () =>
       {
-        Assert2.Equal(ZipFormater(null), NulFormat);
-        Assert2.Equal(ZipFormater(""), NulFormat);
-        Assert2.Equal(ZipFormater("66211", new { }.ToParam()), "66211");
+        Assert2.Equal(ZipFormatter(null), NulFormat);
+        Assert2.Equal(ZipFormatter(""), NulFormat);
+        Assert2.Equal(ZipFormatter("66211", new { }.ToParam()), "66211");
       }
       // should parse
       {

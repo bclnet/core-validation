@@ -26,13 +26,13 @@ export const objectInputParser = ($) => {
 };
 
 // accessors
-export const create = function (binding, defaultRules) {
+export const create = function (binding) {
   return ($this) => {
     return {
       // STATE
       $this,
       binding,
-      defaultRules: null,
+      rules: null,
       inputParser: eventTargetInputParser,
       inputHandler: null,
       reset: function () {
@@ -61,20 +61,20 @@ export const create = function (binding, defaultRules) {
 
       // RUN
       getRules: function (opts, field) {
-        const rules = (opts || {}).rules || this.defaultRules || defaultRules;
+        const rules = (opts || {}).rules || this.rules;
         const state = binding.getState($this, opts);
         if (field) return rules ? find(state, rules, field) : null;
         return rules ? flatten(state, rules) : [];
       },
       getFormats: function (opts, field) {
-        const rules = (opts || {}).rules || this.defaultRules || defaultRules;
+        const rules = (opts || {}).rules || this.rules;
         const state = binding.getState($this, opts);
         const values = rules ? format(state, rules, field) : {};
         if (field && state[field] === values[field]) return {};
         return values;
       },
       runRules: function (opts, field, flag) {
-        const rules = (opts || {}).rules || this.defaultRules || defaultRules;
+        const rules = (opts || {}).rules || this.rules;
         const state = binding.getState($this, opts);
         const errors = rules ? validate(state, rules, field) : {};
         errors._flag = flag ? flag : binding.getErrors($this)._flag;
@@ -82,7 +82,7 @@ export const create = function (binding, defaultRules) {
         return errors;
       },
       runFormats: function (opts, field) {
-        const rules = (opts || {}).rules || this.defaultRules || defaultRules;
+        const rules = (opts || {}).rules || this.rules;
         const state = binding.getState($this, opts);
         const values = rules ? format(state, rules, field) : {};
         if (field && state[field] === values[field]) return {};

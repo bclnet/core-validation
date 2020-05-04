@@ -10,10 +10,51 @@ namespace CoreValidation.Formats
   {
     static readonly Regex _digitPatern = new Regex(@"[^0-9\.]+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-    // bool
-    public static string BoolFormater(object value, IDictionary<string, object> param = null)
+    static bool TryBool(object value, out bool result)
     {
-      if (value == null || !(value is bool value_)) return NulFormat;
+      try { result = Convert.ToBoolean(value); return true; }
+      catch (FormatException)
+      {
+        try { result = Convert.ToInt32(value) != 0; return true; }
+        catch (FormatException) { result = default; return false; }
+      }
+    }
+
+    static bool TryDecimal(object value, out decimal result)
+    {
+      if (value is float f && float.IsNaN(f)) { result = default; return false; }
+      try { result = Convert.ToDecimal(value); return true; }
+      catch (FormatException)
+      {
+        result = default; return false;
+      }
+    }
+
+    static bool TryDouble(object value, out double result)
+    {
+      if (value is float f && float.IsNaN(f)) { result = default; return false; }
+      if (value is double d && double.IsNaN(d)) { result = default; return false; }
+      try { result = Convert.ToDouble(value); return true; }
+      catch (FormatException)
+      {
+        result = default; return false;
+      }
+    }
+
+    static bool TryInt32(object value, out int result)
+    {
+      if (value is float f && float.IsNaN(f)) { result = default; return false; }
+      try { result = Convert.ToInt32(value); return true; }
+      catch (FormatException)
+      {
+        result = default; return false;
+      }
+    }
+
+    // bool
+    public static string BoolFormatter(object value, IDictionary<string, object> param = null)
+    {
+      if (value == null || (value is string h && h.Length == 0) || !TryBool(value, out var value_)) return NulFormat;
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
         {
@@ -42,14 +83,13 @@ namespace CoreValidation.Formats
     }
 
     // decimal
-    public static string DecimalFormater(object value, IDictionary<string, object> param = null)
+    public static string DecimalFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
-      var value_ = Convert.ToDecimal(value);
+      if (value == null || (value is string h && h.Length == 0) || !TryDecimal(value, out var value_)) return NulFormat;
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
         {
-          case "comma": return value_.ToString("#,##0", CultureInfo.InvariantCulture);
+          case "comma": return value_.ToString("#,#.####", CultureInfo.InvariantCulture);
           case "n2": return value_.ToString("n2", CultureInfo.InvariantCulture);
           case "n3": return value_.ToString("n3", CultureInfo.InvariantCulture);
           case "pattern": return param.TryGetValue("pattern", out z) && z is string pattern ? value_.ToString(pattern, CultureInfo.InvariantCulture) : string.Empty;
@@ -65,24 +105,23 @@ namespace CoreValidation.Formats
       { // check param
         if (param.TryGetValue("minValue", out var z) && z is decimal minValue) { if (minValue != 0 && value < minValue) return (text, false, error); }
         if (param.TryGetValue("maxValue", out z) && z is decimal maxValue) { if (maxValue != 0 && value > maxValue) return (text, false, error); }
-        if (param.TryGetValue("precision", out z) && z is int precision) { if (precision != 0 && value < Math.Round(value, precision)) return (text, false, error); }
+        if (param.TryGetValue("precision", out z) && z is int precision) { if (precision != 0 && value != Math.Round(value, precision)) return (text, false, error); }
         if (param.TryGetValue("round", out z) && z is int round) { if (round != 0) value = Math.Round(value, round); }
       }
       return (value, true, error);
     }
 
     // integer
-    public static string IntegerFormater(object value, IDictionary<string, object> param = null)
+    public static string IntegerFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
-      var value_ = Convert.ToInt32(value);
+      if (value == null || (value is string h && h.Length == 0) || !TryInt32(value, out var value_)) return NulFormat;
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
         {
-          case "comma": return value_.ToString("#,##0", CultureInfo.InvariantCulture);
+          case "comma": return value_.ToString("#,#.####", CultureInfo.InvariantCulture);
           case "byte":
-            var radix = (int)Math.Floor((float)(value_.ToString().Length - 1) / 3);
-            if (radix > 0) return $"{Math.Round((double)(value_ / (1 << 10 * radix)), 2)} {"  KBMBGB".Substring(radix << 1, 2)}";
+            var radix = (int)Math.Floor((decimal)(value_.ToString().Length - 1) / 3);
+            if (radix > 0) return $"{Math.Round(value_ / (decimal)(1 << 10 * radix), 2)} {"  KBMBGB".Substring(radix << 1, 2)}";
             if (value_ == 1) return "1 byte";
             return $"{value_} bytes";
           case "pattern": return param.TryGetValue("pattern", out z) && z is string pattern ? value_.ToString(pattern, CultureInfo.InvariantCulture) : string.Empty;
@@ -93,24 +132,77 @@ namespace CoreValidation.Formats
     public static (object, bool, Func<object>) IntegerParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
-      if (!int.TryParse(text, out var value)) return (text, false, error);
+      if (!decimal.TryParse(text, out var v)) return (text, false, error);
+      var value = (int)v;
       if (param != null)
       { // check param
-        if (param.TryGetValue("minValue", out var z) && z is decimal minValue) { if (minValue != 0 && value < minValue) return (text, false, error); }
-        if (param.TryGetValue("maxValue", out z) && z is decimal maxValue) { if (maxValue != 0 && value > maxValue) return (text, false, error); }
+        if (param.TryGetValue("minValue", out var z) && z is int minValue) { if (minValue != 0 && value < minValue) return (text, false, error); }
+        if (param.TryGetValue("maxValue", out z) && z is int maxValue) { if (maxValue != 0 && value > maxValue) return (text, false, error); }
       }
       return (value, true, error);
     }
 
-    // real
-    public static string RealFormater(object value, IDictionary<string, object> param = null)
+    // money
+    public static string MoneyFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
-      var value_ = Convert.ToSingle(value);
+      if (value == null || (value is string h && h.Length == 0) || !TryDecimal(value, out var value_)) return NulFormat;
       if (param != null && param.TryGetValue("format", out var z) && z is string format)
         switch (format)
         {
-          case "comma": return value_.ToString("#,##0", CultureInfo.InvariantCulture);
+          case "c2": return value_.ToString("c2");
+          case "c3": return value_.ToString("c3");
+          case "pattern": return param.TryGetValue("pattern", out z) && z is string pattern ? value_.ToString(pattern) : string.Empty;
+          default: throw new ArgumentOutOfRangeException(nameof(param), "param.format invalid");
+        }
+      return value_.ToString("c2");
+    }
+    public static (object, bool, Func<object>) MoneyParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
+    {
+      if (string.IsNullOrEmpty(text)) return (text, true, error);
+      text = _digitPatern.Replace(text, string.Empty); if (string.IsNullOrEmpty(text)) return (text, false, error);
+      if (!decimal.TryParse(text, out var value)) return (text, false, error);
+      value = Math.Round(value, 4);
+      if (param != null)
+      { // check param
+        if (param.TryGetValue("minValue", out var z) && z is decimal minValue) { if (minValue != 0 && value < minValue) return (text, false, error); }
+        if (param.TryGetValue("maxValue", out z) && z is decimal maxValue) { if (maxValue != 0 && value > maxValue) return (text, false, error); }
+        if (param.TryGetValue("precision", out z) && z is int precision) { if (precision != 0 && value != Math.Round(value, precision)) return (text, false, error); }
+        if (param.TryGetValue("round", out z) && z is int round) { if (round != 0) value = Math.Round(value, round); }
+      }
+      return (value, true, error);
+    }
+
+    // percent
+    public static string PercentFormatter(object value, IDictionary<string, object> param = null)
+    {
+      if (value == null || (value is string h && h.Length == 0) || !TryDouble(value, out var value_)) return NulFormat;
+      if (param != null && param.TryGetValue("format", out var z) && z is string format)
+        switch (format)
+        {
+          case "p2": return value_.ToString("p2");
+          case "p3": return value_.ToString("p3");
+          case "p4": return value_.ToString("p4");
+          case "pattern": return param.TryGetValue("pattern", out z) && z is string pattern ? value_.ToString(pattern) : string.Empty;
+          default: throw new ArgumentOutOfRangeException(nameof(param), "param.format invalid");
+        }
+      return value_.ToString("p2");
+    }
+    public static (object, bool, Func<object>) PercentParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
+    {
+      if (string.IsNullOrEmpty(text)) return (text, true, error);
+      if (text[text.Length - 1] == '%') text = text.Substring(0, text.Length - 1);
+      if (!double.TryParse(text, out var value) || double.IsNaN(value)) return (text, false, error);
+      return (value / 100, true, error);
+    }
+
+    // real
+    public static string RealFormatter(object value, IDictionary<string, object> param = null)
+    {
+      if (value == null || (value is string h && h.Length == 0) || !TryDouble(value, out var value_)) return NulFormat;
+      if (param != null && param.TryGetValue("format", out var z) && z is string format)
+        switch (format)
+        {
+          case "comma": return value_.ToString("#,#.####", CultureInfo.InvariantCulture);
           case "n2": return value_.ToString("n2", CultureInfo.InvariantCulture);
           case "n3": return value_.ToString("n3", CultureInfo.InvariantCulture);
           case "pattern": return param.TryGetValue("pattern", out z) && z is string pattern ? value_.ToString(pattern, CultureInfo.InvariantCulture) : string.Empty;
@@ -121,69 +213,15 @@ namespace CoreValidation.Formats
     public static (object, bool, Func<object>) RealParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
     {
       if (string.IsNullOrEmpty(text)) return (text, true, error);
-      if (!float.TryParse(text, out var value)) return (text, false, error);
+      if (!double.TryParse(text, out var value) || double.IsNaN(value)) return (text, false, error);
       if (param != null)
       { // check param
-        if (param.TryGetValue("minValue", out var z) && z is float minValue) { if (minValue != 0 && value < minValue) return (text, false, error); }
-        if (param.TryGetValue("maxValue", out z) && z is float maxValue) { if (maxValue != 0 && value > maxValue) return (text, false, error); }
-        if (param.TryGetValue("precision", out z) && z is int precision) { if (precision != 0 && value < Math.Round(value, precision)) return (text, false, error); }
-        if (param.TryGetValue("round", out z) && z is int round) { if (round != 0) value = (float)Math.Round(value, round); }
-      }
-      return (value, true, error);
-    }
-
-    // money
-    public static string MoneyFormater(object value, IDictionary<string, object> param = null)
-    {
-      if (value == null) return NulFormat;
-      var value_ = Convert.ToDecimal(value);
-      if (param != null && param.TryGetValue("format", out var z) && z is string format)
-        switch (format)
-        {
-          case "c2": return value_.ToString("c2", CultureInfo.InvariantCulture);
-          case "c3": return value_.ToString("c3", CultureInfo.InvariantCulture);
-          case "pattern": return param.TryGetValue("pattern", out z) && z is string pattern ? value_.ToString(pattern, CultureInfo.InvariantCulture) : string.Empty;
-          default: throw new ArgumentOutOfRangeException(nameof(param), "param.format invalid");
-        }
-      return value_.ToString("c2", CultureInfo.InvariantCulture);
-    }
-    public static (object, bool, Func<object>) MoneyParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
-    {
-      if (string.IsNullOrEmpty(text)) return (text, true, error);
-      text = _digitPatern.Replace(text, string.Empty); if (string.IsNullOrEmpty(text)) return (text, true, error);
-      if (!decimal.TryParse(text, out var value)) return (text, false, error);
-      value = Math.Round(value, 4);
-      if (param != null)
-      { // check param
-        if (param.TryGetValue("minValue", out var z) && z is decimal minValue) { if (minValue != 0 && value < minValue) return (text, false, error); }
-        if (param.TryGetValue("maxValue", out z) && z is decimal maxValue) { if (maxValue != 0 && value > maxValue) return (text, false, error); }
-        if (param.TryGetValue("precision", out z) && z is int precision) { if (precision != 0 && value < Math.Round(value, precision)) return (text, false, error); }
+        if (param.TryGetValue("minValue", out var z) && z is double minValue) { if (minValue != 0 && value < minValue) return (text, false, error); }
+        if (param.TryGetValue("maxValue", out z) && z is double maxValue) { if (maxValue != 0 && value > maxValue) return (text, false, error); }
+        if (param.TryGetValue("precision", out z) && z is int precision) { if (precision != 0 && value != Math.Round(value, precision)) return (text, false, error); }
         if (param.TryGetValue("round", out z) && z is int round) { if (round != 0) value = Math.Round(value, round); }
       }
       return (value, true, error);
-    }
-
-    // percent
-    public static string PercentFormater(object value, IDictionary<string, object> param = null)
-    {
-      if (value == null) return NulFormat;
-      var value_ = Convert.ToSingle(value);
-      if (param != null && param.TryGetValue("format", out var z) && z is string format)
-        switch (format)
-        {
-          case "p2": return value_.ToString("p2", CultureInfo.InvariantCulture);
-          case "p3": return value_.ToString("p3", CultureInfo.InvariantCulture);
-          case "pattern": return param.TryGetValue("pattern", out z) && z is string pattern ? value_.ToString(pattern, CultureInfo.InvariantCulture) : string.Empty;
-          default: throw new ArgumentOutOfRangeException(nameof(param), "param.format invalid");
-        }
-      return value_.ToString("p2", CultureInfo.InvariantCulture);
-    }
-    public static (object, bool, Func<object>) PercentParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
-    {
-      if (string.IsNullOrEmpty(text)) return (text, true, error);
-      if (text[text.Length - 1] == '%') text = text.Substring(0, text.Length - 1);
-      if (!float.TryParse(text, out var value)) return (text, false, error);
-      return (value / 100, true, error);
     }
   }
 }

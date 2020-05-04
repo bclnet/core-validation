@@ -11,9 +11,9 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(TextFormater(null), NulFormat);
-        Assert2.Equal(TextFormater(""), NulFormat);
-        Assert2.Equal(TextFormater("12"), "12");
+        Assert2.Equal(TextFormatter(null), NulFormat);
+        Assert2.Equal(TextFormatter(""), NulFormat);
+        Assert2.Equal(TextFormatter("12"), "12");
       }
       // should parse
       {
@@ -28,9 +28,9 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(MemoFormater(null), NulFormat);
-        Assert2.Equal(MemoFormater(""), NulFormat);
-        Assert2.Equal(MemoFormater("12"), "12");
+        Assert2.Equal(MemoFormatter(null), NulFormat);
+        Assert2.Equal(MemoFormatter(""), NulFormat);
+        Assert2.Equal(MemoFormatter("12"), "12");
       }
       // should parse
       {
@@ -58,9 +58,9 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(RegexFormater(null), NulFormat);
-        Assert2.Equal(RegexFormater(""), NulFormat);
-        Assert2.Equal(RegexFormater("12"), "12");
+        Assert2.Equal(RegexFormatter(null), NulFormat);
+        Assert2.Equal(RegexFormatter(""), NulFormat);
+        Assert2.Equal(RegexFormatter("12"), "12");
       }
       // should parse
       {

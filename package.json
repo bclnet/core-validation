@@ -20,7 +20,7 @@
     "lint": "npm run lint:src && npm run lint:test",
     "lint:src": "eslint --ext .js src/**",
     "lint:test": "eslint --ext .js test/**",
-    "build": "babel -d lib/ src.js/"
+    "build": "babel -d lib/ src/"
   },
   "files": [
     "lib"

@@ -12,39 +12,41 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(BoolFormater(null), NulFormat);
-        Assert2.Equal(BoolFormater(""), "No");
-        Assert2.Equal(BoolFormater("12"), "Yes");
+        Assert2.Equal(BoolFormatter(null), NulFormat);
+        Assert2.Equal(BoolFormatter(""), NulFormat);
+        Assert2.Equal(BoolFormatter("af"), NulFormat);
+        Assert2.Equal(BoolFormatter("0"), "No");
+        Assert2.Equal(BoolFormatter("12"), "Yes");
       }
       // should format: *
       {
         var param = new { format = "*" }.ToParam();
-        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("12", param));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormatter("12", param));
       }
       // should format: trueFalse
       {
         var param = new { format = "trueFalse" }.ToParam();
-        Assert2.Equal(BoolFormater("12", param), "True");
-        Assert2.Equal(BoolFormater("", param), "False");
+        Assert2.Equal(BoolFormatter("12", param), "True");
+        Assert2.Equal(BoolFormatter("0", param), "False");
       }
       // should format: yesNo
       {
         var param = new { format = "yesNo" }.ToParam();
-        Assert2.Equal(BoolFormater("12", param), "Yes");
-        Assert2.Equal(BoolFormater("", param), "No");
+        Assert2.Equal(BoolFormatter("12", param), "Yes");
+        Assert2.Equal(BoolFormatter("0", param), "No");
       }
       // should format: values no values
       {
-        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("12", new { format = "values" }.ToParam()));
-        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("", new { format = "values" }.ToParam()));
-        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("12", new { format = "values", values = "" }.ToParam()));
-        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("1", new { format = "values", values = (string)null }.ToParam()));
-        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("s", new { format = "values", values = "1" }.ToParam()));
-        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("af", new { format = "values", values = new string[0] }.ToParam()));
-        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("af", new { format = "values", values = new[] { 1 } }.ToParam()));
-        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormater("af", new { format = "values", values = (1, 2, 3) }.ToParam()));
-        Assert2.Equal(BoolFormater("af", new { format = "values", values = new[] { 1, 0 } }.ToParam()), "1");
-        Assert2.Equal(BoolFormater("", new { format = "values", values = new[] { 1, 0 } }.ToParam()), "0");
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormatter("12", new { format = "values" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormatter("12", new { format = "values", values = "" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormatter("1", new { format = "values", values = (string)null }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormatter("1", new { format = "values", values = "1" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormatter("1", new { format = "values", values = new string[0] }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormatter("1", new { format = "values", values = new[] { "1" } }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => BoolFormatter("1", new { format = "values", values = new[] { "1", "2", "3" } }.ToParam()));
+        Assert2.Equal(BoolFormatter("af", new { format = "values", values = new[] { "1", "0" } }.ToParam()), NulFormat);
+        Assert2.Equal(BoolFormatter("12", new { format = "values", values = new[] { "1", "0" } }.ToParam()), "1");
+        Assert2.Equal(BoolFormatter("0", new { format = "values", values = new[] { "1", "0" } }.ToParam()), "0");
       }
       // should parse
       {
@@ -69,32 +71,32 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(DecimalFormater(null), NulFormat);
-        Assert2.Equal(DecimalFormater(""), NulFormat);
-        Assert2.Equal(DecimalFormater("12"), "12.0000");
-        Assert2.Equal(DecimalFormater("ABC"), "NaN");
+        Assert2.Equal(DecimalFormatter(null), NulFormat);
+        Assert2.Equal(DecimalFormatter(""), NulFormat);
+        Assert2.Equal(DecimalFormatter("ABC"), NulFormat);
+        Assert2.Equal(DecimalFormatter("12"), "12.0000");
       }
       // should format: *
       {
-        Assert.Throws<ArgumentOutOfRangeException>(() => DecimalFormater("12", new { format = "*" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => DecimalFormatter("12", new { format = "*" }.ToParam()));
       }
       // should format: comma
       {
-        Assert2.Equal(DecimalFormater(float.NaN, new { format = "comma" }.ToParam()), NulFormat);
-        Assert2.Equal(DecimalFormater("1232323", new { format = "comma" }.ToParam()), "1,232,323");
-        Assert2.Equal(DecimalFormater("1232323.234", new { format = "comma" }.ToParam()), "1,232,323.234");
-        Assert2.Equal(DecimalFormater("12", new { format = "comma" }.ToParam()), "12");
-        Assert2.Equal(DecimalFormater("12.234", new { format = "comma" }.ToParam()), "12.234");
+        Assert2.Equal(DecimalFormatter(float.NaN, new { format = "comma" }.ToParam()), NulFormat);
+        Assert2.Equal(DecimalFormatter("1232323", new { format = "comma" }.ToParam()), "1,232,323");
+        Assert2.Equal(DecimalFormatter("1232323.234", new { format = "comma" }.ToParam()), "1,232,323.234");
+        Assert2.Equal(DecimalFormatter("12", new { format = "comma" }.ToParam()), "12");
+        Assert2.Equal(DecimalFormatter("12.234", new { format = "comma" }.ToParam()), "12.234");
       }
       // should format: nx
       {
-        Assert2.Equal(DecimalFormater("12", new { format = "n2" }.ToParam()), "12.00");
-        Assert2.Equal(DecimalFormater("12", new { format = "n3" }.ToParam()), "12.000");
+        Assert2.Equal(DecimalFormatter("12", new { format = "n2" }.ToParam()), "12.00");
+        Assert2.Equal(DecimalFormatter("12", new { format = "n3" }.ToParam()), "12.000");
       }
       // should format: pattern
       {
-        Assert2.Equal(DecimalFormater("12", new { format = "pattern", pattern = "2" }.ToParam()), "12.00");
-        Assert2.Equal(DecimalFormater("12", new { format = "pattern", pattern = "A" }.ToParam()), "12");
+        Assert2.Equal(DecimalFormatter("12", new { format = "pattern", pattern = "n2" }.ToParam()), "12.00");
+        Assert2.Equal(DecimalFormatter("12", new { format = "pattern", pattern = "#" }.ToParam()), "12");
       }
       //  should parse
       {
@@ -102,27 +104,27 @@ namespace CoreValidation.Tests
         Assert2.Equal(DecimalParser(""), ("", true, null));
         Assert2.Equal(DecimalParser("NaN"), ("NaN", false, null));
         //Assert2.Equal(DecimalParser(NaN), (NaN, true, null));
-        Assert2.Equal(DecimalParser("12"), (12, true, null));
+        Assert2.Equal(DecimalParser("12"), (12M, true, null));
       }
       // should parse: minValue
       {
-        Assert2.Equal(DecimalParser("13.0", new { minValue = 12 }.ToParam()), (13, true, null));
-        Assert2.Equal(DecimalParser("12.0", new { minValue = 13 }.ToParam()), (12, false, null));
+        Assert2.Equal(DecimalParser("13.0", new { minValue = 12M }.ToParam()), (13M, true, null));
+        Assert2.Equal(DecimalParser("12.0", new { minValue = 13M }.ToParam()), ("12.0", false, null));
       }
       // should parse: maxValue
       {
-        Assert2.Equal(DecimalParser("12.0", new { maxValue = 23 }.ToParam()), (12, true, null));
-        Assert2.Equal(DecimalParser("22.0", new { maxValue = 13 }.ToParam()), (22, false, null));
+        Assert2.Equal(DecimalParser("12.0", new { maxValue = 23M }.ToParam()), (12M, true, null));
+        Assert2.Equal(DecimalParser("22.0", new { maxValue = 13M }.ToParam()), ("22.0", false, null));
       }
       // should parse: precision
       {
-        Assert2.Equal(DecimalParser("22.123", new { precision = 2 }.ToParam()), (22.123, false, null));
-        Assert2.Equal(DecimalParser("22.12", new { precision = 2 }.ToParam()), (22.12, true, null));
+        Assert2.Equal(DecimalParser("22.123", new { precision = 2 }.ToParam()), ("22.123", false, null));
+        Assert2.Equal(DecimalParser("22.12", new { precision = 2 }.ToParam()), (22.12M, true, null));
       }
       // should parse: round
       {
-        Assert2.Equal(DecimalParser("22.123", new { round = 1 }.ToParam()), (22.1, true, null));
-        Assert2.Equal(DecimalParser("22.123", new { round = 2 }.ToParam()), (22.12, true, null));
+        Assert2.Equal(DecimalParser("22.123", new { round = 1 }.ToParam()), (22.1M, true, null));
+        Assert2.Equal(DecimalParser("22.123", new { round = 2 }.ToParam()), (22.12M, true, null));
       }
     }
 
@@ -131,33 +133,33 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(IntegerFormater(null), NulFormat);
-        Assert2.Equal(IntegerFormater(""), NulFormat);
-        Assert2.Equal(IntegerFormater("A"), "NaN");
-        Assert2.Equal(IntegerFormater("12"), "12");
+        Assert2.Equal(IntegerFormatter(null), NulFormat);
+        Assert2.Equal(IntegerFormatter(""), NulFormat);
+        Assert2.Equal(IntegerFormatter("A"), NulFormat);
+        Assert2.Equal(IntegerFormatter("12"), "12");
       }
       // should format: *
       {
-        Assert.Throws<ArgumentOutOfRangeException>(() => IntegerFormater("12", new { format = "*" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => IntegerFormatter("12", new { format = "*" }.ToParam()));
       }
       // should format: comma
       {
-        Assert2.Equal(IntegerFormater(float.NaN, new { format = "comma" }.ToParam()), NulFormat);
-        Assert2.Equal(IntegerFormater("1232323", new { format = "comma" }.ToParam()), "1,232,323");
-        Assert2.Equal(IntegerFormater("12", new { format = "comma" }.ToParam()), "12");
+        Assert2.Equal(IntegerFormatter(float.NaN, new { format = "comma" }.ToParam()), NulFormat);
+        Assert2.Equal(IntegerFormatter("1232323", new { format = "comma" }.ToParam()), "1,232,323");
+        Assert2.Equal(IntegerFormatter("12", new { format = "comma" }.ToParam()), "12");
       }
       // should format: byte
       {
         var param = new { format = "byte" }.ToParam();
-        Assert2.Equal(IntegerFormater("1232323", param), "1.18 MB");
-        Assert2.Equal(IntegerFormater("2048", param), "2 KB");
-        Assert2.Equal(IntegerFormater("2", param), "2 bytes");
-        Assert2.Equal(IntegerFormater("1", param), "1 byte");
-        Assert2.Equal(IntegerFormater("0", param), "0 bytes");
+        Assert2.Equal(IntegerFormatter("1232323", param), "1.18 MB");
+        Assert2.Equal(IntegerFormatter("2048", param), "2 KB");
+        Assert2.Equal(IntegerFormatter("2", param), "2 bytes");
+        Assert2.Equal(IntegerFormatter("1", param), "1 byte");
+        Assert2.Equal(IntegerFormatter("0", param), "0 bytes");
       }
       // should format: pattern
       {
-        Assert2.Equal(IntegerFormater("1232323", new { format = "pattern", pattern = 10 }.ToParam()), "1232323");
+        Assert2.Equal(IntegerFormatter("1232323", new { format = "pattern", pattern = "#" }.ToParam()), "1232323");
       }
       // should parse
       {
@@ -170,74 +172,12 @@ namespace CoreValidation.Tests
       // should parse: minValue
       {
         Assert2.Equal(IntegerParser("13.0", new { minValue = 12 }.ToParam()), (13, true, null));
-        Assert2.Equal(IntegerParser("12.0", new { minValue = 13 }.ToParam()), (12, false, null));
+        Assert2.Equal(IntegerParser("12.0", new { minValue = 13 }.ToParam()), ("12.0", false, null));
       }
       // should parse: maxValue
       {
         Assert2.Equal(IntegerParser("12.0", new { maxValue = 23 }.ToParam()), (12, true, null));
-        Assert2.Equal(IntegerParser("22.0", new { maxValue = 13 }.ToParam()), (22, false, null));
-      }
-    }
-
-    [Fact]
-    public void Real()
-    {
-      // should format
-      {
-        Assert2.Equal(RealFormater(null), NulFormat);
-        Assert2.Equal(RealFormater(""), NulFormat);
-        Assert2.Equal(RealFormater("A"), "NaN");
-        Assert2.Equal(RealFormater("12"), "12.0000");
-      }
-      // should format: *
-      {
-        Assert.Throws<ArgumentOutOfRangeException>(() => RealFormater("12", new { format = "*" }.ToParam()));
-      }
-      // should format: comma
-      {
-        Assert2.Equal(RealFormater(float.NaN, new { format = "comma" }.ToParam()), NulFormat);
-        Assert2.Equal(RealFormater("1232323", new { format = "comma" }.ToParam()), "1,232,323");
-        Assert2.Equal(RealFormater("1232323.234", new { format = "comma" }.ToParam()), "1,232,323.234");
-        Assert2.Equal(RealFormater("12", new { format = "comma" }.ToParam()), "12");
-        Assert2.Equal(RealFormater("12.234", new { format = "comma" }.ToParam()), "12.234");
-      }
-      // should format: nx
-      {
-        Assert2.Equal(RealFormater("12", new { format = "n2" }.ToParam()), "12.00");
-        Assert2.Equal(RealFormater("12", new { format = "n3" }.ToParam()), "12.000");
-      }
-      // should format: pattern
-      {
-        Assert2.Equal(RealFormater("12", new { format = "pattern", pattern = "2" }.ToParam()), "12.00");
-        Assert2.Equal(RealFormater("12", new { format = "pattern", pattern = "A" }.ToParam()), "12");
-      }
-      // should parse
-      {
-        Assert2.Equal(RealParser(null), (null, true, null));
-        Assert2.Equal(RealParser(""), ("", true, null));
-        Assert2.Equal(RealParser("NaN"), ("NaN", false, null));
-        //Assert2.Equal(RealParser(NaN), (NaN, true, null));
-        Assert2.Equal(RealParser("12"), (12, true, null));
-      }
-      // should parse: minValue
-      {
-        Assert2.Equal(RealParser("13.0", new { minValue = 12 }.ToParam()), (13, true, null));
-        Assert2.Equal(RealParser("12.0", new { minValue = 13 }.ToParam()), (12, false, null));
-      }
-      // should parse: maxValue
-      {
-        Assert2.Equal(RealParser("12.0", new { maxValue = 23 }.ToParam()), (12, true, null));
-        Assert2.Equal(RealParser("22.0", new { maxValue = 13 }.ToParam()), (22, false, null));
-      }
-      // should parse: precision
-      {
-        Assert2.Equal(RealParser("22.123", new { precision = 2 }.ToParam()), (22.123, false, null));
-        Assert2.Equal(RealParser("22.12", new { precision = 2 }.ToParam()), (22.12, true, null));
-      }
-      // should parse: round
-      {
-        Assert2.Equal(RealParser("22.123", new { round = 1 }.ToParam()), (22.1, true, null));
-        Assert2.Equal(RealParser("22.123", new { round = 2 }.ToParam()), (22.12, true, null));
+        Assert2.Equal(IntegerParser("22.0", new { maxValue = 13 }.ToParam()), ("22.0", false, null));
       }
     }
 
@@ -246,24 +186,24 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(MoneyFormater(null), NulFormat);
-        Assert2.Equal(MoneyFormater(""), NulFormat);
-        Assert2.Equal(MoneyFormater("A"), "$0.00");
-        Assert2.Equal(MoneyFormater("12"), "$12.00");
+        Assert2.Equal(MoneyFormatter(null), NulFormat);
+        Assert2.Equal(MoneyFormatter(""), NulFormat);
+        Assert2.Equal(MoneyFormatter("A"), NulFormat);
+        Assert2.Equal(MoneyFormatter("12"), "$12.00");
       }
       // should format: *
       {
-        Assert.Throws<ArgumentOutOfRangeException>(() => MoneyFormater("12", new { format = "*" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => MoneyFormatter("12", new { format = "*" }.ToParam()));
       }
       // should format: nx
       {
-        Assert2.Equal(MoneyFormater("12", new { format = "c2" }.ToParam()), "$12.00");
-        Assert2.Equal(MoneyFormater("12", new { format = "c3" }.ToParam()), "$12.000");
+        Assert2.Equal(MoneyFormatter("12", new { format = "c2" }.ToParam()), "$12.00");
+        Assert2.Equal(MoneyFormatter("12", new { format = "c3" }.ToParam()), "$12.000");
       }
       // should format: pattern
       {
-        Assert2.Equal(MoneyFormater("12", new { format = "pattern", pattern = "2" }.ToParam()), "$12.00");
-        Assert2.Equal(MoneyFormater("12", new { format = "pattern", pattern = "A" }.ToParam()), "$12.00");
+        Assert2.Equal(MoneyFormatter("12", new { format = "pattern", pattern = "c2" }.ToParam()), "$12.00");
+        Assert2.Equal(MoneyFormatter("12", new { format = "pattern", pattern = "#" }.ToParam()), "12");
       }
       // should parse
       {
@@ -271,27 +211,27 @@ namespace CoreValidation.Tests
         Assert2.Equal(MoneyParser(""), ("", true, null));
         Assert2.Equal(MoneyParser("NaN"), ("", false, null));
         //Assert2.Equal(MoneyParser(NaN), (NaN, true, null));
-        Assert2.Equal(MoneyParser("12"), (12, true, null));
+        Assert2.Equal(MoneyParser("12"), (12M, true, null));
       }
       // should parse: minValue
       {
-        Assert2.Equal(MoneyParser("13.0", new { minValue = 12 }.ToParam()), (13, true, null));
-        Assert2.Equal(MoneyParser("12.0", new { minValue = 13 }.ToParam()), (12, false, null));
+        Assert2.Equal(MoneyParser("13.0", new { minValue = 12M }.ToParam()), (13M, true, null));
+        Assert2.Equal(MoneyParser("12.0", new { minValue = 13M }.ToParam()), ("12.0", false, null));
       }
       // should parse: maxValue
       {
-        Assert2.Equal(MoneyParser("12.0", new { maxValue = 23 }.ToParam()), (12, true, null));
-        Assert2.Equal(MoneyParser("22.0", new { maxValue = 13 }.ToParam()), (22, false, null));
+        Assert2.Equal(MoneyParser("12.0", new { maxValue = 23M }.ToParam()), (12M, true, null));
+        Assert2.Equal(MoneyParser("22.0", new { maxValue = 13M }.ToParam()), ("22.0", false, null));
       }
       // should parse: precision
       {
-        Assert2.Equal(MoneyParser("22.123", new { precision = 2 }.ToParam()), (22.123, false, null));
-        Assert2.Equal(MoneyParser("22.12", new { precision = 2 }.ToParam()), (22.12, true, null));
+        Assert2.Equal(MoneyParser("22.123", new { precision = 2 }.ToParam()), ("22.123", false, null));
+        Assert2.Equal(MoneyParser("22.12", new { precision = 2 }.ToParam()), (22.12M, true, null));
       }
       // should parse: round
       {
-        Assert2.Equal(MoneyParser("22.123", new { round = 1 }.ToParam()), (22.1, true, null));
-        Assert2.Equal(MoneyParser("22.123", new { round = 2 }.ToParam()), (22.12, true, null));
+        Assert2.Equal(MoneyParser("22.123", new { round = 1 }.ToParam()), (22.1M, true, null));
+        Assert2.Equal(MoneyParser("22.123", new { round = 2 }.ToParam()), (22.12M, true, null));
       }
     }
 
@@ -300,25 +240,25 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(PercentFormater(null), NulFormat);
-        Assert2.Equal(PercentFormater(""), NulFormat);
-        Assert2.Equal(PercentFormater("A"), "NaN%");
-        Assert2.Equal(PercentFormater(".12"), "12.00%");
+        Assert2.Equal(PercentFormatter(null), NulFormat);
+        Assert2.Equal(PercentFormatter(""), NulFormat);
+        Assert2.Equal(PercentFormatter("A"), NulFormat);
+        Assert2.Equal(PercentFormatter(".12"), "12.00%");
       }
       // should format: *
       {
-        Assert.Throws<ArgumentOutOfRangeException>(() => PercentFormater("12", new { format = "*" }.ToParam()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PercentFormatter("12", new { format = "*" }.ToParam()));
       }
       //should format: nx
       {
-        Assert2.Equal(PercentFormater(".12", new { format = "p2" }.ToParam()), "12.00%");
-        Assert2.Equal(PercentFormater(".12", new { format = "p3" }.ToParam()), "12.000%");
-        Assert2.Equal(PercentFormater(".12", new { format = "p4" }.ToParam()), "12.0000%");
+        Assert2.Equal(PercentFormatter(".12", new { format = "p2" }.ToParam()), "12.00%");
+        Assert2.Equal(PercentFormatter(".12", new { format = "p3" }.ToParam()), "12.000%");
+        Assert2.Equal(PercentFormatter(".12", new { format = "p4" }.ToParam()), "12.0000%");
       }
       // should format: pattern
       {
-        Assert2.Equal(PercentFormater(".12", new { format = "pattern", pattern = "2" }.ToParam()), "12.00%");
-        Assert2.Equal(PercentFormater(".12", new { format = "pattern", pattern = "A" }.ToParam()), "12%");
+        Assert2.Equal(PercentFormatter(".12", new { format = "pattern", pattern = "p2" }.ToParam()), "12.00%");
+        Assert2.Equal(PercentFormatter(".12", new { format = "pattern", pattern = ".##" }.ToParam()), ".12");
       }
       // should parse
       {
@@ -328,6 +268,68 @@ namespace CoreValidation.Tests
         //Assert2.Equal(PercentParser(NaN), (NaN, true, null));
         Assert2.Equal(PercentParser("12"), (.12, true, null));
         Assert2.Equal(PercentParser("12%"), (.12, true, null));
+      }
+    }
+
+    [Fact]
+    public void Real()
+    {
+      // should format
+      {
+        Assert2.Equal(RealFormatter(null), NulFormat);
+        Assert2.Equal(RealFormatter(""), NulFormat);
+        Assert2.Equal(RealFormatter("A"), NulFormat);
+        Assert2.Equal(RealFormatter("12"), "12.0000");
+      }
+      // should format: *
+      {
+        Assert.Throws<ArgumentOutOfRangeException>(() => RealFormatter("12", new { format = "*" }.ToParam()));
+      }
+      // should format: comma
+      {
+        Assert2.Equal(RealFormatter(double.NaN, new { format = "comma" }.ToParam()), NulFormat);
+        Assert2.Equal(RealFormatter("1232323", new { format = "comma" }.ToParam()), "1,232,323");
+        Assert2.Equal(RealFormatter("1232323.234", new { format = "comma" }.ToParam()), "1,232,323.234");
+        Assert2.Equal(RealFormatter("12", new { format = "comma" }.ToParam()), "12");
+        Assert2.Equal(RealFormatter("12.234", new { format = "comma" }.ToParam()), "12.234");
+      }
+      // should format: nx
+      {
+        Assert2.Equal(RealFormatter("12", new { format = "n2" }.ToParam()), "12.00");
+        Assert2.Equal(RealFormatter("12", new { format = "n3" }.ToParam()), "12.000");
+      }
+      // should format: pattern
+      {
+        Assert2.Equal(RealFormatter("12", new { format = "pattern", pattern = "n2" }.ToParam()), "12.00");
+        Assert2.Equal(RealFormatter("12", new { format = "pattern", pattern = "#" }.ToParam()), "12");
+      }
+      // should parse
+      {
+        Assert2.Equal(RealParser(null), (null, true, null));
+        Assert2.Equal(RealParser(""), ("", true, null));
+        Assert2.Equal(RealParser("NaN"), ("NaN", false, null));
+        //Assert2.Equal(RealParser(NaN), (NaN, true, null));
+        Assert2.Equal(RealParser("12"), (12.0, true, null));
+      }
+      // should parse: minValue
+      {
+        Assert2.Equal(RealParser("13.0", new { minValue = 12.0 }.ToParam()), (13.0, true, null));
+        Assert2.Equal(RealParser("12.0", new { minValue = 13.0 }.ToParam()), ("12.0", false, null));
+      }
+      // should parse: maxValue
+      {
+        Assert2.Equal(RealParser("12.0", new { maxValue = 23.0 }.ToParam()), (12.0, true, null));
+        Assert2.Equal(RealParser("22.0", new { maxValue = 13.0 }.ToParam()), ("22.0", false, null));
+      }
+      // should parse: precision
+      {
+        Assert2.Equal(RealParser("22.123", new { precision = 2 }.ToParam()), ("22.123", false, null));
+        Assert2.Equal(RealParser("22.12", new { precision = 2 }.ToParam()), (22.12, true, null));
+      }
+      // should parse: round
+      {
+        Assert2.Equal(RealParser("22.123", new { round = 1 }.ToParam()), (22.1, true, null));
+        Assert2.Equal(RealParser("22.123", new { round = 2 }.ToParam()), (22.12, true, null));
       }
     }
   }

@@ -1,63 +1,63 @@
 import assert from 'power-assert';
 import moment from 'moment';
 
-import { nulFormat } from '../src.js/globals';
+import { nulFormat } from '../src/globals';
 import {
-    dateFormater, dateParser,
-    dateTimeFormater, dateTimeParser,
-    monthAndDayFormater, monthAndDayParser,
-    timeFormater, timeParser,
-} from '../src.js/formats/moment';
+    dateFormatter, dateParser,
+    dateTimeFormatter, dateTimeParser,
+    monthAndDayFormatter, monthAndDayParser,
+    timeFormatter, timeParser,
+} from '../src/formats/moment';
 
 describe('Date', () => {
     it('should format', () => {
-        expect(dateFormater(null)).toBe(nulFormat);
-        expect(dateFormater('')).toBe(nulFormat);
-        expect(dateFormater('1/1/2017')).toBe('2017-01-01');
-        expect(dateFormater('2017-01-01')).toBe('2017-01-01');
-        expect(dateFormater('2017-01-01 03:00')).toBe('2017-01-01');
+        expect(dateFormatter(null)).toBe(nulFormat);
+        expect(dateFormatter('')).toBe(nulFormat);
+        expect(dateFormatter('1/1/2017')).toBe('2017-01-01');
+        expect(dateFormatter('2017-01-01')).toBe('2017-01-01');
+        expect(dateFormatter('2017-01-01 03:00')).toBe('2017-01-01');
     });
     it('should format: *', () => {
         const param = { format: '*' };
-        expect(() => dateFormater('2017-01-01', param)).toThrow();
+        expect(() => dateFormatter('2017-01-01', param)).toThrow();
     });
     it('should format: date', () => {
         const param = { format: 'date' };
-        expect(dateFormater('2017-01-01', param)).toBe('01 January 2017');
+        expect(dateFormatter('2017-01-01', param)).toBe('01 January 2017');
     });
     it('should format: longDate', () => {
         const param = { format: 'longDate' };
-        expect(dateFormater('2017-01-01', param)).toBe('Sunday, January 1, 2017');
+        expect(dateFormatter('2017-01-01', param)).toBe('Sunday, January 1, 2017');
     });
     it('should format: longDate2', () => {
         const param = { format: 'longDate2' };
         const firstOfYear = moment({ y: moment().year(), M: 1, d: 1 });
         const firstOfYearFormat = firstOfYear.format('dddd, MMMM D');
-        expect(dateFormater(firstOfYear, param)).toBe(firstOfYearFormat);
+        expect(dateFormatter(firstOfYear, param)).toBe(firstOfYearFormat);
     });
     it('should format: longDate2', () => {
         const param = { format: 'longDate2' };
-        expect(dateFormater('2013-01-01', param)).toBe('Tuesday, January 1, 2013');
+        expect(dateFormatter('2013-01-01', param)).toBe('Tuesday, January 1, 2013');
     });
     it('should format: shortDate', () => {
         const param = { format: 'shortDate' };
-        expect(dateFormater('2017-01-01', param)).toBe('1-Jan-2017');
+        expect(dateFormatter('2017-01-01', param)).toBe('1-Jan-2017');
     });
     it('should format: shorterDate', () => {
         const param = { format: 'shorterDate' };
-        expect(dateFormater('2017-01-01', param)).toBe('Jan 1 2017');
+        expect(dateFormatter('2017-01-01', param)).toBe('Jan 1 2017');
     });
     it('should format: monthDay', () => {
         const param = { format: 'monthDay' };
-        expect(dateFormater('2017-01-01', param)).toBe('January 1');
+        expect(dateFormatter('2017-01-01', param)).toBe('January 1');
     });
     it('should format: monthYear', () => {
         const param = { format: 'monthYear' };
-        expect(dateFormater('2017-01-01', param)).toBe('January 2017');
+        expect(dateFormatter('2017-01-01', param)).toBe('January 2017');
     });
     it('should format: pattern', () => {
         const param = { format: 'pattern', pattern: 'YYYY' };
-        expect(dateFormater('2017-01-01', param)).toBe('2017');
+        expect(dateFormatter('2017-01-01', param)).toBe('2017');
     });
     it('should parse', () => {
         expect(dateParser(null)).toEqual([null, true, undefined]);
@@ -71,104 +71,104 @@ describe('Date', () => {
         expect(dateParser('2012-01-01 3:00 pm').toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
         expect(dateParser('1901-01-01 03:00:00 am').toString()).toEqual('Tue Jan 01 1901 00:00:00 GMT-0600,true,');
         // bounds-check
-        expect(dateParser('1752-01-01').toString()).toEqual('Sat Jan 01 1752 00:00:00 GMT-0545,false,');
-        expect(dateParser('10000-01-01').toString()).toEqual('Sat Jan 01 10000 00:00:00 GMT-0600,true,');
+        expect(dateParser('1752-01-01').toString()).toEqual('1752-01-01,false,');
+        expect(dateParser('9999-01-01').toString()).toEqual('9999-01-01,false,');
     });
     it('should parse: minValue', () => {
-        expect(dateParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,false,');
+        expect(dateParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('2011-01-01,false,');
         expect(dateParser('2012-01-01', { minValue: '1/1/2011' }).toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
     });
     it('should parse: maxValue', () => {
-        expect(dateParser('2017-01-01', { maxValue: '2012-01-01' }).toString()).toEqual('Sun Jan 01 2017 00:00:00 GMT-0600,false,');
+        expect(dateParser('2017-01-01', { maxValue: '2012-01-01' }).toString()).toEqual('2017-01-01,false,');
         expect(dateParser('2011-01-01', { maxValue: '1/1/2012' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,true,');
     });
 });
 
 describe('DateTime', () => {
     it('should format', () => {
-        expect(dateTimeFormater(null)).toBe(nulFormat);
-        expect(dateTimeFormater('')).toBe(nulFormat);
-        expect(dateTimeFormater('1/1/2017')).toBe('01/01/2017');
-        expect(dateTimeFormater('2017-03-02')).toBe('03/02/2017');
-        expect(dateTimeFormater('2017-01-01 03:00')).toBe('01/01/2017');
+        expect(dateTimeFormatter(null)).toBe(nulFormat);
+        expect(dateTimeFormatter('')).toBe(nulFormat);
+        expect(dateTimeFormatter('1/1/2017')).toBe('2017-01-01 12:00 am');
+        expect(dateTimeFormatter('2017-03-02')).toBe('2017-03-02 12:00 am');
+        expect(dateTimeFormatter('2017-01-01 03:00')).toBe('2017-01-01 3:00 am');
     });
     it('should format: *', () => {
         const param = { format: '*' };
-        expect(() => dateTimeFormater('2017-01-01 03:00 am', param)).toThrow();
+        expect(() => dateTimeFormatter('2017-01-01 03:00 am', param)).toThrow();
     });
     it('should format: pattern', () => {
         const param = { format: 'pattern', pattern: 'YYYY' };
-        expect(dateTimeFormater('2017-01-01', param)).toBe('2017');
+        expect(dateTimeFormatter('2017-01-01', param)).toBe('2017');
     });
     it('should format: dateTime', () => {
         const param = { format: 'dateTime' };
-        expect(dateTimeFormater('2017-01-01 03:00 am', param)).toBe('01 January 2017 03:00 am');
+        expect(dateTimeFormatter('2017-01-01 03:00 am', param)).toBe('01 January 2017 3:00 am');
     });
     it('should format: longDateTime', () => {
         const param = { format: 'longDateTime' };
-        expect(dateTimeFormater('2017-01-01 03:00 am', param)).toBe('Sunday, January 1, 2017 03:00 am');
+        expect(dateTimeFormatter('2017-01-01 03:00 am', param)).toBe('Sunday, January 1, 2017 3:00 am');
     });
     it('should format: longDate', () => {
         const param = { format: 'longDate' };
-        expect(dateTimeFormater('2017-01-01', param)).toBe('Sunday, January 1, 2017');
+        expect(dateTimeFormatter('2017-01-01', param)).toBe('Sunday, January 1, 2017');
     });
     it('should format: longTime', () => {
         const param = { format: 'longTime' };
-        expect(dateTimeFormater('2017-01-01 03:00:00 am', param)).toBe('03:00:00 am');
+        expect(dateTimeFormatter('2017-01-01 03:00:00 am', param)).toBe('03:00:00 am');
     });
     it('should format: shortDate', () => {
         const param = { format: 'shortDate' };
-        expect(dateTimeFormater('2017-01-01', param)).toBe('1-Jan-2017');
+        expect(dateTimeFormatter('2017-01-01', param)).toBe('1-Jan-2017');
     });
     it('should format: shorterDate', () => {
         const param = { format: 'shorterDate' };
-        expect(dateTimeFormater('2017-01-01', param)).toBe('Jan 1 2017');
+        expect(dateTimeFormatter('2017-01-01', param)).toBe('Jan 1 2017');
     });
     it('should format: shortTime', () => {
         const param = { format: 'shortTime' };
-        expect(dateTimeFormater('2017-01-01 03:00:00 am', param)).toBe('03:00 am');
+        expect(dateTimeFormatter('2017-01-01 03:00:00 am', param)).toBe('3:00 am');
     });
     it('should format: tinyDate', () => {
         const param = { format: 'tinyDate' };
-        expect(dateTimeFormater('2017-01-01 03:00:00 am', param)).toBe('1/1/17');
+        expect(dateTimeFormatter('2017-01-01 03:00:00 am', param)).toBe('1/1/17');
     });
     it('should format: tinyDateTime', () => {
         const param = { format: 'tinyDateTime' };
-        expect(dateTimeFormater('2017-01-01 03:00:00 am', param)).toBe('1/1/17 03:00 am');
+        expect(dateTimeFormatter('2017-01-01 03:00:00 am', param)).toBe('1/1/17 3:00 am');
     });
     it('should parse', () => {
         expect(dateTimeParser(null)).toEqual([null, true, undefined]);
         expect(dateTimeParser('')).toEqual(['', true, undefined]);
-        expect(dateTimeParser('1ab')).toEqual(['1ab', false, undefined]);
+        expect(dateTimeParser('1ab').toString()).toEqual('1ab,false,');
         expect(dateTimeParser('blah').toString()).toEqual('blah,false,');
         expect(dateTimeParser('2017-01-01 03:00:00 am').toString()).toEqual('Sun Jan 01 2017 03:00:00 GMT-0600,true,');
         expect(dateTimeParser('1901-01-01 03:00:00 am').toString()).toEqual('Tue Jan 01 1901 03:00:00 GMT-0600,true,');
     });
     it('should parse: minValue', () => {
-        expect(dateTimeParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,false,');
+        expect(dateTimeParser('2011-01-01', { minValue: '2012-01-01' }).toString()).toEqual('2011-01-01,false,');
         expect(dateTimeParser('2012-01-01', { minValue: '1/1/2011' }).toString()).toEqual('Sun Jan 01 2012 00:00:00 GMT-0600,true,');
     });
     it('should parse: maxValue', () => {
-        expect(dateTimeParser('2017-01-01', { maxValue: '2012-01-01' }).toString()).toEqual('Sun Jan 01 2017 00:00:00 GMT-0600,false,');
+        expect(dateTimeParser('2017-01-01', { maxValue: '2012-01-01' }).toString()).toEqual('2017-01-01,false,');
         expect(dateTimeParser('2011-01-01', { maxValue: '1/1/2012' }).toString()).toEqual('Sat Jan 01 2011 00:00:00 GMT-0600,true,');
     });
 });
 
 describe('MonthAndDay', () => {
     it('should format', () => {
-        expect(monthAndDayFormater(null)).toBe(nulFormat);
-        expect(monthAndDayFormater('')).toBe(nulFormat);
-        expect(monthAndDayFormater('1/1/2017')).toBe('01/01');
-        expect(monthAndDayFormater('2017-03-02')).toBe('03/02');
-        expect(monthAndDayFormater('2017-01-01 03:00')).toBe('01/01');
+        expect(monthAndDayFormatter(null)).toBe(nulFormat);
+        expect(monthAndDayFormatter('')).toBe(nulFormat);
+        expect(monthAndDayFormatter('1/1/2017')).toBe('01/01');
+        expect(monthAndDayFormatter('2017-03-02')).toBe('03/02');
+        expect(monthAndDayFormatter('2017-01-01 03:00')).toBe('01/01');
     });
     it('should format: *', () => {
         const param = { format: '*' };
-        expect(() => monthAndDayFormater('2017-01-01', param)).toThrow();
+        expect(() => monthAndDayFormatter('2017-01-01', param)).toThrow();
     });
     it('should format: pattern', () => {
         const param = { format: 'pattern', pattern: 'YYYY' };
-        expect(monthAndDayFormater('2017-01-01', param)).toBe('2017');
+        expect(monthAndDayFormatter('2017-01-01', param)).toBe('2017');
     });
     it('should parse', () => {
         expect(monthAndDayParser(null)).toEqual([null, true, undefined]);
@@ -185,27 +185,27 @@ describe('MonthAndDay', () => {
 
 describe('Time', () => {
     it('should format', () => {
-        expect(timeFormater(null)).toBe(nulFormat);
-        expect(timeFormater('')).toBe(nulFormat);
-        expect(timeFormater('1/1/2017')).toEqual('12:00 00');
-        expect(timeFormater('2017-01-01')).toEqual('12:00 00');
-        expect(timeFormater('2017-01-01 03:00')).toEqual('03:00 00');
+        expect(timeFormatter(null)).toBe(nulFormat);
+        expect(timeFormatter('')).toBe(nulFormat);
+        expect(timeFormatter('1/1/2017')).toEqual('12:00 am');
+        expect(timeFormatter('2017-01-01')).toEqual('12:00 am');
+        expect(timeFormatter('2017-01-01 03:00')).toEqual('3:00 am');
     });
     it('should format: *', () => {
         const param = { format: '*' };
-        expect(() => timeFormater('2017-01-01', param)).toThrow();
+        expect(() => timeFormatter('2017-01-01', param)).toThrow();
     });
     it('should format: longTime', () => {
         const param = { format: 'longTime' };
-        expect(timeFormater('2017-01-01', param)).toEqual('12:00:00 am');
+        expect(timeFormatter('2017-01-01', param)).toEqual('12:00:00 am');
     });
     it('should format: shortTime', () => {
         const param = { format: 'shortTime' };
-        expect(timeFormater('2017-01-01 17:00', param)).toEqual('05:00 pm');
+        expect(timeFormatter('2017-01-01 17:00', param)).toEqual('5:00 pm');
     });
     it('should format: pattern', () => {
         const param = { format: 'pattern', pattern: 'hh a' };
-        expect(timeFormater('2017-01-01 17:00', param)).toEqual('05 pm');
+        expect(timeFormatter('2017-01-01 17:00', param)).toEqual('05 pm');
     });
     it('should parse', () => {
         expect(timeParser(null)).toEqual([null, true, undefined]);
@@ -217,11 +217,11 @@ describe('Time', () => {
         expect(timeParser('abc 3:00').toString()).toEqual('Sat Jan 01 2000 03:00:00 GMT-0600,true,');
     });
     it('should parse: minValue', () => {
-        expect(timeParser('2012-01-01 3:11:01 pm', { minValue: '5:00:00 pm' }).toString()).toEqual('Sat Jan 01 2000 15:11:01 GMT-0600,false,');
+        expect(timeParser('2012-01-01 3:11:01 pm', { minValue: '5:00:00 pm' }).toString()).toEqual('2012-01-01 3:11:01 pm,false,');
         expect(timeParser('2012-01-01 3:11:01 pm', { minValue: '1:00:00 am' }).toString()).toEqual('Sat Jan 01 2000 15:11:01 GMT-0600,true,');
     });
     it('should parse: maxValue', () => {
-        expect(timeParser('2012-01-01 3:11:01 pm', { maxValue: '1:00:00 am' }).toString()).toEqual('Sat Jan 01 2000 15:11:01 GMT-0600,false,');
+        expect(timeParser('2012-01-01 3:11:01 pm', { maxValue: '1:00:00 am' }).toString()).toEqual('2012-01-01 3:11:01 pm,false,');
         expect(timeParser('2012-01-01 3:11:01 pm', { maxValue: '5:00:00 pm' }).toString()).toEqual('Sat Jan 01 2000 15:11:01 GMT-0600,true,');
     });
 });

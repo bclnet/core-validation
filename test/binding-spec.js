@@ -1,6 +1,6 @@
 import assert from 'power-assert';
 
-// import { NullBinding, ReactBinding } from '../src.js/index';
+// import { NullBinding, ReactBinding } from '../src/index';
 
 describe('Binding', () => {
     it('should', () => {

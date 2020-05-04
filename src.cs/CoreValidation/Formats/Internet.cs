@@ -14,9 +14,9 @@ namespace CoreValidation.Formats
     static readonly Regex _hostnamePattern = new Regex(@"^(?:([a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+([a-zA-Z]{2,6})(:\d{1,5})?)|(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,5})?)$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
     // email
-    public static string EmailFormater(object value, IDictionary<string, object> param = null)
+    public static string EmailFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
       return value.ToString();
     }
     public static (object, bool, Func<object>) EmailParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
@@ -27,9 +27,9 @@ namespace CoreValidation.Formats
     }
 
     // emailList
-    public static string EmailListFormater(object value, IDictionary<string, object> param = null)
+    public static string EmailListFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
       return value.ToString();
     }
     public static (object, bool, Func<object>) EmailListParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
@@ -51,9 +51,9 @@ namespace CoreValidation.Formats
     }
 
     // hostname
-    public static string HostnameFormater(object value, IDictionary<string, object> param = null)
+    public static string HostnameFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
       return value.ToString();
     }
     public static (object, bool, Func<object>) HostnameParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
@@ -64,9 +64,9 @@ namespace CoreValidation.Formats
     }
 
     // hostnameList
-    public static string HostnameListFormater(object value, IDictionary<string, object> param = null)
+    public static string HostnameListFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
       return value.ToString();
     }
     public static (object, bool, Func<object>) HostnameListParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
@@ -88,9 +88,9 @@ namespace CoreValidation.Formats
     }
 
     // uri
-    public static string UriFormater(object value, IDictionary<string, object> param = null)
+    public static string UriFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
       return value.ToString();
     }
     public static (object, bool, Func<object>) UriParser(string text, IDictionary<string, object> param = null, Func<object> error = null)
@@ -100,9 +100,9 @@ namespace CoreValidation.Formats
     }
 
     // xml
-    public static string XmlFormater(object value, IDictionary<string, object> param = null)
+    public static string XmlFormatter(object value, IDictionary<string, object> param = null)
     {
-      if (value == null) return NulFormat;
+      if (value == null || (value is string h && h.Length == 0)) return NulFormat;
       return value.ToString();
     }
     public static (object, bool, Func<object>) XmlParser(string text, IDictionary<string, object> param = null, Func<object> error = null)

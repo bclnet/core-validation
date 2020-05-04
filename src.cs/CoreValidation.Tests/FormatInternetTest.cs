@@ -11,9 +11,9 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(EmailFormater(null), NulFormat);
-        Assert2.Equal(EmailFormater(""), NulFormat);
-        Assert2.Equal(EmailFormater("anything"), "anything");
+        Assert2.Equal(EmailFormatter(null), NulFormat);
+        Assert2.Equal(EmailFormatter(""), NulFormat);
+        Assert2.Equal(EmailFormatter("anything"), "anything");
       }
       // should parse
       {
@@ -29,9 +29,9 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(EmailListFormater(null), NulFormat);
-        Assert2.Equal(EmailListFormater(""), NulFormat);
-        Assert2.Equal(EmailListFormater("anything"), "anything");
+        Assert2.Equal(EmailListFormatter(null), NulFormat);
+        Assert2.Equal(EmailListFormatter(""), NulFormat);
+        Assert2.Equal(EmailListFormatter("anything"), "anything");
       }
       // should parse
       {
@@ -56,9 +56,9 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(HostnameFormater(null), NulFormat);
-        Assert2.Equal(HostnameFormater(""), NulFormat);
-        Assert2.Equal(HostnameFormater("anything"), "anything");
+        Assert2.Equal(HostnameFormatter(null), NulFormat);
+        Assert2.Equal(HostnameFormatter(""), NulFormat);
+        Assert2.Equal(HostnameFormatter("anything"), "anything");
       }
       // should parse
       {
@@ -74,9 +74,9 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(HostnameListFormater(null), NulFormat);
-        Assert2.Equal(HostnameListFormater(""), NulFormat);
-        Assert2.Equal(HostnameListFormater("anything"), "anything");
+        Assert2.Equal(HostnameListFormatter(null), NulFormat);
+        Assert2.Equal(HostnameListFormatter(""), NulFormat);
+        Assert2.Equal(HostnameListFormatter("anything"), "anything");
       }
       // should parse
       {
@@ -101,9 +101,9 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(UriFormater(null), NulFormat);
-        Assert2.Equal(UriFormater(""), NulFormat);
-        Assert2.Equal(UriFormater("anything"), "anything");
+        Assert2.Equal(UriFormatter(null), NulFormat);
+        Assert2.Equal(UriFormatter(""), NulFormat);
+        Assert2.Equal(UriFormatter("anything"), "anything");
       }
       // should parse
       {
@@ -117,9 +117,9 @@ namespace CoreValidation.Tests
     public void Xml()
     {
       // should format
-      Assert2.Equal(XmlFormater(null), NulFormat);
-      Assert2.Equal(XmlFormater(""), NulFormat);
-      Assert2.Equal(XmlFormater("anything"), "anything");
+      Assert2.Equal(XmlFormatter(null), NulFormat);
+      Assert2.Equal(XmlFormatter(""), NulFormat);
+      Assert2.Equal(XmlFormatter("anything"), "anything");
       // should parse
       Assert2.Equal(XmlParser(null), (null, true, null));
       Assert2.Equal(XmlParser(""), ("", true, null));

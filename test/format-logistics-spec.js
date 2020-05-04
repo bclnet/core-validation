@@ -1,16 +1,16 @@
 import assert from 'power-assert';
 
-import { nulFormat } from '../src.js/globals';
+import { nulFormat } from '../src/globals';
 import {
-    phoneFormater, phoneParser,
-    zipFormater, zipParser,
-} from '../src.js/formats/logistics';
+    phoneFormatter, phoneParser,
+    zipFormatter, zipParser,
+} from '../src/formats/logistics';
 
 describe('Phone', () => {
     it('should format', () => {
-        expect(phoneFormater(null)).toBe(nulFormat);
-        expect(phoneFormater('')).toBe(nulFormat);
-        expect(phoneFormater('816-304-4341')).toBe('816-304-4341');
+        expect(phoneFormatter(null)).toBe(nulFormat);
+        expect(phoneFormatter('')).toBe(nulFormat);
+        expect(phoneFormatter('816-304-4341')).toBe('816-304-4341');
     });
     it('should parse', () => {
         expect(phoneParser(null)).toEqual([null, true, undefined]);
@@ -57,9 +57,9 @@ describe('Phone', () => {
 
 describe('Zip', () => {
     it('should format', () => {
-        expect(zipFormater(null)).toBe(nulFormat);
-        expect(zipFormater('')).toBe(nulFormat);
-        expect(zipFormater('66211', {})).toBe('66211');
+        expect(zipFormatter(null)).toBe(nulFormat);
+        expect(zipFormatter('')).toBe(nulFormat);
+        expect(zipFormatter('66211', {})).toBe('66211');
     });
     it('should parse', () => {
         expect(zipParser(null)).toEqual([null, true, undefined]);
