@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+import { nulFormat } from './globals';
 // execution
 import {
   find, flatten, valuedate, validate, format
@@ -105,13 +106,13 @@ export const create = function (binding) {
       // BINDERS
       labelFor: function (field, opts) {
         const rule = this.getRules(opts, field) || {};
-        return rule.name || 'Label';
+        return rule.label || 'Label';
       },
       valueFor: function (field, opts) {
         const rule = this.getRules(opts, field) || {};
         const state = binding.getState($this, opts);
         let { defaultValue } = rule.state;
-        if (defaultValue === undefined) defaultValue = '';
+        if (defaultValue === undefined) defaultValue = nulFormat;
         return state[field] || defaultValue;
       },
       requiredFor: function (field, opts) {

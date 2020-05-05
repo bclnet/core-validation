@@ -1,129 +1,171 @@
-//using Xunit;
-//using static CoreValidation.Formats.Internet;
-//using static CoreValidation.Globals;
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
-//namespace CoreValidation.Tests
-//{
-//  public class ExecutionTest
-//  {
-//    [Fact]
-//    public void Valid()
-//    {
-//      // should format
-//      {
-//        Assert2.Equal(EmailFormatter(null), NulFormat);
-//        Assert2.Equal(EmailFormatter(""), NulFormat);
-//        Assert2.Equal(EmailFormatter("anything"), "anything");
-//      }
-//      // should parse
-//      {
-//        Assert2.Equal(EmailParser(null), (null, true, null));
-//        Assert2.Equal(EmailParser(""), ("", true, null));
-//        Assert2.Equal(EmailParser("bad.com"), ("bad.com", false, null));
-//        Assert2.Equal(EmailParser("valid@email.com"), ("valid@email.com", true, null));
-//      }
-//    }
+namespace CoreValidation.Tests
+{
+  public class ExecutionTest
+  {
+    [Fact]
+    public void Rule()
+    {
+      // should parse simple rules
+      {
+        var rules = new[] {
+          V.Rule("field", "field label"),
+          V.Rule("value", "value label", new { value = false }),
+          V.Rule("required", "required label", V.Required),
+          V.Rule("email", "email label", V.Email),
+        };
+        Assert2.Equal(rules.Length, 4);
+        Assert2.Equal(rules[0].Field, "field"); Assert2.Equal(rules[0].Label, "field label"); Assert2.Equal(rules[0].Args.Length, 0); Assert2.Equal(rules[0].State.Count, 0);
+        Assert2.Equal(rules[1].Field, "value"); Assert2.Equal(rules[1].Args.Length, 0); Assert2.Equal(rules[1].State.Count, 1);
+        Assert2.Equal(rules[2].Field, "required"); Assert2.Equal(rules[2].Args.Length, 1); Assert2.Equal(rules[2].State.Count, 0);
+        Assert2.Equal(rules[3].Field, "email"); Assert2.Equal(rules[3].Args.Length, 1); Assert2.Equal(rules[3].State.Count, 0);
+      }
+      // should parse complex rules
+      {
+        var rules = new[] {
+          V.Rule("email", "email label", V.Email(new { maxValue = 10 }), V.MaxLength(100), V.Required),
+        };
+        Assert2.Equal(rules.Length, 1);
+        Assert2.Equal(rules[0].Field, "email"); Assert2.Equal(rules[0].Label, "email label"); Assert2.Equal(rules[0].Args.Length, 3); Assert2.Equal(rules[0].State.Count, 0);
+      }
+      // should parse custom rule
+      {
+        var rules = new[] {
+          V.Rule("field", "field label", V.Custom((a,b,c) => false, "Error")),
+        };
+        Assert2.Equal(rules.Length, 1);
+        Assert2.Equal(rules[0].Args.Length, 1);
+      }
+    }
 
-//    [Fact]
-//    public void Email_List()
-//    {
-//      // should format
-//      {
-//        Assert2.Equal(EmailListFormatter(null), NulFormat);
-//        Assert2.Equal(EmailListFormatter(""), NulFormat);
-//        Assert2.Equal(EmailListFormatter("anything"), "anything");
-//      }
-//      // should parse
-//      {
-//        Assert2.Equal(EmailListParser(null), (null, true, null));
-//        Assert2.Equal(EmailListParser(""), ("", true, null));
-//        Assert2.Equal(EmailListParser("bad.com"), ("bad.com", false, null));
-//        Assert2.Equal(EmailListParser("valid@email.com"), ("valid@email.com", true, null));
-//        // list
-//        Assert2.Equal(EmailListParser("bad.com, valid@email.com"), ("bad.com, valid@email.com", false, null));
-//        Assert2.Equal(EmailListParser("valid@email.com, valid@email.com"), ("valid@email.com; valid@email.com", true, null));
-//        Assert2.Equal(EmailListParser("valid@email.com, ,valid@email.com"), ("valid@email.com; valid@email.com", true, null));
-//      }
-//      // should parse: maxCount
-//      {
-//        Assert2.Equal(EmailListParser("valid@email.com, valid@email.com", new { maxCount = 1 }.ToParam()), ("valid@email.com, valid@email.com", false, null));
-//        Assert2.Equal(EmailListParser("valid@email.com, valid@email.com", new { maxCount = 2 }.ToParam()), ("valid@email.com; valid@email.com", true, null));
-//      }
-//    }
+    [Fact]
+    public void RuleIf()
+    {
+      // should parse conditional rule
+      {
+        var rules = new[] {
+          V.Rule("field", "field label"),
+          V.RuleIf("field",
+            V.Rule("subField1", "subField1 label"),
+            V.Rule("subField2", "subField2 label")
+          ),
+        };
+        Assert2.Equal(rules.Length, 2);
+      }
+    }
 
-//    [Fact]
-//    public void Hostname()
-//    {
-//      // should format
-//      {
-//        Assert2.Equal(HostnameFormatter(null), NulFormat);
-//        Assert2.Equal(HostnameFormatter(""), NulFormat);
-//        Assert2.Equal(HostnameFormatter("anything"), "anything");
-//      }
-//      // should parse
-//      {
-//        Assert2.Equal(HostnameParser(null), (null, true, null));
-//        Assert2.Equal(HostnameParser(""), ("", true, null));
-//        Assert2.Equal(HostnameParser("bad-com"), ("bad-com", false, null));
-//        Assert2.Equal(HostnameParser("good.com"), ("good.com", true, null));
-//      }
-//    }
+    [Fact]
+    public void Find()
+    {
+      // should find simple rule
+      {
+        var rules = new[] {
+          V.Rule("field", "field label"),
+        };
+        Assert2.Equal(V.Find(null, rules, "nofield"), null);
+        Assert2.Equal(V.Find(null, rules, "field").Field, "field");
+      }
+      // should find nested rule
+      {
+        var rules = new[] {
+          V.Rule("field", "field label"),
+          V.RuleIf("field",
+            V.Rule("subField1", "subField1 label"),
+            V.Rule("subField2", "subField2 label")
+          ),
+        };
+        var state = new { field = false }.ToParam();
+        Assert2.Equal(V.Find(state, rules, "subField1"), null);
+        state = new { field = true }.ToParam();
+        Assert2.Equal(V.Find(state, rules, "subField1").Field, "subField1");
+      }
+    }
 
-//    [Fact]
-//    public void Hostname_List()
-//    {
-//      // should format
-//      {
-//        Assert2.Equal(HostnameListFormatter(null), NulFormat);
-//        Assert2.Equal(HostnameListFormatter(""), NulFormat);
-//        Assert2.Equal(HostnameListFormatter("anything"), "anything");
-//      }
-//      // should parse
-//      {
-//        Assert2.Equal(HostnameListParser(null), (null, true, null));
-//        Assert2.Equal(HostnameListParser(""), ("", true, null));
-//        Assert2.Equal(HostnameListParser("bad-com"), ("bad-com", false, null));
-//        Assert2.Equal(HostnameListParser("good.com"), ("good.com", true, null));
-//        // list
-//        Assert2.Equal(HostnameListParser("bad-com, good.com"), ("bad-com, good.com", false, null));
-//        Assert2.Equal(HostnameListParser("good.com, good.com"), ("good.com; good.com", true, null));
-//        Assert2.Equal(HostnameListParser("good.com, ,good.com"), ("good.com; good.com", true, null));
-//      }
-//      // should parse: maxCount
-//      {
-//        Assert2.Equal(HostnameListParser("good.com, good.com", new { maxCount = 1 }.ToParam()), ("good.com, good.com", false, null));
-//        Assert2.Equal(HostnameListParser("good.com, good.com", new { maxCount = 2 }.ToParam()), ("good.com; good.com", true, null));
-//      }
-//    }
+    [Fact]
+    public void Flatten()
+    {
+      // should flatten simple rule
+      {
+        var rules = new[] {
+          V.Rule("field", "field label"),
+        };
+        Assert2.Equal(V.Flatten(null, rules).Count, 1);
+      }
+      // should flatten nested rule
+      {
+        var rules = new[] {
+          V.Rule("field", "field label"),
+          V.RuleIf("field",
+            V.Rule("subField1", "subField1 label"),
+            V.Rule("subField2", "subField2 label")
+          ),
+        };
+        var state = new { field = false }.ToParam();
+        Assert2.Equal(V.Flatten(state, rules).Count, 1);
+        state = new { field = true }.ToParam();
+        Assert2.Equal(V.Flatten(state, rules).Count, 3);
+      }
+    }
 
-//    [Fact]
-//    public void Uri()
-//    {
-//      // should format
-//      {
-//        Assert2.Equal(UriFormatter(null), NulFormat);
-//        Assert2.Equal(UriFormatter(""), NulFormat);
-//        Assert2.Equal(UriFormatter("anything"), "anything");
-//      }
-//      // should parse
-//      {
-//        Assert2.Equal(UriParser(null), (null, true, null));
-//        Assert2.Equal(UriParser(""), ("", true, null));
-//        Assert2.Equal(UriParser("anything"), ("anything", true, null));
-//      }
-//    }
+    //[Fact]
+    //public void Validate()
+    //{
+    //  // should validate simple rule
+    //  {
+    //    var rules = new[] {
+    //      V.Rule("field", "field label"),
+    //    };
+    //    Assert2.Equal(V.Validate(null, rules).Count, 1);
+    //    Assert2.Equal(V.Validate(null, rules, "nofield").Count, 0);
+    //    Assert2.Equal(V.Validate(null, rules, "field").Count, 1);
+    //  }
+    //  // should validate nested rule
+    //  {
+    //    var rules = new[] {
+    //      V.Rule("field", "field label"),
+    //      V.RuleIf("field",
+    //        V.Rule("subField1", "subField1 label"),
+    //        V.Rule("subField2", "subField2 label")
+    //      ),
+    //    };
+    //    var state = new { field = false }.ToParam();
+    //    Assert2.Equal(V.Validate(state, rules).Count, 0);
+    //    state = new { field = true }.ToParam();
+    //    Assert2.Equal(V.Validate(state, rules).Count, 0);
+    //    Assert2.Equal(V.Validate(state, rules, "subField1").Count, 0);
+    //  }
+    //}
 
-//    [Fact]
-//    public void Xml()
-//    {
-//      // should format
-//      Assert2.Equal(XmlFormatter(null), NulFormat);
-//      Assert2.Equal(XmlFormatter(""), NulFormat);
-//      Assert2.Equal(XmlFormatter("anything"), "anything");
-//      // should parse
-//      Assert2.Equal(XmlParser(null), (null, true, null));
-//      Assert2.Equal(XmlParser(""), ("", true, null));
-//      Assert2.Equal(XmlParser("anything"), ("anything", true, null));
-//    }
-//  }
-//}
+    //[Fact]
+    //public void Format()
+    //{
+    //  // should find simple rule
+    //  {
+    //    var rules = new[] {
+    //      V.Rule("field", "field label"),
+    //    };
+    //    Assert2.Equal(V.Format(null, rules).Count, 0);
+    //    Assert2.Equal(V.Format(null, rules, "nofield").Count, 0);
+    //    Assert2.Equal(V.Format(null, rules, "field").Count, 1);
+    //  }
+    //  // should find nested rule
+    //  {
+    //    var rules = new[] {
+    //      V.Rule("field", "field label"),
+    //      V.RuleIf("field",
+    //        V.Rule("subField1", "subField1 label"),
+    //        V.Rule("subField2", "subField2 label")
+    //      ),
+    //    };
+    //    var state = new { field = false }.ToParam();
+    //    Assert2.Equal(V.Format(state, rules).Count, 1);
+    //    state = new { field = true }.ToParam();
+    //    Assert2.Equal(V.Format(state, rules).Count, 3);
+    //    Assert2.Equal(V.Format(state, rules, "subField1").Count, 1);
+    //  }
+    //}
+  }
+}

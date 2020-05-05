@@ -1,8 +1,8 @@
 /* istanbul ignore file */
 // execution
-export { params } from './globals';
+import { params as globals_params } from './globals';
 export {
-  rule, ruleIf
+  rule, ruleIf, find, flatten
 } from './execution';
 
 function makeSymbols(...symbols) {
@@ -24,7 +24,7 @@ function makeSymbol(name, symbol) {
 }
 
 function makeParm(name, param) {
-  return Object.assign(params[name] || {}, param);
+  return Object.assign(globals_params[name] || {}, param);
 }
 
 function makeError(customError, defaultError) {
@@ -34,7 +34,7 @@ function makeError(customError, defaultError) {
 }
 
 // options
-export const setParam = (name, param) => params[name] = param;
+export const setParam = (name, param) => globals_params[name] = param;
 const nulParser = (text, parsed, error) => [value, parsed, error];
 
 // error messages
@@ -47,7 +47,7 @@ const maxLengthError = (length) => (fieldName) => `${fieldName} must be at most 
 
 // rules
 export const required = (customError) => makeSymbol('required', function required(text) { return { format: () => undefined, parse: () => nulParser(text, text && (text.length || Object.keys(text).length), () => makeError(customError, requiredError)) } });
-export const custom = (param, customError, predicate) => makeSymbol('custom', function custom(text, state) { return { format: () => undefined, parse: () => nulParser(text, predicate(text, state, param), () => makeError(customError, generalError)) } });
+export const custom = (predicate, customError, param) => makeSymbol('custom', function custom(text, state) { return { format: () => undefined, parse: () => nulParser(text, predicate(text, state, param), () => makeError(customError, generalError)) } });
 export const mustMatch = (field, fieldName, customError) => makeSymbol('mustMatch', function mustMatch(text, state) { return { format: () => undefined, parse: () => nulParser(text, state[field] === text, () => makeError(customError, mustMatchError(fieldName))) } });
 export const minLength = (length, customError) => makeSymbol('minLength', function minLength(text) { return { format: () => undefined, parse: () => nulParser(text, text && text.length >= length, () => makeError(customError, minLengthError(length))) } });
 export const maxLength = (length, customError) => makeSymbol('maxLength', function maxLength(text) { return { format: () => undefined, parse: () => nulParser(text, (!text || text.length <= length), () => makeError(customError, maxLengthError(length))) } });
@@ -125,12 +125,12 @@ export const regex = (param, customError) => makeSymbol('regex', function regex(
 makeSymbols(text, memo, regex);
 
 // bindings
-export { create } from './binding';
 import NullBinding from './bindings/nullBinding';
 import ReactBinding from './bindings/reactBinding';
 export { NullBinding, ReactBinding };
 
-// default
+// validator - default
+export { create } from './validator';
 let binding, binder;
 try {
   require('react');
