@@ -23,7 +23,7 @@ namespace CoreValidation
 
     // options
     public static void SetParam(string name, object param) { if (param != null) Globals.Params[name] = param?.ToParam(); else Globals.Params.Remove(name); }
-    public static (object, bool, Func<object>) NulParser(string text, bool parsed, Func<object> error) => (text, true, error);
+    public static (object, bool, Func<object>) NulParser(string text, bool parsed, Func<object> error) => (text, parsed, error);
 
     // error messages
     public static readonly Func<string, string> RequiredError = (fieldName) => $"{fieldName} is required";
@@ -34,9 +34,9 @@ namespace CoreValidation
     public static readonly Func<int, Func<string, string>> MaxLengthError = (length) => (fieldName) => $"{fieldName} must be at most {length} characters";
 
     // rules
-    public static readonly Arg<object> Required = (customError) => new Symbol("required", (text) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, text != null && text.Length != 0, () => MakeError(customError, RequiredError)) });
+    public static readonly Arg<object> Required = (customError) => new Symbol("required", (text) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, !string.IsNullOrEmpty(text), () => MakeError(customError, RequiredError)) });
     public static readonly Arg<Func<string, object, object, bool>, object, object> Custom = (predicate, customError, param) => new Symbol("custom", (text, state) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, predicate(text, state, param), () => MakeError(customError, GeneralError)) });
-    public static readonly Arg<string, string, object> MustMatch = (field, fieldName, customError) => new Symbol("mustMatch", (text, state) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, state[field].ToString() == text, () => MakeError(customError, MustMatchError(fieldName))) });
+    public static readonly Arg<string, string, object> MustMatch = (field, fieldName, customError) => new Symbol("mustMatch", (text, state) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, (state.TryGetValue(field, out var z) ? z.ToString() : null) == text, () => MakeError(customError, MustMatchError(fieldName))) });
     public static readonly Arg<int, object> MinLength = (length, customError) => new Symbol("minLength", (text) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, text != null && text.Length >= length, () => MakeError(customError, MinLengthError(length))) });
     public static readonly Arg<int, object> MaxLength = (length, customError) => new Symbol("maxLength", (text) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, (text == null || text.Length <= length), () => MakeError(customError, MaxLengthError(length))) });
 
@@ -77,6 +77,8 @@ namespace CoreValidation
     //makeSymbols(text, memo, regex);
 
     // validator - default
-    public static Validator Create(object @this, AbstractBinding binding = null) => new Validator(@this, binding);
+    public static Validator Create<T>(T @this) => new Validator(@this, new DefaultBinding(typeof(T)));
+    public static Validator Create(Type type, object @this) => new Validator(@this, new DefaultBinding(type));
+    public static Validator Create(Type type, object @this, AbstractBinding binding) => new Validator(@this, binding);
   }
 }

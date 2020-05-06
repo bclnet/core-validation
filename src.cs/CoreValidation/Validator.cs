@@ -11,7 +11,7 @@ namespace CoreValidation
     internal Validator(object @this, AbstractBinding binding = null)
     {
       This = @this;
-      Binding = binding ?? new CastBinding();
+      Binding = binding ?? throw new ArgumentNullException(nameof(binding));
     }
 
     // STATE
@@ -29,25 +29,25 @@ namespace CoreValidation
     {
       var skipRules = opts != null && opts.TryGetValue("skipRules", out var z) && z is bool v1 ? v1 : false;
       var errors = !skipRules ? RunRules(opts, null, 1) : Binding.GetErrors(This);
-      var primaryErrorFlag = ((errors["_flag"] as int?) & 1) != 0;
+      var primaryErrorFlag = ((errors.TryGetValue("_flag", out z) && z is int v2 ? v2 : 0) & 1) != 0;
       return primaryErrorFlag && (errors.Count != 1);
     }
     public bool HasErrorFlag(int bit = 0)
     {
       var errors = Binding.GetErrors(This);
-      return ((errors["_flag"] as int?) & (1 << bit)) != 0;
+      return ((errors.TryGetValue("_flag", out var z) && z is int v2 ? v2 : 0) & (1 << bit)) != 0;
     }
 
     public void SetErrorFlag(int bit = 0)
     {
       var errors = Binding.GetErrors(This);
-      errors["_flag"] = (errors["_flag"] as int?) | (1 << bit);
+      errors["_flag"] = (errors.TryGetValue("_flag", out var z) && z is int v2 ? v2 : 0) | (1 << bit);
       Binding.SetErrors(This, errors);
     }
     public void ClearErrorFlag(int bit = 0)
     {
       var errors = Binding.GetErrors(This);
-      errors["_flag"] = (errors["_flag"] as int?) & ~(1 << bit);
+      errors["_flag"] = (errors.TryGetValue("_flag", out var z) && z is int v2 ? v2 : 0) & ~(1 << bit);
       Binding.SetErrors(This, errors);
     }
 
@@ -65,7 +65,7 @@ namespace CoreValidation
       var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is Rule[] v1 ? v1 : null) ?? Rules;
       var state = Binding.GetState(This, opts);
       var values = rules != null ? V.Format(state, rules, field) : new Dictionary<string, object>();
-      if (field != null && state[field] == values[field]) return new Dictionary<string, object>();
+      if (field != null && state.TryGetValue(field, out var s) && values.TryGetValue(field, out var v) && s == v) return new Dictionary<string, object>();
       return values;
     }
 
@@ -74,7 +74,7 @@ namespace CoreValidation
       var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is Rule[] v1 ? v1 : null) ?? Rules;
       var state = Binding.GetState(This, opts);
       var errors = rules != null ? V.Validate(state, rules, field) : new Dictionary<string, object>();
-      errors["_flag"] = flag != 0 ? flag : (Binding.GetErrors(This)["_flag"] as int?);
+      errors["_flag"] = flag != 0 ? flag : (Binding.GetErrors(This).TryGetValue("_flag", out z) && z is int v2 ? v2 : 0);
       Binding.SetErrors(This, errors);
       return errors;
     }
@@ -84,7 +84,7 @@ namespace CoreValidation
       var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is Rule[] v1 ? v1 : null) ?? Rules;
       var state = Binding.GetState(This, opts);
       var values = rules != null ? V.Format(state, rules, field) : new Dictionary<string, object>();
-      if (field != null && state[field] == values[field]) return new Dictionary<string, object>();
+      if (field != null && state.TryGetValue(field, out var s) && values.TryGetValue(field, out var v) && s == v) return new Dictionary<string, object>();
       Binding.SetState(This, opts, values);
       return values;
     }
@@ -111,8 +111,8 @@ namespace CoreValidation
     {
       var rule = GetRules(opts, field).SingleOrDefault() ?? new Rule();
       var state = Binding.GetState(This, opts);
-      var defaultValue = rule.State["defaultValue"] ?? NulFormat;
-      return state[field] ?? defaultValue;
+      var defaultValue = (rule.State.TryGetValue("defaultValue", out var v) ? v : null) ?? NulFormat;
+      return (state.TryGetValue(field, out var z) ? z : null) ?? defaultValue;
     }
 
     public bool RequiredFor(string field, IDictionary<string, object> opts = null)
@@ -125,12 +125,12 @@ namespace CoreValidation
     public string ErrorFor(string field, IDictionary<string, object> opts = null)
     {
       var errors = Binding.GetErrors(This);
-      var primaryErrorFlag = ((errors["_flag"] as int?) & 1) != 0;
+      var primaryErrorFlag = ((errors.TryGetValue("_flag", out var z) && z is int v2 ? v2 : 0) & 1) != 0;
       return primaryErrorFlag ? errors[field ?? string.Empty] as string ?? string.Empty : null;
     }
 
     public string FormatFor(string field, IDictionary<string, object> opts = null) =>
-      GetFormats(opts, field)[field] as string;
+      GetFormats(opts, field).TryGetValue(field, out var v) ? v as string : null;
 
     public object InputFor(string field, IDictionary<string, object> opts = null)
     {

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace CoreValidation.Tests
 {
-  public class ExampleTest : ICastBinding
+  public class ExampleTest : IStateBinding
   {
     public Dictionary<string, object> Errors { get; set; } = new Dictionary<string, object>();
     public Dictionary<string, object> State { get; set; } = new Dictionary<string, object>();

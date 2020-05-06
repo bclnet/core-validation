@@ -17,7 +17,7 @@ export const rule = (field, label, ...args) => {
         if (!v) continue;
         const value = state[field]
         const x = v(value, state).parse();
-        const error = x[1] ? x[2]() : null;
+        const error = x[1] ? null : x[2]();
         if (error)
           return { [field]: error(label) };
       }

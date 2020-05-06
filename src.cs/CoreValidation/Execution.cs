@@ -27,9 +27,9 @@ namespace CoreValidation
       foreach (var v in Args)
       {
         if (v == null) continue;
-        var value = state[Field].ToString();
+        var value = state.TryGetValue(Field, out var z) ? z.ToString() : null;
         var x = v.Func(value, state).Parse();
-        var error = x.Item2 ? x.Item3() : null;
+        var error = x.Item2 ? null : x.Item3();
         if (error is Func<string, object> errorFunc0)
           return new Dictionary<string, object> { { Field, errorFunc0(Label) } };
       }
@@ -41,7 +41,7 @@ namespace CoreValidation
       foreach (var v in Args)
       {
         if (v == null) continue;
-        var value = state[Field].ToString();
+        var value = state.TryGetValue(Field, out var z) ? z.ToString() : null;
         var x = v.Func(value, state).Parse();
         var newValue = v.Func(x.Item1.ToString(), state).Format();
         if (newValue != null && value != newValue)
@@ -67,8 +67,8 @@ namespace CoreValidation
   {
     public class SymbolFunc
     {
-      public Func<string> Format = () => null;
-      public Func<(object, bool, Func<object>)> Parse = () => (null, false, null);
+      public Func<string> Format;
+      public Func<(object, bool, Func<object>)> Parse;
     }
 
     public class Symbol
@@ -95,9 +95,9 @@ namespace CoreValidation
     public static IDictionary<string, object> ToParam(this object source, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance) =>
       source?.GetType().GetProperties(bindingAttr).ToDictionary(x => x.Name, x => x.GetValue(source, null));
     public static IDictionary<string, object> Assign(this IDictionary<string, object> source, IDictionary<string, object> param) =>
-      param?.Aggregate(source, (a, b) => { a[b.Key] = b.Value; return a; });
+      param != null ? param.Aggregate(source, (a, b) => { a[b.Key] = b.Value; return a; }) : source;
     public static IDictionary<string, object> Assign(this IDictionary<string, object> source, object param, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance) =>
-      param?.ToParam(bindingAttr).Aggregate(source, (a, b) => { a[b.Key] = b.Value; return a; });
+      param != null ? param.ToParam(bindingAttr).Aggregate(source, (a, b) => { a[b.Key] = b.Value; return a; }) : source;
 
     // execution
     public static Rule Rule(string field, string label, params object[] args)
@@ -112,7 +112,7 @@ namespace CoreValidation
     }
 
     public static Rule RuleIf(string condition, params Rule[] rules) => new RuleIf(
-      condition: (state) => state != null && state[condition] != null && ((state[condition] is string s && s.Length > 0) || (state[condition] is bool b && b)),
+      condition: (state) => state != null && state.TryGetValue(condition, out var z) && ((z is string s && s.Length > 0) || (z is bool b && b)),
       rules: rules
     );
     public static Rule RuleIf(Func<IDictionary<string, object>, bool> condition, params Rule[] rules) => new RuleIf(
