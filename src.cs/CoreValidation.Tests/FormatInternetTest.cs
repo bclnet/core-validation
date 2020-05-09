@@ -1,3 +1,4 @@
+using Shouldly;
 using Xunit;
 using static CoreValidation.Formats.Internet;
 using static CoreValidation.Globals;
@@ -11,16 +12,16 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(EmailFormatter(null), NulFormat);
-        Assert2.Equal(EmailFormatter(""), NulFormat);
-        Assert2.Equal(EmailFormatter("anything"), "anything");
+        EmailFormatter(null).ShouldBe(NulFormat);
+        EmailFormatter("").ShouldBe(NulFormat);
+        EmailFormatter("anything").ShouldBe("anything");
       }
       // should parse
       {
-        Assert2.Equal(EmailParser(null), (null, true, null));
-        Assert2.Equal(EmailParser(""), ("", true, null));
-        Assert2.Equal(EmailParser("bad.com"), ("bad.com", false, null));
-        Assert2.Equal(EmailParser("valid@email.com"), ("valid@email.com", true, null));
+        EmailParser(null).ShouldBe((null, true, null));
+        EmailParser("").ShouldBe(("", true, null));
+        EmailParser("bad.com").ShouldBe(("bad.com", false, null));
+        EmailParser("valid@email.com").ShouldBe(("valid@email.com", true, null));
       }
     }
 
@@ -29,25 +30,25 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(EmailListFormatter(null), NulFormat);
-        Assert2.Equal(EmailListFormatter(""), NulFormat);
-        Assert2.Equal(EmailListFormatter("anything"), "anything");
+        EmailListFormatter(null).ShouldBe(NulFormat);
+        EmailListFormatter("").ShouldBe(NulFormat);
+        EmailListFormatter("anything").ShouldBe("anything");
       }
       // should parse
       {
-        Assert2.Equal(EmailListParser(null), (null, true, null));
-        Assert2.Equal(EmailListParser(""), ("", true, null));
-        Assert2.Equal(EmailListParser("bad.com"), ("bad.com", false, null));
-        Assert2.Equal(EmailListParser("valid@email.com"), ("valid@email.com", true, null));
+        EmailListParser(null).ShouldBe((null, true, null));
+        EmailListParser("").ShouldBe(("", true, null));
+        EmailListParser("bad.com").ShouldBe(("bad.com", false, null));
+        EmailListParser("valid@email.com").ShouldBe(("valid@email.com", true, null));
         // list
-        Assert2.Equal(EmailListParser("bad.com, valid@email.com"), ("bad.com, valid@email.com", false, null));
-        Assert2.Equal(EmailListParser("valid@email.com, valid@email.com"), ("valid@email.com; valid@email.com", true, null));
-        Assert2.Equal(EmailListParser("valid@email.com, ,valid@email.com"), ("valid@email.com; valid@email.com", true, null));
+        EmailListParser("bad.com, valid@email.com").ShouldBe(("bad.com, valid@email.com", false, null));
+        EmailListParser("valid@email.com, valid@email.com").ShouldBe(("valid@email.com; valid@email.com", true, null));
+        EmailListParser("valid@email.com, ,valid@email.com").ShouldBe(("valid@email.com; valid@email.com", true, null));
       }
       // should parse: maxCount
       {
-        Assert2.Equal(EmailListParser("valid@email.com, valid@email.com", new { maxCount = 1 }.ToParam()), ("valid@email.com, valid@email.com", false, null));
-        Assert2.Equal(EmailListParser("valid@email.com, valid@email.com", new { maxCount = 2 }.ToParam()), ("valid@email.com; valid@email.com", true, null));
+        EmailListParser("valid@email.com, valid@email.com", new { maxCount = 1 }.ToParam()).ShouldBe(("valid@email.com, valid@email.com", false, null));
+        EmailListParser("valid@email.com, valid@email.com", new { maxCount = 2 }.ToParam()).ShouldBe(("valid@email.com; valid@email.com", true, null));
       }
     }
 
@@ -56,16 +57,16 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(HostnameFormatter(null), NulFormat);
-        Assert2.Equal(HostnameFormatter(""), NulFormat);
-        Assert2.Equal(HostnameFormatter("anything"), "anything");
+        HostnameFormatter(null).ShouldBe(NulFormat);
+        HostnameFormatter("").ShouldBe(NulFormat);
+        HostnameFormatter("anything").ShouldBe("anything");
       }
       // should parse
       {
-        Assert2.Equal(HostnameParser(null), (null, true, null));
-        Assert2.Equal(HostnameParser(""), ("", true, null));
-        Assert2.Equal(HostnameParser("bad-com"), ("bad-com", false, null));
-        Assert2.Equal(HostnameParser("good.com"), ("good.com", true, null));
+        HostnameParser(null).ShouldBe((null, true, null));
+        HostnameParser("").ShouldBe(("", true, null));
+        HostnameParser("bad-com").ShouldBe(("bad-com", false, null));
+        HostnameParser("good.com").ShouldBe(("good.com", true, null));
       }
     }
 
@@ -74,25 +75,25 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(HostnameListFormatter(null), NulFormat);
-        Assert2.Equal(HostnameListFormatter(""), NulFormat);
-        Assert2.Equal(HostnameListFormatter("anything"), "anything");
+        HostnameListFormatter(null).ShouldBe(NulFormat);
+        HostnameListFormatter("").ShouldBe(NulFormat);
+        HostnameListFormatter("anything").ShouldBe("anything");
       }
       // should parse
       {
-        Assert2.Equal(HostnameListParser(null), (null, true, null));
-        Assert2.Equal(HostnameListParser(""), ("", true, null));
-        Assert2.Equal(HostnameListParser("bad-com"), ("bad-com", false, null));
-        Assert2.Equal(HostnameListParser("good.com"), ("good.com", true, null));
+        HostnameListParser(null).ShouldBe((null, true, null));
+        HostnameListParser("").ShouldBe(("", true, null));
+        HostnameListParser("bad-com").ShouldBe(("bad-com", false, null));
+        HostnameListParser("good.com").ShouldBe(("good.com", true, null));
         // list
-        Assert2.Equal(HostnameListParser("bad-com, good.com"), ("bad-com, good.com", false, null));
-        Assert2.Equal(HostnameListParser("good.com, good.com"), ("good.com; good.com", true, null));
-        Assert2.Equal(HostnameListParser("good.com, ,good.com"), ("good.com; good.com", true, null));
+        HostnameListParser("bad-com, good.com").ShouldBe(("bad-com, good.com", false, null));
+        HostnameListParser("good.com, good.com").ShouldBe(("good.com; good.com", true, null));
+        HostnameListParser("good.com, ,good.com").ShouldBe(("good.com; good.com", true, null));
       }
       // should parse: maxCount
       {
-        Assert2.Equal(HostnameListParser("good.com, good.com", new { maxCount = 1 }.ToParam()), ("good.com, good.com", false, null));
-        Assert2.Equal(HostnameListParser("good.com, good.com", new { maxCount = 2 }.ToParam()), ("good.com; good.com", true, null));
+        HostnameListParser("good.com, good.com", new { maxCount = 1 }.ToParam()).ShouldBe(("good.com, good.com", false, null));
+        HostnameListParser("good.com, good.com", new { maxCount = 2 }.ToParam()).ShouldBe(("good.com; good.com", true, null));
       }
     }
 
@@ -101,15 +102,15 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(UriFormatter(null), NulFormat);
-        Assert2.Equal(UriFormatter(""), NulFormat);
-        Assert2.Equal(UriFormatter("anything"), "anything");
+        UriFormatter(null).ShouldBe(NulFormat);
+        UriFormatter("").ShouldBe(NulFormat);
+        UriFormatter("anything").ShouldBe("anything");
       }
       // should parse
       {
-        Assert2.Equal(UriParser(null), (null, true, null));
-        Assert2.Equal(UriParser(""), ("", true, null));
-        Assert2.Equal(UriParser("anything"), ("anything", true, null));
+        UriParser(null).ShouldBe((null, true, null));
+        UriParser("").ShouldBe(("", true, null));
+        UriParser("anything").ShouldBe(("anything", true, null));
       }
     }
 
@@ -117,13 +118,13 @@ namespace CoreValidation.Tests
     public void Xml()
     {
       // should format
-      Assert2.Equal(XmlFormatter(null), NulFormat);
-      Assert2.Equal(XmlFormatter(""), NulFormat);
-      Assert2.Equal(XmlFormatter("anything"), "anything");
+      XmlFormatter(null).ShouldBe(NulFormat);
+      XmlFormatter("").ShouldBe(NulFormat);
+      XmlFormatter("anything").ShouldBe("anything");
       // should parse
-      Assert2.Equal(XmlParser(null), (null, true, null));
-      Assert2.Equal(XmlParser(""), ("", true, null));
-      Assert2.Equal(XmlParser("anything"), ("anything", true, null));
+      XmlParser(null).ShouldBe((null, true, null));
+      XmlParser("").ShouldBe(("", true, null));
+      XmlParser("anything").ShouldBe(("anything", true, null));
     }
   }
 }

@@ -17,7 +17,7 @@ namespace CoreValidation
     // STATE
     public readonly object This;
     public readonly AbstractBinding Binding;
-    public Rule[] Rules { get; set; }
+    public ICollection<VRule> Rules { get; set; }
     //  public object inputParser = eventTargetInputParser,
     //  public object inputHandler: null,
 
@@ -52,17 +52,17 @@ namespace CoreValidation
     }
 
     // RUN
-    public ICollection<Rule> GetRules(IDictionary<string, object> opts = null, string field = null)
+    public ICollection<VRule> GetRules(IDictionary<string, object> opts = null, string field = null)
     {
-      var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is Rule[] v1 ? v1 : null) ?? Rules;
+      var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is ICollection<VRule> v1 ? v1 : null) ?? Rules;
       var state = Binding.GetState(This, opts);
       if (field != null) return rules != null ? new[] { V.Find(state, rules, field) } : null;
-      return rules != null ? V.Flatten(state, rules) : new Rule[0];
+      return rules != null ? V.Flatten(state, rules) : new VRule[0];
     }
 
     public IDictionary<string, object> GetFormats(IDictionary<string, object> opts = null, string field = null)
     {
-      var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is Rule[] v1 ? v1 : null) ?? Rules;
+      var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is ICollection<VRule> v1 ? v1 : null) ?? Rules;
       var state = Binding.GetState(This, opts);
       var values = rules != null ? V.Format(state, rules, field) : new Dictionary<string, object>();
       if (field != null && state.TryGetValue(field, out var s) && values.TryGetValue(field, out var v) && s == v) return new Dictionary<string, object>();
@@ -71,7 +71,7 @@ namespace CoreValidation
 
     public IDictionary<string, object> RunRules(IDictionary<string, object> opts = null, string field = null, int flag = 0)
     {
-      var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is Rule[] v1 ? v1 : null) ?? Rules;
+      var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is ICollection<VRule> v1 ? v1 : null) ?? Rules;
       var state = Binding.GetState(This, opts);
       var errors = rules != null ? V.Validate(state, rules, field) : new Dictionary<string, object>();
       errors["_flag"] = flag != 0 ? flag : (Binding.GetErrors(This).TryGetValue("_flag", out z) && z is int v2 ? v2 : 0);
@@ -81,7 +81,7 @@ namespace CoreValidation
 
     public IDictionary<string, object> RunFormats(IDictionary<string, object> opts = null, string field = null)
     {
-      var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is Rule[] v1 ? v1 : null) ?? Rules;
+      var rules = (opts != null && opts.TryGetValue("rules", out var z) && z is ICollection<VRule> v1 ? v1 : null) ?? Rules;
       var state = Binding.GetState(This, opts);
       var values = rules != null ? V.Format(state, rules, field) : new Dictionary<string, object>();
       if (field != null && state.TryGetValue(field, out var s) && values.TryGetValue(field, out var v) && s == v) return new Dictionary<string, object>();
@@ -103,13 +103,13 @@ namespace CoreValidation
     // BINDERS
     public string LabelFor(string field, IDictionary<string, object> opts = null)
     {
-      var rule = GetRules(opts, field).SingleOrDefault() ?? new Rule();
+      var rule = GetRules(opts, field).SingleOrDefault() ?? new VRule();
       return rule.Label ?? "Label";
     }
 
     public object ValueFor(string field, IDictionary<string, object> opts = null)
     {
-      var rule = GetRules(opts, field).SingleOrDefault() ?? new Rule();
+      var rule = GetRules(opts, field).SingleOrDefault() ?? new VRule();
       var state = Binding.GetState(This, opts);
       var defaultValue = (rule.State.TryGetValue("defaultValue", out var v) ? v : null) ?? NulFormat;
       return (state.TryGetValue(field, out var z) ? z : null) ?? defaultValue;
@@ -117,7 +117,7 @@ namespace CoreValidation
 
     public bool RequiredFor(string field, IDictionary<string, object> opts = null)
     {
-      var rule = GetRules(opts, field).SingleOrDefault() ?? new Rule();
+      var rule = GetRules(opts, field).SingleOrDefault() ?? new VRule();
       var required = rule.Args != null && rule.Args.Any(x => x.Name == "required");
       return required;
     }

@@ -1,3 +1,4 @@
+using Shouldly;
 using System;
 using Xunit;
 using static CoreValidation.Formats.Logistics;
@@ -12,56 +13,56 @@ namespace CoreValidation.Tests
     {
       // should format
       {
-        Assert2.Equal(PhoneFormatter(null), NulFormat);
-        Assert2.Equal(PhoneFormatter(""), NulFormat);
-        Assert2.Equal(PhoneFormatter("816-304-4341"), "816-304-4341");
+        PhoneFormatter(null).ShouldBe(NulFormat);
+        PhoneFormatter("").ShouldBe(NulFormat);
+        PhoneFormatter("816-304-4341").ShouldBe("816-304-4341");
       }
       //should parse
       {
-        Assert2.Equal(PhoneParser(null), (null, true, null));
-        Assert2.Equal(PhoneParser(""), ("", true, null));
-        Assert2.Equal(PhoneParser("123-456"), ("123-456", false, null));
-        Assert2.Equal(PhoneParser("123-456-7890.1234"), ("(123) 456-7890 x1234", true, null));
-        Assert2.Equal(PhoneParser("123-456-7890"), ("(123) 456-7890", true, null));
+        PhoneParser(null).ShouldBe((null, true, null));
+        PhoneParser("").ShouldBe(("", true, null));
+        PhoneParser("123-456").ShouldBe(("123-456", false, null));
+        PhoneParser("123-456-7890.1234").ShouldBe(("(123) 456-7890 x1234", true, null));
+        PhoneParser("123-456-7890").ShouldBe(("(123) 456-7890", true, null));
       }
       // should parse: _
       {
         var param = new { countries = "" }.ToParam();
-        Assert2.Equal(PhoneParser("123.456.7890.1234", param), ("(123) 456-7890 x1234", true, null));
-        Assert2.Equal(PhoneParser("123.456.7890.1234", param.Assign(new { layout = "-" })), ("123-456-7890 x1234", true, null));
-        Assert2.Equal(PhoneParser("123.456.7890.1234", param.Assign(new { layout = "." })), ("123.456.7890 x1234", true, null));
-        Assert2.Equal(PhoneParser("123.456.7890.1234", param.Assign(new { layout = "()" })), ("(123) 456-7890 x1234", true, null));
+        PhoneParser("123.456.7890.1234", param).ShouldBe(("(123) 456-7890 x1234", true, null));
+        PhoneParser("123.456.7890.1234", param.Assign(new { layout = "-" })).ShouldBe(("123-456-7890 x1234", true, null));
+        PhoneParser("123.456.7890.1234", param.Assign(new { layout = "." })).ShouldBe(("123.456.7890 x1234", true, null));
+        PhoneParser("123.456.7890.1234", param.Assign(new { layout = "()" })).ShouldBe(("(123) 456-7890 x1234", true, null));
       }
       // should parse: *
       {
         var param = new { countries = "*" }.ToParam();
-        Assert2.Equal(PhoneParser("123-456-7890.1234", param), ("123-456-7890.1234", true, null));
-        Assert2.Equal(PhoneParser("123-456-7890", param), ("123-456-7890", true, null));
+        PhoneParser("123-456-7890.1234", param).ShouldBe(("123-456-7890.1234", true, null));
+        PhoneParser("123-456-7890", param).ShouldBe(("123-456-7890", true, null));
       }
       // should parse: usa
       {
         var param = new { countries = "u" }.ToParam();
-        Assert2.Equal(PhoneParser("123.456.7890.1234", param), ("(123) 456-7890 x1234", true, null));
-        Assert2.Equal(PhoneParser("123-456-7890", param), ("(123) 456-7890", true, null));
-        Assert2.Equal(PhoneParser("456-7890", param), ("456-7890", false, null));
+        PhoneParser("123.456.7890.1234", param).ShouldBe(("(123) 456-7890 x1234", true, null));
+        PhoneParser("123-456-7890", param).ShouldBe(("(123) 456-7890", true, null));
+        PhoneParser("456-7890", param).ShouldBe(("456-7890", false, null));
       }
       // should parse: canada
       {
         var param = new { countries = "c" }.ToParam();
-        Assert2.Equal(PhoneParser("123.456.7890.1234", param), ("(123) 456-7890 x1234", true, null));
-        Assert2.Equal(PhoneParser("123-456-7890", param), ("(123) 456-7890", true, null));
-        Assert2.Equal(PhoneParser("456-7890", param), ("456-7890", false, null));
+        PhoneParser("123.456.7890.1234", param).ShouldBe(("(123) 456-7890 x1234", true, null));
+        PhoneParser("123-456-7890", param).ShouldBe(("(123) 456-7890", true, null));
+        PhoneParser("456-7890", param).ShouldBe(("456-7890", false, null));
       }
       // should parse: unknown
       {
         var param = new { countries = "z" }.ToParam();
-        Assert2.Equal(PhoneParser("123.456.7890.1234", param), ("123.456.7890.1234", false, null));
+        PhoneParser("123.456.7890.1234", param).ShouldBe(("123.456.7890.1234", false, null));
       }
       // should parse: layout
       {
-        Assert2.Equal(PhoneParser("123.456.7890.1234", new { countries = "u", layout = "." }.ToParam()), ("123.456.7890 x1234", true, null));
-        Assert2.Equal(PhoneParser("123.456.7890.1234", new { countries = "u", layout = "-" }.ToParam()), ("123-456-7890 x1234", true, null));
-        Assert2.Equal(PhoneParser("123.456.7890.1234", new { countries = "u", layout = "()" }.ToParam()), ("(123) 456-7890 x1234", true, null));
+        PhoneParser("123.456.7890.1234", new { countries = "u", layout = "." }.ToParam()).ShouldBe(("123.456.7890 x1234", true, null));
+        PhoneParser("123.456.7890.1234", new { countries = "u", layout = "-" }.ToParam()).ShouldBe(("123-456-7890 x1234", true, null));
+        PhoneParser("123.456.7890.1234", new { countries = "u", layout = "()" }.ToParam()).ShouldBe(("(123) 456-7890 x1234", true, null));
         Assert.Throws<ArgumentOutOfRangeException>(() => PhoneParser("123.456.7890.1234", new { countries = "u", layout = "*" }.ToParam()));
       }
     }
@@ -71,48 +72,48 @@ namespace CoreValidation.Tests
     {
       // should format", () =>
       {
-        Assert2.Equal(ZipFormatter(null), NulFormat);
-        Assert2.Equal(ZipFormatter(""), NulFormat);
-        Assert2.Equal(ZipFormatter("66211", new { }.ToParam()), "66211");
+        ZipFormatter(null).ShouldBe(NulFormat);
+        ZipFormatter("").ShouldBe(NulFormat);
+        ZipFormatter("66211", new { }.ToParam()).ShouldBe("66211");
       }
       // should parse
       {
-        Assert2.Equal(ZipParser(null), (null, true, null));
-        Assert2.Equal(ZipParser(""), ("", true, null));
-        Assert2.Equal(ZipParser("66211"), ("66211", true, null));
+        ZipParser(null).ShouldBe((null, true, null));
+        ZipParser("").ShouldBe(("", true, null));
+        ZipParser("66211").ShouldBe(("66211", true, null));
       }
       // should parse: _
       {
         var param = new { countries = "" }.ToParam();
-        Assert2.Equal(ZipParser("12345-0123", param), ("12345-0123", true, null));
+        ZipParser("12345-0123", param).ShouldBe(("12345-0123", true, null));
       }
       // should parse: *
       {
         var param = new { countries = "*" }.ToParam();
-        Assert2.Equal(ZipParser("123", param), ("123", true, null));
-        Assert2.Equal(ZipParser("12345", param), ("12345", true, null));
-        Assert2.Equal(ZipParser("12345-123", param), ("12345-123", true, null));
+        ZipParser("123", param).ShouldBe(("123", true, null));
+        ZipParser("12345", param).ShouldBe(("12345", true, null));
+        ZipParser("12345-123", param).ShouldBe(("12345-123", true, null));
       }
       // should parse: usa
       {
         var param = new { countries = "u" }.ToParam();
-        Assert2.Equal(ZipParser("123", param), ("00123", true, null));
-        Assert2.Equal(ZipParser("12345", param), ("12345", true, null));
-        Assert2.Equal(ZipParser("123456", param), ("123456", false, null));
-        Assert2.Equal(ZipParser("12345-0123", param), ("12345-0123", true, null));
-        Assert2.Equal(ZipParser("12345-1234", param), ("12345-1234", true, null));
+        ZipParser("123", param).ShouldBe(("00123", true, null));
+        ZipParser("12345", param).ShouldBe(("12345", true, null));
+        ZipParser("123456", param).ShouldBe(("123456", false, null));
+        ZipParser("12345-0123", param).ShouldBe(("12345-0123", true, null));
+        ZipParser("12345-1234", param).ShouldBe(("12345-1234", true, null));
       }
       // should parse: canada
       {
         var param = new { countries = "c" }.ToParam();
-        Assert2.Equal(ZipParser("12345", param), ("12345", false, null));
-        Assert2.Equal(ZipParser("123 456", param), ("123 456", false, null));
-        Assert2.Equal(ZipParser("K8N 5W6", param), ("K8N 5W6", true, null));
+        ZipParser("12345", param).ShouldBe(("12345", false, null));
+        ZipParser("123 456", param).ShouldBe(("123 456", false, null));
+        ZipParser("K8N 5W6", param).ShouldBe(("K8N 5W6", true, null));
       }
       // should parse: unknown
       {
         var param = new { countries = "z" }.ToParam();
-        Assert2.Equal(ZipParser("12345", param), ("12345", false, null));
+        ZipParser("12345", param).ShouldBe(("12345", false, null));
       }
     }
   }

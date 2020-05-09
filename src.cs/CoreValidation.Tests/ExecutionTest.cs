@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
+using Shouldly;
 using Xunit;
 
 namespace CoreValidation.Tests
@@ -17,27 +16,27 @@ namespace CoreValidation.Tests
           V.Rule("required", "required label", V.Required),
           V.Rule("email", "email label", V.Email),
         };
-        Assert2.Equal(rules.Length, 4);
-        Assert2.Equal(rules[0].Field, "field"); Assert2.Equal(rules[0].Label, "field label"); Assert2.Equal(rules[0].Args.Length, 0); Assert2.Equal(rules[0].State.Count, 0);
-        Assert2.Equal(rules[1].Field, "value"); Assert2.Equal(rules[1].Args.Length, 0); Assert2.Equal(rules[1].State.Count, 1);
-        Assert2.Equal(rules[2].Field, "required"); Assert2.Equal(rules[2].Args.Length, 1); Assert2.Equal(rules[2].State.Count, 0);
-        Assert2.Equal(rules[3].Field, "email"); Assert2.Equal(rules[3].Args.Length, 1); Assert2.Equal(rules[3].State.Count, 0);
+        rules.Length.ShouldBe(4);
+        rules[0].Field.ShouldBe("field"); rules[0].Label.ShouldBe("field label"); rules[0].Args.Count.ShouldBe(0); rules[0].State.Count.ShouldBe(0);
+        rules[1].Field.ShouldBe("value"); rules[1].Args.Count.ShouldBe(0); rules[1].State.Count.ShouldBe(1);
+        rules[2].Field.ShouldBe("required"); rules[2].Args.Count.ShouldBe(1); rules[2].State.Count.ShouldBe(0);
+        rules[3].Field.ShouldBe("email"); rules[3].Args.Count.ShouldBe(1); rules[3].State.Count.ShouldBe(0);
       }
       // should parse complex rules
       {
         var rules = new[] {
           V.Rule("email", "email label", V.Email(new { maxValue = 10 }), V.MaxLength(100), V.Required),
         };
-        Assert2.Equal(rules.Length, 1);
-        Assert2.Equal(rules[0].Field, "email"); Assert2.Equal(rules[0].Label, "email label"); Assert2.Equal(rules[0].Args.Length, 3); Assert2.Equal(rules[0].State.Count, 0);
+        rules.Length.ShouldBe(1);
+        rules[0].Field.ShouldBe("email"); rules[0].Label.ShouldBe("email label"); rules[0].Args.Count.ShouldBe(3); rules[0].State.Count.ShouldBe(0);
       }
       // should parse custom rule
       {
         var rules = new[] {
           V.Rule("field", "field label", V.Custom((a,b,c) => false, "Error")),
         };
-        Assert2.Equal(rules.Length, 1);
-        Assert2.Equal(rules[0].Args.Length, 1);
+        rules.Length.ShouldBe(1);
+        rules[0].Args.Count.ShouldBe(1);
       }
     }
 
@@ -53,7 +52,7 @@ namespace CoreValidation.Tests
             V.Rule("subField2", "subField2 label")
           ),
         };
-        Assert2.Equal(rules.Length, 2);
+        rules.Length.ShouldBe(2);
       }
     }
 
@@ -65,8 +64,8 @@ namespace CoreValidation.Tests
         var rules = new[] {
           V.Rule("field", "field label"),
         };
-        Assert2.Equal(V.Find(null, rules, "nofield"), null);
-        Assert2.Equal(V.Find(null, rules, "field").Field, "field");
+        V.Find(null, rules, "nofield").ShouldBeNull();
+        V.Find(null, rules, "field").Field.ShouldBe("field");
       }
       // should find nested rule
       {
@@ -78,9 +77,9 @@ namespace CoreValidation.Tests
           ),
         };
         var state = new { field = false }.ToParam();
-        Assert2.Equal(V.Find(state, rules, "subField1"), null);
+        V.Find(state, rules, "subField1").ShouldBeNull();
         state = new { field = true }.ToParam();
-        Assert2.Equal(V.Find(state, rules, "subField1").Field, "subField1");
+        V.Find(state, rules, "subField1").Field.ShouldBe("subField1");
       }
     }
 
@@ -92,7 +91,7 @@ namespace CoreValidation.Tests
         var rules = new[] {
           V.Rule("field", "field label"),
         };
-        Assert2.Equal(V.Flatten(null, rules).Count, 1);
+        V.Flatten(null, rules).Count.ShouldBe(1);
       }
       // should flatten nested rule
       {
@@ -104,68 +103,68 @@ namespace CoreValidation.Tests
           ),
         };
         var state = new { field = false }.ToParam();
-        Assert2.Equal(V.Flatten(state, rules).Count, 1);
+        V.Flatten(state, rules).Count.ShouldBe(1);
         state = new { field = true }.ToParam();
-        Assert2.Equal(V.Flatten(state, rules).Count, 3);
+        V.Flatten(state, rules).Count.ShouldBe(3);
       }
     }
 
-    //[Fact]
-    //public void Validate()
-    //{
-    //  // should validate simple rule
-    //  {
-    //    var rules = new[] {
-    //      V.Rule("field", "field label"),
-    //    };
-    //    Assert2.Equal(V.Validate(null, rules).Count, 1);
-    //    Assert2.Equal(V.Validate(null, rules, "nofield").Count, 0);
-    //    Assert2.Equal(V.Validate(null, rules, "field").Count, 1);
-    //  }
-    //  // should validate nested rule
-    //  {
-    //    var rules = new[] {
-    //      V.Rule("field", "field label"),
-    //      V.RuleIf("field",
-    //        V.Rule("subField1", "subField1 label"),
-    //        V.Rule("subField2", "subField2 label")
-    //      ),
-    //    };
-    //    var state = new { field = false }.ToParam();
-    //    Assert2.Equal(V.Validate(state, rules).Count, 0);
-    //    state = new { field = true }.ToParam();
-    //    Assert2.Equal(V.Validate(state, rules).Count, 0);
-    //    Assert2.Equal(V.Validate(state, rules, "subField1").Count, 0);
-    //  }
-    //}
+    [Fact]
+    public void Validate()
+    {
+      // should validate simple rule
+      {
+        var rules = new[] {
+          V.Rule("field", "field label"),
+        };
+        V.Validate(null, rules).Count.ShouldBe(0);
+        V.Validate(null, rules, "nofield").Count.ShouldBe(0);
+        V.Validate(null, rules, "field").Count.ShouldBe(0);
+      }
+      // should validate nested rule
+      {
+        var rules = new[] {
+          V.Rule("field", "field label"),
+          V.RuleIf("field",
+            V.Rule("subField1", "subField1 label"),
+            V.Rule("subField2", "subField2 label")
+          ),
+        };
+        var state = new { field = false }.ToParam();
+        V.Validate(state, rules).Count.ShouldBe(0);
+        state = new { field = true }.ToParam();
+        V.Validate(state, rules).Count.ShouldBe(0);
+        V.Validate(state, rules, "subField1").Count.ShouldBe(0);
+      }
+    }
 
-    //[Fact]
-    //public void Format()
-    //{
-    //  // should find simple rule
-    //  {
-    //    var rules = new[] {
-    //      V.Rule("field", "field label"),
-    //    };
-    //    Assert2.Equal(V.Format(null, rules).Count, 0);
-    //    Assert2.Equal(V.Format(null, rules, "nofield").Count, 0);
-    //    Assert2.Equal(V.Format(null, rules, "field").Count, 1);
-    //  }
-    //  // should find nested rule
-    //  {
-    //    var rules = new[] {
-    //      V.Rule("field", "field label"),
-    //      V.RuleIf("field",
-    //        V.Rule("subField1", "subField1 label"),
-    //        V.Rule("subField2", "subField2 label")
-    //      ),
-    //    };
-    //    var state = new { field = false }.ToParam();
-    //    Assert2.Equal(V.Format(state, rules).Count, 1);
-    //    state = new { field = true }.ToParam();
-    //    Assert2.Equal(V.Format(state, rules).Count, 3);
-    //    Assert2.Equal(V.Format(state, rules, "subField1").Count, 1);
-    //  }
-    //}
+    [Fact]
+    public void Format()
+    {
+      // should find simple rule
+      {
+        var rules = new[] {
+          V.Rule("field", "field label"),
+        };
+        V.Format(null, rules).Count.ShouldBe(0);
+        V.Format(null, rules, "nofield").Count.ShouldBe(0);
+        V.Format(null, rules, "field").Count.ShouldBe(0);
+      }
+      // should find nested rule
+      {
+        var rules = new[] {
+          V.Rule("field", "field label"),
+          V.RuleIf("field",
+            V.Rule("subField1", "subField1 label"),
+            V.Rule("subField2", "subField2 label")
+          ),
+        };
+        var state = new { field = false }.ToParam();
+        V.Format(state, rules).Count.ShouldBe(0);
+        state = new { field = true }.ToParam();
+        V.Format(state, rules).Count.ShouldBe(0);
+        V.Format(state, rules, "subField1").Count.ShouldBe(0);
+      }
+    }
   }
 }

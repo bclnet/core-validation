@@ -1,4 +1,6 @@
+using System.Runtime.CompilerServices;
 using CoreValidation.Bindings;
+using CoreValidation.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +9,7 @@ using static CoreValidation.Formats.Logistics;
 using static CoreValidation.Formats.Moment;
 using static CoreValidation.Formats.Number;
 using static CoreValidation.Formats.String;
+[assembly: InternalsVisibleTo("CoreValidation.Tests")]
 
 namespace CoreValidation
 {
@@ -34,50 +37,46 @@ namespace CoreValidation
     public static readonly Func<int, Func<string, string>> MaxLengthError = (length) => (fieldName) => $"{fieldName} must be at most {length} characters";
 
     // rules
-    public static readonly Arg<object> Required = (customError) => new Symbol("required", (text) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, !string.IsNullOrEmpty(text), () => MakeError(customError, RequiredError)) });
-    public static readonly Arg<Func<string, object, object, bool>, object, object> Custom = (predicate, customError, param) => new Symbol("custom", (text, state) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, predicate(text, state, param), () => MakeError(customError, GeneralError)) });
-    public static readonly Arg<string, string, object> MustMatch = (field, fieldName, customError) => new Symbol("mustMatch", (text, state) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, (state.TryGetValue(field, out var z) ? z.ToString() : null) == text, () => MakeError(customError, MustMatchError(fieldName))) });
-    public static readonly Arg<int, object> MinLength = (length, customError) => new Symbol("minLength", (text) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, text != null && text.Length >= length, () => MakeError(customError, MinLengthError(length))) });
-    public static readonly Arg<int, object> MaxLength = (length, customError) => new Symbol("maxLength", (text) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, (text == null || text.Length <= length), () => MakeError(customError, MaxLengthError(length))) });
+    [Symbol("required")] public static readonly Arg<object> Required = (customError) => new Symbol("required", (text) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, !string.IsNullOrEmpty(text), () => MakeError(customError, RequiredError)) });
+    [Symbol("custom")] public static readonly Arg<Func<string, object, object, bool>, object, object> Custom = (predicate, customError, param) => new Symbol("custom", (text, state) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, predicate(text, state, param), () => MakeError(customError, GeneralError)) });
+    [Symbol("mustMatch")] public static readonly Arg<string, string, object> MustMatch = (field, fieldName, customError) => new Symbol("mustMatch", (text, state) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, (state.TryGetValue(field, out var z) ? z.ToString() : null) == text, () => MakeError(customError, MustMatchError(fieldName))) });
+    [Symbol("minLength")] public static readonly Arg<int, object> MinLength = (length, customError) => new Symbol("minLength", (text) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, text != null && text.Length >= length, () => MakeError(customError, MinLengthError(length))) });
+    [Symbol("maxLength")] public static readonly Arg<int, object> MaxLength = (length, customError) => new Symbol("maxLength", (text) => new SymbolFunc { Format = () => null, Parse = () => NulParser(text, (text == null || text.Length <= length), () => MakeError(customError, MaxLengthError(length))) });
 
     // formats - internet
-    public static readonly Arg<object, object> Email = (param, customError) => new Symbol("email", (text) => new SymbolFunc { Format = () => EmailFormatter(text, MakeParm("email", param)), Parse = () => EmailParser(text, MakeParm("email", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> EmailList = (param, customError) => new Symbol("emailList", (text) => new SymbolFunc { Format = () => EmailListFormatter(text, MakeParm("emailList", param)), Parse = () => EmailListParser(text, MakeParm("emailList", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Hostname = (param, customError) => new Symbol("hostname", (text) => new SymbolFunc { Format = () => HostnameFormatter(text, MakeParm("hostname", param)), Parse = () => HostnameParser(text, MakeParm("hostname", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> HostnameList = (param, customError) => new Symbol("hostnameList", (text) => new SymbolFunc { Format = () => HostnameListFormatter(text, MakeParm("hostnameList", param)), Parse = () => HostnameListParser(text, MakeParm("hostnameList", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Uri = (param, customError) => new Symbol("uri", (text) => new SymbolFunc { Format = () => UriFormatter(text, MakeParm("uri", param)), Parse = () => UriParser(text, MakeParm("uri", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Xml = (param, customError) => new Symbol("xml", (text) => new SymbolFunc { Format = () => XmlFormatter(text, MakeParm("xml", param)), Parse = () => XmlParser(text, MakeParm("xml", param), () => MakeError(customError, InvalidFormatError)) });
-    //makeSymbols(email, emailList, hostname, hostnameList, uri, xml);
+    [Symbol("email")] public static readonly Arg<object, object> Email = (param, customError) => new Symbol("email", (text) => new SymbolFunc { Format = () => EmailFormatter(text, MakeParm("email", param)), Parse = () => EmailParser(text, MakeParm("email", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("emailList")] public static readonly Arg<object, object> EmailList = (param, customError) => new Symbol("emailList", (text) => new SymbolFunc { Format = () => EmailListFormatter(text, MakeParm("emailList", param)), Parse = () => EmailListParser(text, MakeParm("emailList", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("hostname")] public static readonly Arg<object, object> Hostname = (param, customError) => new Symbol("hostname", (text) => new SymbolFunc { Format = () => HostnameFormatter(text, MakeParm("hostname", param)), Parse = () => HostnameParser(text, MakeParm("hostname", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("hostnameList")] public static readonly Arg<object, object> HostnameList = (param, customError) => new Symbol("hostnameList", (text) => new SymbolFunc { Format = () => HostnameListFormatter(text, MakeParm("hostnameList", param)), Parse = () => HostnameListParser(text, MakeParm("hostnameList", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("uri")] public static readonly Arg<object, object> Uri = (param, customError) => new Symbol("uri", (text) => new SymbolFunc { Format = () => UriFormatter(text, MakeParm("uri", param)), Parse = () => UriParser(text, MakeParm("uri", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("xml")] public static readonly Arg<object, object> Xml = (param, customError) => new Symbol("xml", (text) => new SymbolFunc { Format = () => XmlFormatter(text, MakeParm("xml", param)), Parse = () => XmlParser(text, MakeParm("xml", param), () => MakeError(customError, InvalidFormatError)) });
 
     // formats - logistics
-    public static readonly Arg<object, object> Phone = (param, customError) => new Symbol("phone", (text) => new SymbolFunc { Format = () => PhoneFormatter(text, MakeParm("phone", param)), Parse = () => PhoneParser(text, MakeParm("phone", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Zip = (param, customError) => new Symbol("zip", (text) => new SymbolFunc { Format = () => ZipFormatter(text, MakeParm("zip", param)), Parse = () => ZipParser(text, MakeParm("zip", param), () => MakeError(customError, InvalidFormatError)) });
-    //makeSymbols(phone, zip);
+    [Symbol("phone")] public static readonly Arg<object, object> Phone = (param, customError) => new Symbol("phone", (text) => new SymbolFunc { Format = () => PhoneFormatter(text, MakeParm("phone", param)), Parse = () => PhoneParser(text, MakeParm("phone", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("zip")] public static readonly Arg<object, object> Zip = (param, customError) => new Symbol("zip", (text) => new SymbolFunc { Format = () => ZipFormatter(text, MakeParm("zip", param)), Parse = () => ZipParser(text, MakeParm("zip", param), () => MakeError(customError, InvalidFormatError)) });
 
     // formats - moment
-    public static readonly Arg<object, object> Date = (param, customError) => new Symbol("date", (text) => new SymbolFunc { Format = () => DateFormatter(text, MakeParm("date", param)), Parse = () => DateParser(text, MakeParm("date", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> DateTime = (param, customError) => new Symbol("dateTime", (text) => new SymbolFunc { Format = () => DateTimeFormatter(text, MakeParm("dateTime", param)), Parse = () => DateTimeParser(text, MakeParm("dateTime", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> MonthAndDay = (param, customError) => new Symbol("monthAndDay", (text) => new SymbolFunc { Format = () => MonthAndDayFormatter(text, MakeParm("monthAndDay", param)), Parse = () => MonthAndDayParser(text, MakeParm("monthAndDay", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Time = (param, customError) => new Symbol("time", (text) => new SymbolFunc { Format = () => TimeFormatter(text, MakeParm("time", param)), Parse = () => TimeParser(text, MakeParm("time", param), () => MakeError(customError, InvalidFormatError)) });
-    //makeSymbols(date, dateTime, monthAndDay, time);
+    [Symbol("date")] public static readonly Arg<object, object> Date = (param, customError) => new Symbol("date", (text) => new SymbolFunc { Format = () => DateFormatter(text, MakeParm("date", param)), Parse = () => DateParser(text, MakeParm("date", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("dateTime")] public static readonly Arg<object, object> DateTime = (param, customError) => new Symbol("dateTime", (text) => new SymbolFunc { Format = () => DateTimeFormatter(text, MakeParm("dateTime", param)), Parse = () => DateTimeParser(text, MakeParm("dateTime", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("monthAndDay")] public static readonly Arg<object, object> MonthAndDay = (param, customError) => new Symbol("monthAndDay", (text) => new SymbolFunc { Format = () => MonthAndDayFormatter(text, MakeParm("monthAndDay", param)), Parse = () => MonthAndDayParser(text, MakeParm("monthAndDay", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("time")] public static readonly Arg<object, object> Time = (param, customError) => new Symbol("time", (text) => new SymbolFunc { Format = () => TimeFormatter(text, MakeParm("time", param)), Parse = () => TimeParser(text, MakeParm("time", param), () => MakeError(customError, InvalidFormatError)) });
 
     // formats - number
-    public static readonly Arg<object, object> Bool = (param, customError) => new Symbol("bool", (text) => new SymbolFunc { Format = () => BoolFormatter(text, MakeParm("bool", param)), Parse = () => BoolParser(text, MakeParm("bool", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Decimal = (param, customError) => new Symbol("decimal", (text) => new SymbolFunc { Format = () => DecimalFormatter(text, MakeParm("decimal", param)), Parse = () => DecimalParser(text, MakeParm("decimal", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Integer = (param, customError) => new Symbol("integer", (text) => new SymbolFunc { Format = () => IntegerFormatter(text, MakeParm("integer", param)), Parse = () => IntegerParser(text, MakeParm("integer", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Real = (param, customError) => new Symbol("real", (text) => new SymbolFunc { Format = () => RealFormatter(text, MakeParm("real", param)), Parse = () => RealParser(text, MakeParm("real", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Money = (param, customError) => new Symbol("money", (text) => new SymbolFunc { Format = () => MoneyFormatter(text, MakeParm("money", param)), Parse = () => MoneyParser(text, MakeParm("money", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Percent = (param, customError) => new Symbol("percent", (text) => new SymbolFunc { Format = () => PercentFormatter(text, MakeParm("percent", param)), Parse = () => PercentParser(text, MakeParm("percent", param), () => MakeError(customError, InvalidFormatError)) });
-    //makeSymbols(bool, decimal, integer, real, money, percent);
+    [Symbol("bool")] public static readonly Arg<object, object> Bool = (param, customError) => new Symbol("bool", (text) => new SymbolFunc { Format = () => BoolFormatter(text, MakeParm("bool", param)), Parse = () => BoolParser(text, MakeParm("bool", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("decimal")] public static readonly Arg<object, object> Decimal = (param, customError) => new Symbol("decimal", (text) => new SymbolFunc { Format = () => DecimalFormatter(text, MakeParm("decimal", param)), Parse = () => DecimalParser(text, MakeParm("decimal", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("integer")] public static readonly Arg<object, object> Integer = (param, customError) => new Symbol("integer", (text) => new SymbolFunc { Format = () => IntegerFormatter(text, MakeParm("integer", param)), Parse = () => IntegerParser(text, MakeParm("integer", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("real")] public static readonly Arg<object, object> Real = (param, customError) => new Symbol("real", (text) => new SymbolFunc { Format = () => RealFormatter(text, MakeParm("real", param)), Parse = () => RealParser(text, MakeParm("real", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("money")] public static readonly Arg<object, object> Money = (param, customError) => new Symbol("money", (text) => new SymbolFunc { Format = () => MoneyFormatter(text, MakeParm("money", param)), Parse = () => MoneyParser(text, MakeParm("money", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("percent")] public static readonly Arg<object, object> Percent = (param, customError) => new Symbol("percent", (text) => new SymbolFunc { Format = () => PercentFormatter(text, MakeParm("percent", param)), Parse = () => PercentParser(text, MakeParm("percent", param), () => MakeError(customError, InvalidFormatError)) });
 
     // formats - strings
-    public static readonly Arg<object, object> Text = (param, customError) => new Symbol("text", (text) => new SymbolFunc { Format = () => TextFormatter(text, MakeParm("text", param)), Parse = () => TextParser(text, MakeParm("text", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Memo = (param, customError) => new Symbol("memo", (text) => new SymbolFunc { Format = () => MemoFormatter(text, MakeParm("memo", param)), Parse = () => MemoParser(text, MakeParm("memo", param), () => MakeError(customError, InvalidFormatError)) });
-    public static readonly Arg<object, object> Regex = (param, customError) => new Symbol("regex", (text) => new SymbolFunc { Format = () => RegexFormatter(text, MakeParm("regex", param)), Parse = () => RegexParser(text, MakeParm("regex", param), () => MakeError(customError, InvalidFormatError)) });
-    //makeSymbols(text, memo, regex);
+    [Symbol("text")] public static readonly Arg<object, object> Text = (param, customError) => new Symbol("text", (text) => new SymbolFunc { Format = () => TextFormatter(text, MakeParm("text", param)), Parse = () => TextParser(text, MakeParm("text", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("memo")] public static readonly Arg<object, object> Memo = (param, customError) => new Symbol("memo", (text) => new SymbolFunc { Format = () => MemoFormatter(text, MakeParm("memo", param)), Parse = () => MemoParser(text, MakeParm("memo", param), () => MakeError(customError, InvalidFormatError)) });
+    [Symbol("regex")] public static readonly Arg<object, object> Regex = (param, customError) => new Symbol("regex", (text) => new SymbolFunc { Format = () => RegexFormatter(text, MakeParm("regex", param)), Parse = () => RegexParser(text, MakeParm("regex", param), () => MakeError(customError, InvalidFormatError)) });
 
     // validator - default
     public static Validator Create<T>(T @this) => new Validator(@this, new DefaultBinding(typeof(T)));
+    public static Validator Create<T>(T @this, AbstractBinding binding) => new Validator(@this, binding);
     public static Validator Create(Type type, object @this) => new Validator(@this, new DefaultBinding(type));
     public static Validator Create(Type type, object @this, AbstractBinding binding) => new Validator(@this, binding);
   }

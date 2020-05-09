@@ -1,25 +1,30 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 
 namespace CoreValidation
 {
-  public class Rule
+  public class VRule
   {
-    internal Rule() { }
-    public Rule(string field, string label, V.Symbol[] args, IDictionary<string, object> state)
+    internal VRule()
+    {
+      Args = new List<V.Symbol>();
+      State = new Dictionary<string, object>();
+    }
+    public VRule(string field, string label, List<V.Symbol> args = null, IDictionary<string, object> state = null)
     {
       Field = field;
       Label = label;
-      Args = args;
-      State = state;
+      Args = args ?? new List<V.Symbol>();
+      State = state ?? new Dictionary<string, object>();
     }
 
     public readonly string Field;
     public readonly string Label;
-    public readonly V.Symbol[] Args;
+    public readonly List<V.Symbol> Args;
     public readonly IDictionary<string, object> State;
 
     internal IDictionary<string, object> Validate(IDictionary<string, object> state)
@@ -51,16 +56,16 @@ namespace CoreValidation
     }
   }
 
-  internal class RuleIf : Rule
+  internal class VRuleIf : VRule
   {
-    public RuleIf(Func<IDictionary<string, object>, bool> condition, Rule[] rules)
+    public VRuleIf(Func<IDictionary<string, object>, bool> condition, VRule[] rules)
     {
       Condition = condition;
       Rules = rules;
     }
 
     public readonly Func<IDictionary<string, object>, bool> Condition;
-    public readonly Rule[] Rules;
+    public readonly VRule[] Rules;
   }
 
   public partial class V
@@ -100,48 +105,49 @@ namespace CoreValidation
       param != null ? param.ToParam(bindingAttr).Aggregate(source, (a, b) => { a[b.Key] = b.Value; return a; }) : source;
 
     // execution
-    public static Rule Rule(string field, string label, params object[] args)
+    public static VRule Rule(string field, string label, params object[] args)
     {
-      var state = new Dictionary<string, object>();
-      var symbols = new List<Symbol>();
-      foreach (var arg in args)
-        if (arg is Delegate d) symbols.Add(d.DynamicInvoke(d.Method.GetParameters().Select(x => x.DefaultValue).ToArray()) as Symbol);
-        else if (arg is Symbol s) symbols.Add(s);
-        else state.Assign(arg);
-      return new Rule(field, label, symbols.ToArray(), state);
+      var rule = new VRule(field, label);
+      var symbols = rule.Args;
+      if (args != null)
+        foreach (var arg in args)
+          if (arg is Delegate d) symbols.Add(d.DynamicInvoke(d.Method.GetParameters().Select(x => x.DefaultValue).ToArray()) as Symbol);
+          else if (arg is Symbol s) symbols.Add(s);
+          else rule.State.Assign(arg);
+      return rule;
     }
 
-    public static Rule RuleIf(string condition, params Rule[] rules) => new RuleIf(
+    public static VRule RuleIf(string condition, params VRule[] rules) => new VRuleIf(
       condition: (state) => state != null && state.TryGetValue(condition, out var z) && ((z is string s && s.Length > 0) || (z is bool b && b)),
       rules: rules
     );
-    public static Rule RuleIf(Func<IDictionary<string, object>, bool> condition, params Rule[] rules) => new RuleIf(
+    public static VRule RuleIf(Func<IDictionary<string, object>, bool> condition, params VRule[] rules) => new VRuleIf(
       condition: condition,
       rules: rules
     );
 
-    public static Rule Find(IDictionary<string, object> state, Rule[] rules, string field) => rules.Aggregate((Rule)null, (a, x) =>
-      a ?? (x is RuleIf c ?
+    public static VRule Find(IDictionary<string, object> state, ICollection<VRule> rules, string field) => rules.Aggregate((VRule)null, (a, x) =>
+      a ?? (x is VRuleIf c ?
       (c.Rules != null && c.Rules.Length > 0 && c.Condition(state) ? Find(state, c.Rules, field) : null) :
       x.Field == field ? x : null)
     );
 
-    public static ICollection<Rule> Flatten(IDictionary<string, object> state, Rule[] rules) => rules.Aggregate(new List<Rule>(), (a, x) =>
+    public static ICollection<VRule> Flatten(IDictionary<string, object> state, ICollection<VRule> rules) => rules.Aggregate(new List<VRule>(), (a, x) =>
     {
-      a.AddRange(x is RuleIf c ?
-        (c.Rules != null && c.Rules.Length > 0 && c.Condition(state) ? (List<Rule>)Flatten(state, c.Rules) : new List<Rule>()) :
-        new List<Rule>(new[] { x }));
+      a.AddRange(x is VRuleIf c ?
+        (c.Rules != null && c.Rules.Length > 0 && c.Condition(state) ? (List<VRule>)Flatten(state, c.Rules) : new List<VRule>()) :
+        new List<VRule>(new[] { x }));
       return a;
     });
 
-    internal static IDictionary<string, object> Validate(IDictionary<string, object> state, Rule[] rules, string field = null) => rules.Aggregate((IDictionary<string, object>)new Dictionary<string, object>(), (a, x) =>
-      a.Assign(x is RuleIf c ?
+    internal static IDictionary<string, object> Validate(IDictionary<string, object> state, ICollection<VRule> rules, string field = null) => rules.Aggregate((IDictionary<string, object>)new Dictionary<string, object>(), (a, x) =>
+      a.Assign(x is VRuleIf c ?
         (c.Rules != null && c.Rules.Length > 0 && c.Condition(state) ? Validate(state, c.Rules, field) : a) :
         string.IsNullOrEmpty(field) || x.Field == field ? x.Validate(state) : null
       ));
 
-    internal static IDictionary<string, object> Format(IDictionary<string, object> state, Rule[] rules, string field = null) => rules.Aggregate((IDictionary<string, object>)new Dictionary<string, object>(), (a, x) =>
-      a.Assign(x is RuleIf c ?
+    internal static IDictionary<string, object> Format(IDictionary<string, object> state, ICollection<VRule> rules, string field = null) => rules.Aggregate((IDictionary<string, object>)new Dictionary<string, object>(), (a, x) =>
+      a.Assign(x is VRuleIf c ?
         (c.Rules != null && c.Rules.Length > 0 && c.Condition(state) ? Format(state, c.Rules, field) : a) :
         string.IsNullOrEmpty(field) || x.Field == field ? x.Format(state) : null
       ));

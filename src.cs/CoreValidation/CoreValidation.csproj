@@ -4,4 +4,32 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="FullSerialization\CoreContractResolver.cs" />
+    <Compile Remove="FullSerialization\EnumNameConverter.cs" />
+    <Compile Remove="FullSerialization\IgnoreArrayConverter.cs" />
+    <Compile Remove="FullSerialization\IgnoreIfDefaultAttribute.cs" />
+    <Compile Remove="FullSerialization\IgnoreIfEmptyAttribute.cs" />
+    <Compile Remove="FullSerialization\ShouldSerializeAttribute.cs" />
+    <Compile Remove="FullSerialization\SymbolTypeAttribute.cs" />
+    <Compile Remove="FullSerialization\SymbolTypeConverter.cs" />
+    <Compile Remove="FullSerialization\SymbolTypeResolver.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="FullSerialization\EnumNameConverter.cs" />
+    <None Include="FullSerialization\IgnoreArrayConverter.cs" />
+    <None Include="FullSerialization\IgnoreIfDefaultAttribute.cs" />
+    <None Include="FullSerialization\IgnoreIfEmptyAttribute.cs" />
+    <None Include="FullSerialization\ShouldSerializeAttribute.cs" />
+    <None Include="FullSerialization\CoreContractResolver.cs" />
+    <None Include="FullSerialization\SymbolTypeAttribute.cs" />
+    <None Include="FullSerialization\SymbolTypeConverter.cs" />
+    <None Include="FullSerialization\SymbolTypeResolver.cs" />
+  </ItemGroup>
+
 </Project>
