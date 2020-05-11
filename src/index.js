@@ -35,7 +35,7 @@ function makeError(customError, defaultError) {
 
 // options
 export const setParam = (name, param) => globals_params[name] = param;
-const nulParser = (text, parsed, error) => [value, parsed, error];
+const nulParser = (text, parsed, error) => [text, parsed, error];
 
 // error messages
 const requiredError = (fieldName) => `${fieldName} is required`;
