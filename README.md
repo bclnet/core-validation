@@ -7,16 +7,15 @@ core validation for form state
 $ npm install core-validation --save
 ```
 
-
 ## Example
 
 ```javascript
 import React from 'react';
-import * as V from 'core-validation';
+import { default as V } from 'core-validation';
 
-let Validator = V.create(new V.ReactBinding(), [
+const Rules = [
     V.rule('message', 'Message Body', V.required),
-]);
+];
 
 export default class extends React.Component {
     constructor(props) {
@@ -25,18 +24,19 @@ export default class extends React.Component {
     }
     handleInputChange = (e) => {
         // set state
-        Validator(this).runRules();
+        V(this).runRules({ rules: Rules });
     })
     handleSubmit = (e) => {
         e.preventDefault();
-        if (Validator(this).hasErrors()) return;
+        if (V(this).hasErrors({ rules: Rules })) return;
         // do submit
     }
     render() {
-        const v = Validator(this);
+        const v = V(this);
+        v.rules = Rules;
         return (
             <div>
-                <input id="message" error={v.errorFor('message')} label={v.labelFor('message')} onBlur={v.onBlurFor('message')} value={this.state.message} onChange={this.handleInputChange} />
+                <input error={v.errorFor('message')} label={v.labelFor('message')} value={v.valueFor('message')} onChange={this.handleInputChange} />
                 <button onClick={this.handleSubmit}>Submit</button>
             </div>
         );

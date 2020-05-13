@@ -109,7 +109,7 @@ export const create = function (binding) {
         return rule.label || 'Label';
       },
       valueFor: function (field, opts) {
-        const rule = this.getRules(opts, field) || {};
+        const rule = this.getRules(opts, field) || { state: {} };
         const state = binding.getState($this, opts);
         let { defaultValue } = rule.state;
         if (defaultValue === undefined) defaultValue = nulFormat;

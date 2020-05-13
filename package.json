@@ -1,6 +1,6 @@
 {
   "name": "core-validation",
-  "version": "0.0.21",
+  "version": "1.0.0",
   "description": "core validation",
   "main": "lib/index.js",
   "keywords": [
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/BclEx/core-validation.git"
+    "url": "https://github.com/bclnet/core-validation.git"
   },
   "scripts": {
     "test": "npm-run-all test:jest",
